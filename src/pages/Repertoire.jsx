@@ -16,12 +16,22 @@ export default function Repertoire() {
   const [searchQuery, setSearchQuery] = useState('');
   const navigate = useNavigate();
   
-  const { fiches, categories } = useFicheStore();
-  const { user } = useAuthStore();
+  const { fiches, categories, isLoading: isFichesLoading } = useFicheStore();
+  const { user, isLoading: isAuthLoading } = useAuthStore();
 
-  const filteredFiches = fiches.filter(fiche => {
+  if (isAuthLoading || isFichesLoading || !user) {
+    return (
+      <div className="flex bg-[#CC1A1A] h-screen items-center justify-center">
+        <div className="text-white font-black uppercase text-xl animate-pulse">
+          CHARGEMENT...
+        </div>
+      </div>
+    );
+  }
+
+  const filteredFiches = (fiches || []).filter(fiche => {
     const matchesFilter = activeFilter === 'Tous' || (activeFilter === 'Fiches');
-    const matchesSearch = fiche.title.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesSearch = (fiche.title || "").toLowerCase().includes(searchQuery.toLowerCase());
     return matchesFilter && matchesSearch;
   });
 

@@ -11,6 +11,7 @@ import AdminDashboard from './pages/admin/AdminDashboard';
 import Login from './pages/Login';
 import { useAuthStore } from './store/useAuthStore';
 import { useFicheStore } from './store/useFicheStore';
+import ErrorBoundary from './components/ErrorBoundary';
 
 function App() {
   const { fetchData } = useFicheStore();
@@ -56,18 +57,20 @@ function App() {
     <Router>
       <div className="font-['Inter'] flex min-h-screen text-gray-900 bg-black">
         <div className="mx-auto w-full max-w-[390px] shadow-2xl relative bg-[#F2F2F7] overflow-x-hidden md:my-4 md:h-[844px] md:rounded-[40px] md:border-[8px] md:border-black ring-1 ring-gray-900/5">
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/parcours" element={<Parcours />} />
-            <Route path="/repertoire" element={<Repertoire />} />
-            <Route path="/profil" element={<Profil />} />
-            <Route path="/fiche/:id" element={<Fiche />} />
-            <Route path="/quiz/:id" element={<Quiz />} />
-            <Route path="/procedure/:id" element={<Procedure />} />
-            <Route path="/quiz-general" element={<Quiz />} />
-            <Route path="/admin" element={<AdminDashboard />} />
-            <Route path="*" element={<Navigate to="/" replace />} />
-          </Routes>
+          <ErrorBoundary>
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/parcours" element={<Parcours />} />
+              <Route path="/repertoire" element={<Repertoire />} />
+              <Route path="/profil" element={<Profil />} />
+              <Route path="/fiche/:id" element={<Fiche />} />
+              <Route path="/quiz/:id" element={<Quiz />} />
+              <Route path="/procedure/:id" element={<Procedure />} />
+              <Route path="/quiz-general" element={<Quiz />} />
+              <Route path="/admin" element={<AdminDashboard />} />
+              <Route path="*" element={<Navigate to="/" replace />} />
+            </Routes>
+          </ErrorBoundary>
         </div>
       </div>
     </Router>

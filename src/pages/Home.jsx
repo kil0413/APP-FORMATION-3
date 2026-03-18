@@ -10,10 +10,20 @@ import { useFicheStore } from '../store/useFicheStore';
 
 export default function Home() {
   const navigate = useNavigate();
-  const { user } = useAuthStore();
-  const { categories } = useFicheStore();
+  const { categories, isLoading: isFichesLoading } = useFicheStore();
+  const { user, isLoading: isAuthLoading } = useAuthStore();
 
-  const nrbcCategory = categories.find(c => c.id === 'c3')?.name || 'NRBC';
+  if (isAuthLoading || isFichesLoading || !user) {
+    return (
+      <div className="flex bg-[#CC1A1A] h-screen items-center justify-center">
+        <div className="text-white font-black uppercase text-xl animate-pulse">
+          PRÉPARATION...
+        </div>
+      </div>
+    );
+  }
+
+  const nrbcCategory = categories?.find(c => c.id === 'c3')?.name || 'NRBC';
 
   return (
     <PageWrapper>

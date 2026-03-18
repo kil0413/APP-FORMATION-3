@@ -13,42 +13,53 @@ export const useFicheStore = create((set, get) => ({
   fetchData: async () => {
     set({ isLoading: true });
     try {
-      // Récupérer les catégories
-      const { data: categoriesData, error: catError } = await supabase
-        .from('categories')
-        .select('*');
-        
-      if (catError) throw catError;
+      // Récupérer les données en parallèle
+      const [
+        { data: categoriesData },
+        { data: fichesData },
+        { data: quizzesData }
+      ] = await Promise.all([
+        supabase.from('categories').select('*'),
+        supabase.from('fiches').select('*'),
+        supabase.from('quizzes').select('*')
+      ]);
 
-      // Récupérer les fiches
-      const { data: fichesData, error: ficheError } = await supabase
-        .from('fiches')
-        .select('*');
+      // Fusionner avec les données de secours (pour s'assurer qu'il y a toujours du contenu)
+      // On utilise les données DB en priorité si ID identiques
+      const finalCategories = [...(categoriesData || [])];
+      fallbackCategories.forEach(fallback => {
+        if (!finalCategories.find(c => c.id === fallback.id)) {
+          finalCategories.push(fallback);
+        }
+      });
 
-      if (ficheError) throw ficheError;
+      const finalFiches = [...(fichesData || [])];
+      fallbackFiches.forEach(fallback => {
+        if (!finalFiches.find(f => f.id === fallback.id)) {
+          finalFiches.push(fallback);
+        }
+      });
 
-      // Récupérer les quiz
-      const { data: quizzesData, error: quizError } = await supabase
-        .from('quizzes')
-        .select('*');
-
-      // (Le quiz error est ignoré si la table n'existe pas encore sur Supabase, on utilisera le fallback)
+      const finalQuizzes = [...(quizzesData || [])];
+      fallbackQuizzes.forEach(fallback => {
+        if (!finalQuizzes.find(q => q.id === fallback.id)) {
+          finalQuizzes.push(fallback);
+        }
+      });
 
       set({ 
-        categories: categoriesData?.length > 0 ? categoriesData : fallbackCategories, 
-        fiches: fichesData?.length > 0 ? fichesData : fallbackFiches,
-        quizzes: quizzesData?.length > 0 ? quizzesData : fallbackQuizzes,
+        categories: finalCategories,
+        fiches: finalFiches,
+        quizzes: finalQuizzes,
         isLoading: false 
       });
     } catch (err) {
-      console.error('Erreur Supabase:', err.message);
+      console.error('Erreur Data Fetching:', err);
       set({ 
-        error: err.message, 
-        isLoading: false,
-        // Fallback sur les données mockées en cas d'erreur
-        fiches: fallbackFiches,
         categories: fallbackCategories,
-        quizzes: fallbackQuizzes
+        fiches: fallbackFiches,
+        quizzes: fallbackQuizzes,
+        isLoading: false
       });
     }
   },
