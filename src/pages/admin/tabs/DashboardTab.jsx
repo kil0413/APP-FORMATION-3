@@ -1,29 +1,30 @@
 import { useFicheStore } from '../../../store/useFicheStore';
-import { Users, FileText, CheckCircle2, TrendingUp, Clock, AlertTriangle, ArrowUpRight, ArrowDownRight } from 'lucide-react';
+import { useAuthStore } from '../../../store/useAuthStore';
+import { Users, FileText, CheckCircle2, TrendingUp, Clock, AlertTriangle, ArrowUpRight, ArrowDownRight, Brain } from 'lucide-react';
 import { Card, CardContent } from '../../../components/ui/Card';
 
 export default function DashboardTab() {
-  const { fiches, categories } = useFicheStore();
+  const { fiches, quizzes } = useFicheStore();
+  const { profiles } = useAuthStore();
 
   const stats = [
-    { label: 'Utilisateurs', value: '1,284', change: '+12%', trend: 'up', icon: Users, color: 'blue' },
+    { label: 'Utilisateurs', value: profiles.length.toLocaleString(), change: '+12%', trend: 'up', icon: Users, color: 'blue' },
     { label: 'Fiches Publiées', value: fiches.length, change: '+5', trend: 'up', icon: FileText, color: 'red' },
-    { label: 'Fiches Validées', value: '86%', change: '+2%', trend: 'up', icon: CheckCircle2, color: 'green' },
-    { label: 'Questions Quiz', value: '450', change: '-3%', trend: 'down', icon: Clock, color: 'purple' },
+    { label: 'Fiches Validées (moy)', value: '74%', change: '+2%', trend: 'up', icon: CheckCircle2, color: 'green' },
+    { label: 'Quiz Disponibles', value: quizzes.length, change: '+1', trend: 'up', icon: Brain, color: 'purple' },
   ];
 
   const recentActivity = [
     { id: 1, user: 'Lucas Dupont', action: 'A validé le module INC-1', time: 'Il y a 2 min', type: 'success' },
     { id: 2, user: 'Sarah Martin', action: 'A échoué au quiz "Risque Gaz"', time: 'Il y a 15 min', type: 'error' },
-    { id: 3, user: 'Julien Bernard', action: 'Fiche "SR-2" mise à jour par l\'admin', time: 'Il y a 1h', type: 'warning' },
-    { id: 4, user: 'Thomas Petit', action: 'Nouvel utilisateur inscrit', time: 'Il y a 3h', type: 'info' },
+    { id: 3, user: 'Admin', action: `Nouvelle fiche "${fiches[0]?.title || '...'}" publiée`, time: 'Il y a 1h', type: 'info' },
   ];
 
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {stats.map((stat, i) => (
-          <Card key={i} className="hover:shadow-xl transition-all duration-300 border-none bg-white group cursor-default">
+          <Card key={i} className="hover:shadow-xl transition-all duration-300 border-none bg-white group cursor-default shadow-sm">
             <CardContent className="p-6">
               <div className="flex items-center justify-between mb-4">
                 <div className={`h-12 w-12 rounded-2xl flex items-center justify-center ${
@@ -49,12 +50,11 @@ export default function DashboardTab() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Main Chart Placeholder */}
-        <Card className="lg:col-span-2 border-none bg-white p-8">
+        <Card className="lg:col-span-2 border-none bg-white p-8 shadow-sm">
           <div className="flex items-center justify-between mb-8">
             <div>
               <h3 className="text-xl font-black uppercase tracking-tighter italic">Engagement Hebdomadaire</h3>
-              <p className="text-xs text-gray-400 font-medium">Répartition des quiz validés par jour</p>
+              <p className="text-xs text-gray-400 font-medium">Répartition des succès aux quiz par jour</p>
             </div>
             <select className="bg-gray-50 border-none rounded-xl px-4 py-2 text-xs font-black uppercase tracking-widest text-gray-500 outline-none">
               <option>7 Derniers Jours</option>
@@ -69,18 +69,17 @@ export default function DashboardTab() {
                   className="w-full bg-gradient-to-t from-[#CC1A1A]/10 to-[#CC1A1A] rounded-t-2xl transition-all duration-500 group-hover:opacity-80 relative"
                   style={{ height: `${h}%` }}
                 >
-                  <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-[#1A1A2E] text-white text-[10px] font-bold px-2 py-1 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                  <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-[#1A1A2E] text-white text-[10px] font-bold px-2 py-1 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-20">
                     {h}% engagement
                   </div>
                 </div>
-                <span className="text-[10px] font-black uppercase text-gray-400">Lu, Ma, Me, Je, Ve, Sa, Di`.split(', ')[i]</span>
+                <span className="text-[10px] font-black uppercase text-gray-400">{'Lu,Ma,Me,Je,Ve,Sa,Di'.split(',')[i]}</span>
               </div>
             ))}
           </div>
         </Card>
 
-        {/* Recent Activity */}
-        <Card className="border-none bg-white p-8 relative overflow-hidden">
+        <Card className="border-none bg-white p-8 relative overflow-hidden shadow-sm">
           <h3 className="text-xl font-black uppercase tracking-tighter italic mb-8 relative z-10">Activité Récente</h3>
           <div className="space-y-6 relative z-10">
             {recentActivity.map((act) => (

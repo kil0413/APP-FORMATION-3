@@ -180,4 +180,38 @@ export const useAuthStore = create((set, get) => ({
     set({ user: { ...state.user, lives: newLives } });
     await supabase.from('profiles').update({ lives: newLives }).eq('id', state.user.id);
   },
+
+  // --- ACTIONS ADMIN ---
+  profiles: [],
+  fetchProfiles: async () => {
+    try {
+      const { data, error } = await supabase.from('profiles').select('*');
+      if (error) throw error;
+      set({ profiles: data || [] });
+    } catch (err) {
+      console.error("Erreur fetchProfiles:", err.message);
+    }
+  },
+
+  deleteProfile: async (id) => {
+    try {
+      const { error } = await supabase.from('profiles').delete().eq('id', id);
+      if (error) throw error;
+      set((state) => ({ profiles: state.profiles.filter(p => p.id !== id) }));
+    } catch (err) {
+      console.error("Erreur deleteProfile:", err.message);
+    }
+  },
+
+  updateProfile: async (id, updates) => {
+    try {
+      const { data, error } = await supabase.from('profiles').update(updates).eq('id', id).select();
+      if (error) throw error;
+      if (data) {
+        set((state) => ({ profiles: state.profiles.map(p => p.id === id ? data[0] : p) }));
+      }
+    } catch (err) {
+      console.error("Erreur updateProfile:", err.message);
+    }
+  }
 }));

@@ -8,6 +8,7 @@ import FichesTab from './tabs/FichesTab';
 import UsersTab from './tabs/UsersTab';
 import SettingsTab from './tabs/SettingsTab';
 import { useFicheStore } from '../../store/useFicheStore';
+import { useAuthStore } from '../../store/useAuthStore';
 
 export default function AdminDashboard() {
   const navigate = useNavigate();
@@ -17,10 +18,14 @@ export default function AdminDashboard() {
   const [showMobileSidebar, setShowMobileSidebar] = useState(false);
   
   const { fetchData } = useFicheStore();
+  const { fetchProfiles } = useAuthStore();
 
   useEffect(() => {
-    fetchData();
-  }, [fetchData]);
+    if (isAuthenticated) {
+       fetchData();
+       fetchProfiles();
+    }
+  }, [isAuthenticated, fetchData, fetchProfiles]);
 
   const handleLogin = (e) => {
     e.preventDefault();
