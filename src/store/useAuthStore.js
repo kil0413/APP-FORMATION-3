@@ -22,10 +22,14 @@ export const useAuthStore = create((set, get) => ({
 
   // Initialisation au lancement de l'app
   initAuth: async () => {
-    // Écoute les changements (connexion / deconnexion)
-    supabase.auth.onAuthStateChange(async (event, session) => {
+    try {
+      // 1. Démarrer avec le chargement
+      set({ isLoading: true });
+
+      // 2. Vérifier s'il y a déjà une session active (très rapide)
+      const { data: { session } } = await supabase.auth.getSession();
+      
       if (session?.user) {
-        // Va chercher le profil personnalisé dans la base de données
         const { data: profile } = await supabase
           .from('profiles')
           .select('*')
@@ -36,24 +40,49 @@ export const useAuthStore = create((set, get) => ({
           isAuthenticated: true, 
           user: { 
              ...session.user, 
-             ...(profile || defaultUserProfile), // Fusionne les données sécu avec le profil du jeu
-             avatar_url: session.user.user_metadata.avatar_url || 'https://api.dicebear.com/7.x/avataaars/svg?seed=Felix'
+             ...(profile || defaultUserProfile),
+             avatar_url: session.user.user_metadata.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${session.user.id}`
           },
           isLoading: false
         });
-
-        // Si le profil n'existe pas en BDD, on le crée
-        if (!profile) {
-          await supabase.from('profiles').insert([{ 
-             id: session.user.id, 
-             email: session.user.email,
-             display_name: session.user.user_metadata.full_name || 'Nouveau Sapeur' 
-          }]);
-        }
       } else {
-        set({ user: null, isAuthenticated: false, isLoading: false });
+        set({ isAuthenticated: false, isLoading: false });
       }
-    });
+
+      // 3. Écouter les changements futurs (connexion / deconnexion)
+      supabase.auth.onAuthStateChange(async (event, session) => {
+        if (session?.user) {
+          const { data: profile } = await supabase
+            .from('profiles')
+            .select('*')
+            .eq('id', session.user.id)
+            .single();
+
+          set({ 
+            isAuthenticated: true, 
+            user: { 
+               ...session.user, 
+               ...(profile || defaultUserProfile),
+               avatar_url: session.user.user_metadata.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${session.user.id}`
+            },
+            isLoading: false
+          });
+        } else {
+          set({ user: null, isAuthenticated: false, isLoading: false });
+        }
+      });
+
+      // 4. Sécurité : Si après 5 secondes on charge toujours, on débloque
+      setTimeout(() => {
+        if (get().isLoading) {
+          set({ isLoading: false });
+        }
+      }, 5000);
+
+    } catch (error) {
+      console.error("Erreur initAuth:", error);
+      set({ isLoading: false });
+    }
   },
 
   // Action pour se connecter avec Google
