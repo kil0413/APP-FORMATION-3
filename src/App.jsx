@@ -56,22 +56,26 @@ function App() {
   return (
     <Router>
       <div className="font-['Inter'] flex min-h-screen text-gray-900 bg-black">
-        <div className="mx-auto w-full max-w-[390px] shadow-2xl relative bg-[#F2F2F7] overflow-x-hidden md:my-4 md:h-[844px] md:rounded-[40px] md:border-[8px] md:border-black ring-1 ring-gray-900/5">
-          <ErrorBoundary>
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/parcours" element={<Parcours />} />
-              <Route path="/repertoire" element={<Repertoire />} />
-              <Route path="/profil" element={<Profil />} />
-              <Route path="/fiche/:id" element={<Fiche />} />
-              <Route path="/quiz/:id" element={<Quiz />} />
-              <Route path="/procedure/:id" element={<Procedure />} />
-              <Route path="/quiz-general" element={<Quiz />} />
-              <Route path="/admin" element={<AdminDashboard />} />
-              <Route path="*" element={<Navigate to="/" replace />} />
-            </Routes>
-          </ErrorBoundary>
-        </div>
+        <Routes>
+          <Route path="/admin/*" element={<AdminDashboard />} />
+          <Route path="*" element={
+            <div className="mx-auto w-full max-w-[390px] shadow-2xl relative bg-[#F2F2F7] overflow-x-hidden md:my-4 md:h-[844px] md:rounded-[40px] md:border-[8px] md:border-black ring-1 ring-gray-900/5">
+              <ErrorBoundary>
+                <Routes>
+                  <Route path="/" element={<Home />} />
+                  <Route path="/parcours" element={<Parcours />} />
+                  <Route path="/repertoire" element={<Repertoire />} />
+                  <Route path="/profil" element={<Profil />} />
+                  <Route path="/fiche/:id" element={<Fiche />} />
+                  <Route path="/quiz/:id" element={<Quiz />} />
+                  <Route path="/procedure/:id" element={<Procedure />} />
+                  <Route path="/quiz-general" element={<Quiz />} />
+                  <Route path="*" element={<Navigate to="/" replace />} />
+                </Routes>
+              </ErrorBoundary>
+            </div>
+          } />
+        </Routes>
       </div>
     </Router>
   );
