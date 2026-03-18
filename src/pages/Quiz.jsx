@@ -1,141 +1,207 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Check, X, Trophy, Flame } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { ChevronLeft, Check, X, Award, Flame, Heart, Zap, Info, ArrowRight } from 'lucide-react';
 import { useAuthStore } from '../store/useAuthStore';
-import { ProgressBar } from '../components/ui/ProgressBar';
-
-const mockQuiz = {
-  title: 'Bilans secouristes',
-  questions: [
-    { q: 'Quel bilan est prioritaire ?', answers: ['Circonstanciel', 'Vital', 'Lésionnel', 'Complémentaire'], correct: 1, explanation: 'Le bilan vital permet d\'identifier les détresses menaçant la vie immédiatement.' },
-    { q: 'Que signifie PLS ?', answers: ['Position Latérale de Sécurité', 'Protection Légale de Secours', 'Poste Local Sanitaire', 'Premiers Lieux Sauvés'], correct: 0, explanation: 'La PLS maintient les voies aériennes libres.' },
-    { q: 'Combien de temps vérifier la respiration ?', answers: ['3 secondes', '5 secondes', '10 secondes au maximum', '15 secondes'], correct: 2, explanation: 'La vérification de la respiration normale ne doit pas excéder 10 secondes (Regarder, Écouter, Sentir).' }
-  ]
-};
+import { useFicheStore } from '../store/useFicheStore';
+import { motion, AnimatePresence } from 'framer-motion';
 
 export default function Quiz() {
+  const { id } = useParams(); // ID de la fiche
   const navigate = useNavigate();
   const { addXp, loseLife, user } = useAuthStore();
-  
-  const [currentIdx, setCurrentIdx] = useState(0);
-  const [selectedIdx, setSelectedIdx] = useState(null);
-  const [score, setScore] = useState(0);
-  const [finished, setFinished] = useState(false);
-  
-  const q = mockQuiz.questions[currentIdx];
-  const isAnswered = selectedIdx !== null;
-  const isCorrect = selectedIdx === q.correct;
+  const { fiches, quizzes } = useFicheStore();
 
-  const handleSelect = (idx) => {
-    if (isAnswered) return;
-    setSelectedIdx(idx);
-    if (idx === q.correct) {
+  const currentFiche = fiches.find(f => f.id === id);
+  const quiz = quizzes.find(q => q.fiche_id === id);
+
+  const [currentStep, setCurrentStep] = useState(0);
+  const [selectedAnswer, setSelectedAnswer] = useState(null);
+  const [isConfirmed, setIsConfirmed] = useState(false);
+  const [score, setScore] = useState(0);
+  const [isFinished, setIsFinished] = useState(false);
+  const [showExplanation, setShowExplanation] = useState(false);
+
+  if (!quiz) {
+    return (
+      <div className="flex h-screen flex-col items-center justify-center p-6 bg-[#F2F2F7] text-center">
+        <h2 className="text-2xl font-black mb-4">Quiz non disponible</h2>
+        <p className="text-gray-500 mb-8">Désolé, cette fiche n'a pas encore de quiz associé.</p>
+        <button onClick={() => navigate(-1)} className="bg-[#CC1A1A] text-white px-8 py-3 rounded-full font-bold">Retour</button>
+      </div>
+    );
+  }
+
+  const currentQuestion = quiz.questions[currentStep];
+  const progress = ((currentStep) / quiz.questions.length) * 100;
+
+  const handleSelect = (index) => {
+    if (isConfirmed) return;
+    setSelectedAnswer(index);
+  };
+
+  const handleConfirm = () => {
+    if (selectedAnswer === null) return;
+    setIsConfirmed(true);
+    setShowExplanation(true);
+
+    if (selectedAnswer === currentQuestion.correct) {
       setScore(s => s + 1);
     } else {
       loseLife();
     }
   };
 
-  const handleNext = () => {
-    if (currentIdx < mockQuiz.questions.length - 1) {
-      setCurrentIdx(i => i + 1);
-      setSelectedIdx(null);
+  const nextStep = () => {
+    if (currentStep < quiz.questions.length - 1) {
+      setCurrentStep(s => s + 1);
+      setSelectedAnswer(null);
+      setIsConfirmed(false);
+      setShowExplanation(false);
     } else {
-      setFinished(true);
-      const isPerfect = score === mockQuiz.questions.length;
-      addXp(50 + (isPerfect ? 25 : 0));
+      finishQuiz();
     }
   };
 
-  if (finished) {
-    const isPerfect = score === mockQuiz.questions.length;
+  const finishQuiz = () => {
+    const finalScore = selectedAnswer === currentQuestion.correct ? score + 1 : score;
+    const xpGained = finalScore * 25; // 25 XP par bonne réponse
+    addXp(xpGained);
+    setIsFinished(true);
+  };
+
+  if (isFinished) {
+    const success = (score / quiz.questions.length) >= 0.5;
     return (
-      <div className="flex min-h-screen flex-col items-center justify-center bg-[#F2F2F7] px-6 text-center">
-        <div className="relative mb-8 flex h-32 w-32 items-center justify-center rounded-full bg-yellow-100 shadow-[0_0_40px_rgba(255,215,0,0.3)] border-4 border-yellow-400">
-          <Trophy size={64} className="text-yellow-500 max-w-full scale-110" />
-        </div>
-        <h1 className="text-3xl font-black text-[#1A1A2E] tracking-tight">Quiz Terminé !</h1>
-        <p className="mt-2 text-lg font-medium text-[#8E8E93]">Score: <strong className="text-[#CC1A1A]">{score}</strong> / {mockQuiz.questions.length}</p>
+      <div className="flex h-screen flex-col items-center justify-center p-8 bg-[#F2F2F7] text-center">
+        <motion.div 
+          initial={{ scale: 0 }}
+          animate={{ scale: 1 }}
+          className="mb-8"
+        >
+          <Award size={100} className={success ? "text-yellow-500" : "text-gray-400"} />
+        </motion.div>
         
-        <div className="mt-8 flex flex-col gap-2 rounded-2xl bg-white p-6 shadow-sm w-full font-bold">
-          <div className="text-gray-500">XP Gagné</div>
-          <div className="text-4xl text-[#FF9500]">+ {50 + (isPerfect ? 25 : 0)} XP ⚡</div>
-          {isPerfect && <div className="mt-2 text-sm text-[#34C759]">Bonus Perfect: +25 XP</div>}
+        <h2 className="text-3xl font-black mb-2 uppercase italic tracking-tighter">Quiz Terminé !</h2>
+        <p className="text-gray-500 font-bold mb-8">Excellent effort, Sapeur.</p>
+        
+        <div className="grid grid-cols-2 gap-4 w-full max-w-sm mb-12">
+          <div className="bg-white p-6 rounded-3xl shadow-sm border-b-4 border-gray-100">
+            <div className="text-2xl font-black text-[#CC1A1A]">{score}/{quiz.questions.length}</div>
+            <div className="text-[10px] uppercase font-black text-gray-400">Score</div>
+          </div>
+          <div className="bg-white p-6 rounded-3xl shadow-sm border-b-4 border-gray-100">
+            <div className="text-2xl font-black text-blue-500">+{score * 25}</div>
+            <div className="text-[10px] uppercase font-black text-gray-400">XP Gagné</div>
+          </div>
         </div>
 
         <button 
-          onClick={() => navigate('/')}
-          className="mt-8 w-full rounded-2xl bg-[#CC1A1A] py-4 font-bold text-white shadow-md shadow-red-500/20 active:scale-95"
+          onClick={() => navigate('/')} 
+          className="w-full max-w-sm bg-[#CC1A1A] text-white py-5 rounded-3xl font-black uppercase shadow-xl shadow-red-500/20 active:scale-95 transition-all"
         >
-          Continuer
+          Retour à la base
         </button>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#F2F2F7] flex flex-col pt-10 px-5 relative pb-24">
-      <div className="flex items-center justify-between mb-8">
-        <button onClick={() => navigate(-1)} className="p-2 -ml-2 text-gray-400 active:scale-95">
-          <X size={28} className="text-[#8E8E93]" />
+    <div className="flex h-screen flex-col bg-[#F2F2F7] font-['Inter']">
+      {/* HEADER QUIZ */}
+      <header className="px-6 pt-8 pb-4 flex items-center justify-between">
+        <button onClick={() => navigate(-1)} className="text-gray-400 p-2">
+          <X size={24} />
         </button>
-        <ProgressBar value={(currentIdx / mockQuiz.questions.length) * 100} className="w-2/3 h-3 bg-gray-200" colorClass="bg-[#34C759]" />
-        <div className="flex items-center gap-1 font-bold text-[#CC1A1A] text-lg">
-          <span className="text-2xl pt-1">❤️</span> {user.lives}
+        <div className="flex-1 px-4">
+           <div className="h-3 w-full bg-gray-200 rounded-full overflow-hidden">
+             <motion.div 
+              initial={{ width: 0 }}
+              animate={{ width: `${progress}%` }}
+              className="h-full bg-[#CC1A1A]" />
+           </div>
         </div>
-      </div>
+        <div className="flex items-center gap-2 bg-white px-3 py-1.5 rounded-full border border-gray-100 shadow-sm">
+           <Heart size={16} className="text-red-500 fill-red-500" />
+           <span className="text-sm font-black">{user.lives}</span>
+        </div>
+      </header>
 
-      <div className="flex-1 flex flex-col">
-        <h2 className="text-2xl font-black text-[#1A1A2E] leading-tight tracking-tight mb-8">
-          {q.q}
-        </h2>
+      {/* QUESTION AREA */}
+      <main className="flex-1 px-6 pt-8 pb-24 overflow-y-auto no-scrollbar">
+        <div className="mb-10">
+          <span className="text-[10px] font-black uppercase text-gray-400 tracking-widest block mb-1">Question {currentStep + 1} sur {quiz.questions.length}</span>
+          <h2 className="text-2xl font-black text-[#1A1A2E] leading-tight italic">{currentQuestion.q}</h2>
+        </div>
 
-        <div className="flex flex-col gap-3">
-          {q.answers.map((ans, idx) => {
-            let stateClass = "bg-white border-2 border-transparent text-[#1A1A2E] shadow-sm";
-            if (isAnswered) {
-              if (idx === q.correct) stateClass = "bg-green-50 border-2 border-[#34C759] text-green-700 shadow-md shadow-green-500/10";
-              else if (idx === selectedIdx) stateClass = "bg-red-50 border-2 border-[#CC1A1A] text-[#CC1A1A] shadow-md shadow-red-500/10";
-              else stateClass = "bg-white opacity-50";
+        <div className="flex flex-col gap-4">
+          {currentQuestion.answers.map((answer, index) => {
+            const isSelected = selectedAnswer === index;
+            const isCorrect = currentQuestion.correct === index;
+            
+            let cardClass = "bg-white border-2 border-gray-100 text-[#1A1A2E] shadow-sm";
+            if (isConfirmed) {
+              if (isCorrect) cardClass = "bg-green-100 border-green-500 text-green-700 shadow-green-200 ring-2 ring-green-100";
+              else if (isSelected) cardClass = "bg-red-100 border-red-500 text-red-700 shadow-red-200 ring-2 ring-red-100";
+            } else if (isSelected) {
+              cardClass = "bg-blue-50 border-blue-500 text-blue-700 ring-4 ring-blue-50 scale-[1.02]";
             }
 
             return (
-              <button 
-                key={idx}
-                disabled={isAnswered}
-                onClick={() => handleSelect(idx)}
-                className={`flex items-center justify-between rounded-2xl p-5 text-left font-bold transition-all active:scale-[0.98] ${stateClass}`}
+              <motion.button
+                key={index}
+                whileTap={{ scale: 0.98 }}
+                onClick={() => handleSelect(index)}
+                className={`w-full text-left p-5 rounded-[1.5rem] font-bold text-sm transition-all duration-200 flex items-center justify-between ${cardClass}`}
               >
-                <span className="text-[16px] leading-tight pr-4">{ans}</span>
-                {isAnswered && idx === q.correct && <Check size={28} className="text-[#34C759] stroke-[3px]" />}
-                {isAnswered && idx === selectedIdx && idx !== q.correct && <X size={28} className="text-[#CC1A1A] stroke-[3px]" />}
-              </button>
+                <span>{answer}</span>
+                {isConfirmed && isCorrect && <Check size={20} className="text-green-600" />}
+                {isConfirmed && isSelected && !isCorrect && <X size={20} className="text-red-600" />}
+              </motion.button>
             );
           })}
         </div>
 
-        {/* Feedback Zone */}
-        {isAnswered && (
-          <div className={`mt-8 rounded-2xl p-5 border shadow-sm animate-[fadeUp_0.4s_ease-out_forwards] ${isCorrect ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'}`}>
-            <h3 className={`text-xl font-black mb-2 flex items-center gap-2 ${isCorrect ? 'text-[#34C759]' : 'text-[#CC1A1A]'}`}>
-              {isCorrect ? <><Check strokeWidth={4} /> Excellent !</> : <><X strokeWidth={4} /> Incorrect</>}
-            </h3>
-            <p className={`font-medium ${isCorrect ? 'text-green-700' : 'text-red-700'}`}>
-              {q.explanation}
-            </p>
-          </div>
-        )}
-      </div>
+        <AnimatePresence>
+          {showExplanation && (
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className={`mt-8 p-6 rounded-3xl border-b-4 ${selectedAnswer === currentQuestion.correct ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'}`}
+            >
+              <div className="flex items-center gap-2 mb-2">
+                <Info size={18} className={selectedAnswer === currentQuestion.correct ? 'text-green-600' : 'text-red-600'} />
+                <span className={`text-[10px] font-black uppercase tracking-tighter ${selectedAnswer === currentQuestion.correct ? 'text-green-600' : 'text-red-600'}`}>
+                  {selectedAnswer === currentQuestion.correct ? 'Bonne réponse !' : 'Oups...'}
+                </span>
+              </div>
+              <p className="text-xs font-bold leading-relaxed">{currentQuestion.explanation}</p>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </main>
 
-      <div className="fixed bottom-0 left-0 w-full max-w-[390px] bg-white p-4 border-t border-gray-100 safe-area-bottom pb-6">
-        <button
-          disabled={!isAnswered}
-          onClick={handleNext}
-          className="w-full rounded-2xl bg-[#CC1A1A] py-4 font-bold text-lg text-white disabled:opacity-30 disabled:pointer-events-none transition-transform active:scale-95 shadow-md shadow-red-500/20"
-        >
-          {currentIdx === mockQuiz.questions.length - 1 ? 'Terminer' : 'Continuer'}
-        </button>
-      </div>
+      {/* FOOTER BUTTON */}
+      <footer className="fixed bottom-0 w-full max-w-[390px] p-6 bg-white/80 backdrop-blur-md border-t border-gray-100">
+        {!isConfirmed ? (
+          <button
+            onClick={handleConfirm}
+            disabled={selectedAnswer === null}
+            className={`w-full py-5 rounded-3xl font-[1000] uppercase tracking-tighter transition-all active:scale-95 shadow-xl ${
+              selectedAnswer !== null ? 'bg-[#1A1A2E] text-white opacity-100 transform translate-y-0' : 'bg-gray-200 text-gray-400 pointer-events-none'
+            }`}
+          >
+            VÉRIFIER
+          </button>
+        ) : (
+          <button
+            onClick={nextStep}
+            className="w-full bg-[#CC1A1A] text-white py-5 rounded-3xl font-[1000] uppercase tracking-tighter transition-all active:scale-95 flex items-center justify-center gap-3 shadow-xl shadow-red-500/20"
+          >
+            {currentStep < quiz.questions.length - 1 ? 'CONTINUER' : 'TERMINER'}
+            <ArrowRight size={20} />
+          </button>
+        )}
+      </footer>
     </div>
   );
 }

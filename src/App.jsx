@@ -62,8 +62,9 @@ function App() {
             <Route path="/repertoire" element={<Repertoire />} />
             <Route path="/profil" element={<Profil />} />
             <Route path="/fiche/:id" element={<Fiche />} />
+            <Route path="/quiz/:id" element={<Quiz />} />
             <Route path="/procedure/:id" element={<Procedure />} />
-            <Route path="/quiz" element={<Quiz />} />
+            <Route path="/quiz-general" element={<Quiz />} />
             <Route path="/admin" element={<AdminDashboard />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>

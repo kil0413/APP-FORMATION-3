@@ -1,10 +1,11 @@
 import { create } from 'zustand';
 import { supabase } from '../lib/supabase';
-import { fiches as fallbackFiches, categories as fallbackCategories } from '../mockData';
+import { fiches as fallbackFiches, categories as fallbackCategories, quizzes as fallbackQuizzes } from '../mockData';
 
 export const useFicheStore = create((set, get) => ({
   fiches: [],
   categories: [],
+  quizzes: [],
   isLoading: false,
   error: null,
 
@@ -26,9 +27,17 @@ export const useFicheStore = create((set, get) => ({
 
       if (ficheError) throw ficheError;
 
+      // Récupérer les quiz
+      const { data: quizzesData, error: quizError } = await supabase
+        .from('quizzes')
+        .select('*');
+
+      // (Le quiz error est ignoré si la table n'existe pas encore sur Supabase, on utilisera le fallback)
+
       set({ 
-        categories: categoriesData.length > 0 ? categoriesData : fallbackCategories, 
-        fiches: fichesData.length > 0 ? fichesData : fallbackFiches,
+        categories: categoriesData?.length > 0 ? categoriesData : fallbackCategories, 
+        fiches: fichesData?.length > 0 ? fichesData : fallbackFiches,
+        quizzes: quizzesData?.length > 0 ? quizzesData : fallbackQuizzes,
         isLoading: false 
       });
     } catch (err) {
@@ -38,7 +47,8 @@ export const useFicheStore = create((set, get) => ({
         isLoading: false,
         // Fallback sur les données mockées en cas d'erreur
         fiches: fallbackFiches,
-        categories: fallbackCategories
+        categories: fallbackCategories,
+        quizzes: fallbackQuizzes
       });
     }
   },

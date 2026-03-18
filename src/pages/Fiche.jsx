@@ -10,10 +10,10 @@ import PDFViewer from '../components/ui/PDFViewer';
 export default function Fiche() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { user, addXp, completeFiche } = useAuthStore();
-  const { fiches, categories } = useFicheStore();
+  const { fiches, categories, quizzes } = useFicheStore();
   
   const currentFiche = fiches.find(f => f.id === id) || fiches[0];
+  const quiz = quizzes.find(q => q.fiche_id === id);
   const currentCategory = categories.find(c => c.id === currentFiche.category_id);
   const categoryName = currentCategory?.name || 'Formation';
   
@@ -52,10 +52,12 @@ export default function Fiche() {
       setCompleted(true);
       addXp(10);
       completeFiche(id);
-      setTimeout(() => {
-        alert("Félicitations ! Vous avez complété la leçon.\n+10 XP 🎉");
-        navigate(-1);
-      }, 500);
+      if (!quiz) {
+        setTimeout(() => {
+          alert("Félicitations ! Vous avez complété la leçon.\n+10 XP 🎉");
+          navigate(-1);
+        }, 500);
+      }
     }
   };
 
@@ -167,18 +169,28 @@ export default function Fiche() {
           className="py-3 px-4 border-t border-gray-100 text-center shrink-0"
           style={{ backgroundColor: currentTheme.bg }}
         >
-          <p className="text-gray-400 text-[10px] font-black uppercase tracking-[0.15em] mb-4">Swipe de haut en bas pour naviguer</p>
-          <button
-            onClick={handleComplete}
-            disabled={completed}
-            className={`w-full flex items-center justify-center gap-3 rounded-[1.5rem] py-5 font-[1000] uppercase tracking-tighter transition-all active:scale-95 shadow-xl ${
-              completed 
-              ? 'bg-[#34C759] text-white shadow-green-500/20' 
-              : 'bg-[#1A1A2E] text-white shadow-black/30'
-            }`}
-          >
-            {completed ? <><CheckCircle2 size={24} /> Fiche Assimilée</> : 'Valider la leçon (+10 XP)'}
-          </button>
+          <div className="flex flex-col gap-3">
+            <button
+              onClick={handleComplete}
+              disabled={completed}
+              className={`w-full flex items-center justify-center gap-3 rounded-[1.5rem] py-5 font-[1000] uppercase tracking-tighter transition-all active:scale-95 shadow-xl ${
+                completed 
+                ? 'bg-[#34C759] text-white shadow-green-500/20' 
+                : 'bg-[#1A1A2E] text-white shadow-black/30'
+              }`}
+            >
+              {completed ? <><CheckCircle2 size={24} /> Fiche Assimilée</> : 'Valider la leçon (+10 XP)'}
+            </button>
+            
+            {completed && quiz && (
+              <button
+                onClick={() => navigate(`/quiz/${id}`)}
+                className="w-full flex items-center justify-center gap-3 rounded-[1.5rem] py-5 font-[1000] uppercase tracking-tighter transition-all active:scale-95 shadow-xl bg-[#CC1A1A] text-white shadow-red-500/20"
+              >
+                <Zap size={24} /> Lancer le Quiz
+              </button>
+            )}
+          </div>
         </footer>
 
         {/* Global CSS for No Scrollbar */}
@@ -304,20 +316,31 @@ export default function Fiche() {
       </main>
 
       <div 
-        className="fixed bottom-0 z-50 w-full max-w-[390px] p-4 border-t border-gray-100 safe-area-bottom pb-6"
+        className="fixed bottom-0 z-50 w-full max-w-[390px] p-6 border-t border-gray-100 safe-area-bottom pb-8"
         style={{ backgroundColor: currentTheme.bg }}
       >
-        <button
-          onClick={handleComplete}
-          disabled={completed}
-          className={`w-full flex items-center justify-center gap-3 rounded-[1.5rem] py-5 font-[1000] uppercase tracking-tighter transition-all active:scale-95 shadow-2xl ${
-            completed 
-            ? 'bg-[#34C759] text-white shadow-green-500/20' 
-            : 'bg-[#1A1A2E] text-white shadow-black/30'
-          }`}
-        >
-          {completed ? <><CheckCircle2 size={24} /> Fiche Assimilée</> : 'Valider la leçon (+10 XP)'}
-        </button>
+        <div className="flex flex-col gap-3">
+          <button
+            onClick={handleComplete}
+            disabled={completed}
+            className={`w-full flex items-center justify-center gap-3 rounded-[1.5rem] py-5 font-[1000] uppercase tracking-tighter transition-all active:scale-95 shadow-2xl ${
+              completed 
+              ? 'bg-[#34C759] text-white shadow-green-500/20' 
+              : 'bg-[#1A1A2E] text-white shadow-black/30'
+            }`}
+          >
+            {completed ? <><CheckCircle2 size={24} /> Fiche Assimilée</> : 'Valider la leçon (+10 XP)'}
+          </button>
+
+          {completed && quiz && (
+            <button
+              onClick={() => navigate(`/quiz/${id}`)}
+              className="w-full flex items-center justify-center gap-3 rounded-[1.5rem] py-5 font-[1000] uppercase tracking-tighter transition-all active:scale-95 shadow-xl bg-[#CC1A1A] text-white shadow-red-500/20"
+            >
+              <Zap size={24} /> Lancer le Quiz
+            </button>
+          )}
+        </div>
       </div>
     </div>
   );

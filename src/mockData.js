@@ -113,6 +113,12 @@ export const quizzes = [
   { id: 'q1', title: 'Bilans secouristes', fiche_id: 'f1', questions: [
     { q: 'Quel bilan est prioritaire ?', answers: ['Circonstanciel', 'Vital', 'Lésionnel', 'Complémentaire'], correct: 1, explanation: 'Le bilan vital permet d\'identifier les détresses menaçant la vie.' },
     { q: 'Que signifie PLS ?', answers: ['Position Latérale de Sécurité', 'Protection Légale de Secours', 'Poste Local Sanitaire', 'Premiers Lieux Sauvés'], correct: 0, explanation: 'La PLS maintient les voies aériennes libres.' }
+  ], is_published: true },
+  { id: 'q2', title: 'Quiz Risque Gaz', fiche_id: 'f4', questions: [
+    { q: 'Que signifie BLEVE ?', answers: ['Boiling Liquid Expanding Vapor Explosion', 'Blast Level Emergency Valve Exit', 'Basic Line Essential Venture Engine'], correct: 0, explanation: 'Il s\'agit de la vaporisation violente d\'un gaz liquéfié sous pression.' },
+    { q: 'Lequel de ces gaz est plus lourd que l\'air ?', answers: ['Gaz Naturel', 'Hydrogène', 'GPL (Butane/Propane)'], correct: 2, explanation: 'Les GPL ont une densité supérieure à 1 et s\'accumulent au sol.' },
+    { q: 'Quelle est la vitesse d\'une détonation ?', answers: ['< 340 m/s', 'Entre 2000 et 9000 m/s', '> 15 000 m/s'], correct: 1, explanation: 'Une détonation est une explosion supersonique (2000-9000m/s).' },
+    { q: 'Que signifie UVCE ?', answers: ['Unconfined Vapor Cloud Explosion', 'Universal Valve Control Engine', 'Underground Vault Center Exit'], correct: 0, explanation: 'C\'est l\'explosion d\'un nuage de vapeur en milieu non confiné.' }
   ], is_published: true }
 ];
 
