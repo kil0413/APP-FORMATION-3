@@ -51,7 +51,10 @@ export const useFicheStore = create((set, get) => ({
         categories: finalCategories,
         fiches: finalFiches,
         quizzes: finalQuizzes,
-        isLoading: false 
+        isLoading: false,
+        realFichesCount: (fichesData || []).length,
+        realQuizzesCount: (quizzesData || []).length,
+        realCategoriesCount: (categoriesData || []).length
       });
     } catch (err) {
       console.error('Erreur Data Fetching:', err);
@@ -59,7 +62,10 @@ export const useFicheStore = create((set, get) => ({
         categories: fallbackCategories,
         fiches: fallbackFiches,
         quizzes: fallbackQuizzes,
-        isLoading: false
+        isLoading: false,
+        realFichesCount: 0,
+        realQuizzesCount: 0,
+        realCategoriesCount: 0
       });
     }
   },

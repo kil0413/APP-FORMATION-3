@@ -12,40 +12,51 @@ import { useAuthStore } from '../../store/useAuthStore';
 
 export default function AdminDashboard() {
   const navigate = useNavigate();
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const { user, isAuthenticated, loginWithEmail, isLoading: authLoading } = useAuthStore();
   const [email, setEmail] = useState('');
   const [pwd, setPwd] = useState('');
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
   const [showMobileSidebar, setShowMobileSidebar] = useState(false);
   
   const { fetchData } = useFicheStore();
   const { fetchProfiles } = useAuthStore();
 
+  const isAdmin = user?.role === 'admin';
+
   useEffect(() => {
-    if (isAuthenticated) {
+    if (isAuthenticated && isAdmin) {
        fetchData();
        fetchProfiles();
     }
-  }, [isAuthenticated, fetchData, fetchProfiles]);
+  }, [isAuthenticated, isAdmin, fetchData, fetchProfiles]);
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    if (email === 'admin@sdis.fr' && pwd === 'admin') {
-      setIsAuthenticated(true);
-    } else {
-      alert('Identifiants incorrects.');
+    setIsLoggingIn(true);
+    try {
+      await loginWithEmail(email, pwd);
+      // Le useEffect gérera la suite une fois l'auth réussie
+    } catch (err) {
+      alert('Erreur: ' + err.message);
+    } finally {
+      setIsLoggingIn(false);
     }
   };
 
   const handleLogout = () => {
-    setIsAuthenticated(false);
+    useAuthStore.getState().logout();
     navigate('/profil');
   };
 
-  // Login screen
-  if (!isAuthenticated) {
+  // En attente du chargement initial
+  if (authLoading) {
+    return <div className="h-screen w-full bg-[#0F0F1A] flex items-center justify-center text-white">Initialisation...</div>;
+  }
+
+  // Écran de login si non authentifié ou pas admin
+  if (!isAuthenticated || !isAdmin) {
     return (
       <div className="flex min-h-screen bg-[#0F0F1A] items-center justify-center p-6 relative overflow-hidden">
-        {/* Glow Effects */}
         <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-red-600/10 blur-[150px] -translate-y-1/2 translate-x-1/3 rounded-full" />
         <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-blue-600/10 blur-[150px] translate-y-1/2 -translate-x-1/3 rounded-full" />
 
@@ -55,44 +66,43 @@ export default function AdminDashboard() {
               <Lock size={32} className="text-red-500" />
             </div>
             <h1 className="text-4xl font-black text-white tracking-tighter uppercase italic drop-shadow-sm">Console <span className="text-[#CC1A1A]">Admin</span></h1>
-            <p className="text-gray-400 mt-2 font-bold uppercase tracking-widest text-[10px]">Espace de gestion Sapeurs-Pompiers</p>
+            {isAuthenticated && !isAdmin && (
+               <div className="mt-4 p-4 bg-red-500/20 border border-red-500/50 rounded-2xl text-red-200 text-xs font-bold uppercase tracking-widest">
+                  Accès Refusé : Vous n'êtes pas administrateur.
+               </div>
+            )}
+            <p className="text-gray-400 mt-2 font-bold uppercase tracking-widest text-[10px]">Identifiez-vous pour gérer la plateforme</p>
           </header>
           
           <div className="bg-white/5 backdrop-blur-3xl border border-white/10 rounded-[3rem] p-8 md:p-12 shadow-[0_20px_50px_rgba(0,0,0,0.5)]">
             <form onSubmit={handleLogin} className="space-y-6">
               <div className="space-y-2">
-                <label className="text-[10px] font-black uppercase tracking-widest text-gray-500 ml-4">Email Administrateur</label>
-                <div className="relative group">
-                  <input 
-                    type="email" 
-                    placeholder="admin@sdis.fr"
-                    className="w-full rounded-2xl bg-white/5 border border-white/10 p-5 font-bold text-white shadow-inner focus:ring-4 focus:ring-red-500/10 focus:border-red-500/50 transition-all outline-none"
-                    value={email} onChange={e => setEmail(e.target.value)}
-                  />
-                </div>
+                <label className="text-[10px] font-black uppercase tracking-widest text-gray-500 ml-4">Email</label>
+                <input 
+                  type="email" 
+                  placeholder="votre.nom@sdis.fr"
+                  className="w-full rounded-2xl bg-white/5 border border-white/10 p-5 font-bold text-white outline-none focus:border-red-500/50"
+                  value={email} onChange={e => setEmail(e.target.value)}
+                />
               </div>
               <div className="space-y-2">
                 <label className="text-[10px] font-black uppercase tracking-widest text-gray-500 ml-4">Mot de passe</label>
                 <input 
                   type="password" 
                   placeholder="••••••••"
-                  className="w-full rounded-2xl bg-white/5 border border-white/10 p-5 font-bold text-white shadow-inner focus:ring-4 focus:ring-red-500/10 focus:border-red-500/50 transition-all outline-none"
+                  className="w-full rounded-2xl bg-white/5 border border-white/10 p-5 font-bold text-white outline-none focus:border-red-500/50"
                   value={pwd} onChange={e => setPwd(e.target.value)}
                 />
               </div>
               <button 
                 type="submit" 
-                className="w-full mt-4 bg-gradient-to-r from-[#CC1A1A] to-[#991414] text-white rounded-[1.5rem] py-5 font-black uppercase tracking-widest shadow-[0_10px_30px_rgba(204,26,26,0.3)] active:scale-95 hover:scale-[1.02] transition-all"
+                disabled={isLoggingIn}
+                className="w-full mt-4 bg-gradient-to-r from-[#CC1A1A] to-[#991414] text-white rounded-[1.5rem] py-5 font-black uppercase tracking-widest shadow-xl active:scale-95 transition-all text-sm disabled:opacity-50"
               >
-                Accéder à la console
+                {isLoggingIn ? 'Connexion...' : 'Se connecter au panel'}
               </button>
-              <button 
-                type="button" 
-                onClick={() => navigate('/profil')} 
-                className="flex items-center justify-center gap-2 group text-gray-400 text-xs font-bold mt-6 uppercase tracking-widest cursor-pointer w-full text-center hover:text-white transition-colors"
-              >
-                <ChevronLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
-                Retour au profil
+              <button type="button" onClick={() => navigate('/profil')} className="text-gray-400 text-xs font-bold mt-6 uppercase tracking-widest w-full text-center hover:text-white transition-colors">
+                ← Retour au profil 
               </button>
             </form>
           </div>

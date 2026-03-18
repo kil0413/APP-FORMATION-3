@@ -52,11 +52,34 @@ export const useAuthStore = create((set, get) => ({
       // 3. Écouter les changements futurs (connexion / deconnexion)
       supabase.auth.onAuthStateChange(async (event, session) => {
         if (session?.user) {
-          const { data: profile } = await supabase
+          // Récupérer le profil existant
+          let { data: profile } = await supabase
             .from('profiles')
             .select('*')
             .eq('id', session.user.id)
             .single();
+
+          // SI LE PROFIL N'EXISTE PAS (Premier login), on le crée en BDD
+          if (!profile) {
+            const newProfile = {
+              id: session.user.id,
+              display_name: session.user.user_metadata.full_name || 'Pompier',
+              email: session.user.email,
+              grade: 'Sapeur',
+              xp_total: 0,
+              lives: 5,
+              completed_fiches: [],
+              role: 'student'
+            };
+            
+            const { data: createdProfile, error: createError } = await supabase
+              .from('profiles')
+              .insert([newProfile])
+              .select()
+              .single();
+            
+            if (!createError) profile = createdProfile;
+          }
 
           set({ 
             isAuthenticated: true, 
