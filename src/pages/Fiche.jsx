@@ -10,9 +10,18 @@ import PDFViewer from '../components/ui/PDFViewer';
 export default function Fiche() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { fiches, categories, quizzes } = useFicheStore();
+  const { fiches, categories, quizzes, isLoading: isStoreLoading } = useFicheStore();
   
   const currentFiche = fiches.find(f => f.id === id) || fiches[0];
+  
+  if (!currentFiche || isStoreLoading) {
+    return (
+      <div className="flex h-screen items-center justify-center bg-[#F2F2F7]">
+         <div className="text-[#CC1A1A] font-black uppercase text-xl animate-pulse italic">Chargement du contenu...</div>
+      </div>
+    );
+  }
+
   const quiz = quizzes.find(q => q.fiche_id === id);
   const currentCategory = categories.find(c => c.id === currentFiche.category_id);
   const categoryName = currentCategory?.name || 'Formation';
