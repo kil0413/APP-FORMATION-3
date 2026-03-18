@@ -11,10 +11,11 @@ export default function Fiche() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { fiches, categories, quizzes, isLoading: isStoreLoading } = useFicheStore();
+  const { user, addXp, completeFiche, isLoading: isAuthLoading } = useAuthStore();
   
   const currentFiche = fiches.find(f => f.id === id) || fiches[0];
   
-  if (!currentFiche || isStoreLoading) {
+  if (!currentFiche || isStoreLoading || isAuthLoading || !user) {
     return (
       <div className="flex h-screen items-center justify-center bg-[#F2F2F7]">
          <div className="text-[#CC1A1A] font-black uppercase text-xl animate-pulse italic">Chargement du contenu...</div>
@@ -27,7 +28,7 @@ export default function Fiche() {
   const categoryName = currentCategory?.name || 'Formation';
   
   const [activePage, setActivePage] = useState(1);
-  const [completed, setCompleted] = useState(user.completed_fiches?.includes(id) || false);
+  const [completed, setCompleted] = useState(user?.completed_fiches?.includes(id) || false);
   const scrollContainerRef = useRef(null);
 
   const totalPages = 3;
