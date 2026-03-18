@@ -1,0 +1,56 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #CC1A1A;
+  --color-primary-light: #FFECEC;
+  --color-bg-base: #F2F2F7;
+  --color-text-main: #1A1A2E;
+  --color-text-muted: #8E8E93;
+  --color-success: #34C759;
+  --color-xp: #FF9500;
+  
+  --radius-xl: 16px;
+  --radius-2xl: 20px;
+  
+  --shadow-card: 0 2px 12px rgba(0,0,0,0.06);
+}
+
+@layer base {
+  
+  html, body {
+    margin: 0;
+    padding: 0;
+    background-color: #E5E5EA; /* Un gris doux derrière l'app */
+    font-family: 'Inter', system-ui, sans-serif;
+    color: var(--color-text-main);
+    display: flex;
+    justify-content: center;
+    min-height: 100vh;
+  }
+  
+  #root {
+    width: 100%;
+    max-width: 390px;
+    min-height: 100vh;
+    background-color: var(--color-bg-base);
+    position: relative;
+    box-shadow: 0 0 40px rgba(0,0,0,0.1);
+    overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    font-weight: 600;
+  }
+}
+
+@layer utilities {
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+  }
+}

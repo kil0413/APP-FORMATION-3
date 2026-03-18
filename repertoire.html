@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+
+<html class="" lang="fr"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#cf2029",
+                        "background-light": "#f8f6f6",
+                        "background-dark": "#201212",
+                    },
+                    fontFamily: {
+                        "display": ["Inter"]
+                    },
+                    borderRadius: {"DEFAULT": "0.5rem", "lg": "1rem", "xl": "1.5rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<title>Répertoire - Formation Pompiers</title>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="bg-[#f8fafc] font-display text-slate-900 min-h-screen flex flex-col">
+<!-- Header Section -->
+<header class="sticky top-0 z-10 bg-white/80 backdrop-blur-md border-b border-slate-200">
+<div class="flex items-center p-4 justify-between">
+<button class="text-primary flex size-10 shrink-0 items-center justify-center rounded-full hover:bg-primary/10 transition-colors">
+<span class="material-symbols-outlined">arrow_back</span>
+</button>
+<h2 class="text-lg font-bold leading-tight tracking-tight flex-1 text-center pr-10 text-slate-900">Répertoire des documents</h2>
+</div>
+<!-- Search Bar -->
+<div class="px-4 pb-4">
+<label class="flex flex-col w-full">
+<div class="flex w-full items-stretch rounded-xl h-12 bg-white border border-slate-200 focus-within:border-primary transition-all shadow-sm">
+<div class="text-primary flex items-center justify-center pl-4">
+<span class="material-symbols-outlined">search</span>
+</div>
+<input class="form-input flex w-full border-none bg-transparent focus:ring-0 text-base font-normal placeholder:text-slate-400 text-slate-700" placeholder="Rechercher un document..." type="text"/>
+</div>
+</label>
+</div>
+<!-- Filters -->
+<div class="flex gap-3 px-4 pb-4 overflow-x-auto no-scrollbar">
+<button class="flex h-9 shrink-0 items-center justify-center gap-x-2 rounded-full bg-primary text-white px-5 text-sm font-semibold shadow-sm shadow-primary/20">
+                Tous
+            </button>
+<button class="flex h-9 shrink-0 items-center justify-center gap-x-2 rounded-full bg-white border border-slate-200 text-slate-600 px-4 text-sm font-medium hover:bg-slate-50">
+<span class="material-symbols-outlined text-[18px]">menu_book</span>
+                Cours
+            </button>
+<button class="flex h-9 shrink-0 items-center justify-center gap-x-2 rounded-full bg-white border border-slate-200 text-slate-600 px-4 text-sm font-medium hover:bg-slate-50">
+<span class="material-symbols-outlined text-[18px]">play_circle</span>
+                Vidéos
+            </button>
+<button class="flex h-9 shrink-0 items-center justify-center gap-x-2 rounded-full bg-white border border-slate-200 text-slate-600 px-4 text-sm font-medium hover:bg-slate-50">
+<span class="material-symbols-outlined text-[18px]">hub</span>
+                Cartes Mentales
+            </button>
+<button class="flex h-9 shrink-0 items-center justify-center gap-x-2 rounded-full bg-white border border-slate-200 text-slate-600 px-4 text-sm font-medium hover:bg-slate-50">
+<span class="material-symbols-outlined text-[18px]">description</span>
+                Fiches
+            </button>
+</div>
+</header>
+<!-- Content Section -->
+<main class="flex-1 overflow-y-auto p-4 space-y-4">
+<div class="flex items-center justify-between">
+<h3 class="text-lg font-bold tracking-tight text-slate-900">Documents récents</h3>
+<button class="text-primary text-sm font-semibold">Voir tout</button>
+</div>
+<!-- Document List -->
+<div class="space-y-3">
+<!-- Document Item 1 -->
+<div class="flex items-center gap-4 p-3 bg-white rounded-xl border border-slate-100 shadow-sm hover:shadow-md transition-all cursor-pointer">
+<div class="size-12 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-3xl">local_fire_department</span>
+</div>
+<div class="flex-1 min-w-0">
+<h4 class="font-bold text-slate-800 truncate">Extinction des incendies urbains</h4>
+<div class="flex items-center gap-2 mt-1">
+<span class="text-xs font-medium text-primary bg-primary/10 px-2 py-0.5 rounded">Cours PDF</span>
+<div class="flex-1 h-1.5 bg-slate-100 rounded-full overflow-hidden">
+<div class="bg-primary h-full w-[85%] rounded-full"></div>
+</div>
+<span class="text-[10px] font-bold text-slate-500">85%</span>
+</div>
+</div>
+<div class="text-primary">
+<span class="material-symbols-outlined">chevron_right</span>
+</div>
+</div>
+<!-- Document Item 2 -->
+<div class="flex items-center gap-4 p-3 bg-white rounded-xl border border-slate-100 shadow-sm hover:shadow-md transition-all cursor-pointer">
+<div class="size-12 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-3xl">medical_services</span>
+</div>
+<div class="flex-1 min-w-0">
+<h4 class="font-bold text-slate-800 truncate">Secourisme : Arrêt Cardiaque</h4>
+<div class="flex items-center gap-2 mt-1">
+<span class="text-xs font-medium text-blue-500 bg-blue-500/10 px-2 py-0.5 rounded">Vidéo HD</span>
+<div class="flex-1 h-1.5 bg-slate-100 rounded-full overflow-hidden">
+<div class="bg-primary h-full w-[40%] rounded-full"></div>
+</div>
+<span class="text-[10px] font-bold text-slate-500">40%</span>
+</div>
+</div>
+<div class="text-primary">
+<span class="material-symbols-outlined">chevron_right</span>
+</div>
+</div>
+<!-- Document Item 3 -->
+<div class="flex items-center gap-4 p-3 bg-white rounded-xl border border-slate-100 shadow-sm hover:shadow-md transition-all cursor-pointer">
+<div class="size-12 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-3xl">warning</span>
+</div>
+<div class="flex-1 min-w-0">
+<h4 class="font-bold text-slate-800 truncate">Risques Chimiques et Biologiques</h4>
+<div class="flex items-center gap-2 mt-1">
+<span class="text-xs font-medium text-orange-500 bg-orange-500/10 px-2 py-0.5 rounded">Carte Mentale</span>
+<div class="flex-1 h-1.5 bg-slate-100 rounded-full overflow-hidden">
+<div class="bg-primary h-full w-[100%] rounded-full"></div>
+</div>
+<span class="text-[10px] font-bold text-slate-500">100%</span>
+</div>
+</div>
+<div class="text-green-500">
+<span class="material-symbols-outlined">check_circle</span>
+</div>
+</div>
+<!-- Document Item 4 -->
+<div class="flex items-center gap-4 p-3 bg-white rounded-xl border border-slate-100 shadow-sm hover:shadow-md transition-all cursor-pointer">
+<div class="size-12 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-3xl">communication</span>
+</div>
+<div class="flex-1 min-w-0">
+<h4 class="font-bold text-slate-800 truncate">Communication Radio Opérationnelle</h4>
+<div class="flex items-center gap-2 mt-1">
+<span class="text-xs font-medium text-primary bg-primary/10 px-2 py-0.5 rounded">Fiche Récap</span>
+<div class="flex-1 h-1.5 bg-slate-100 rounded-full overflow-hidden">
+<div class="bg-primary h-full w-[15%] rounded-full"></div>
+</div>
+<span class="text-[10px] font-bold text-slate-500">15%</span>
+</div>
+</div>
+<div class="text-primary">
+<span class="material-symbols-outlined">chevron_right</span>
+</div>
+</div>
+<!-- Document Item 5 -->
+<div class="flex items-center gap-4 p-3 bg-white rounded-xl border border-slate-100 shadow-sm hover:shadow-md transition-all cursor-pointer">
+<div class="size-12 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-3xl">visibility</span>
+</div>
+<div class="flex-1 min-w-0">
+<h4 class="font-bold text-slate-800 truncate">Lecture du feu : Signaux d'alarme</h4>
+<div class="flex items-center gap-2 mt-1">
+<span class="text-xs font-medium text-blue-500 bg-blue-500/10 px-2 py-0.5 rounded">Vidéo HD</span>
+<div class="flex-1 h-1.5 bg-slate-100 rounded-full overflow-hidden">
+<div class="bg-primary h-full w-[0%] rounded-full"></div>
+</div>
+<span class="text-[10px] font-bold text-slate-500">0%</span>
+</div>
+</div>
+<div class="text-primary">
+<span class="material-symbols-outlined">play_circle</span>
+</div>
+</div>
+</div>
+<!-- Section Header -->
+<div class="pt-2">
+<h3 class="text-lg font-bold tracking-tight text-slate-900">Thématiques populaires</h3>
+<div class="grid grid-cols-2 gap-3">
+<div class="bg-white p-4 rounded-xl border border-slate-100 shadow-sm">
+<span class="material-symbols-outlined text-primary mb-2">safety_check</span>
+<p class="font-bold text-sm text-slate-800">Sécurité Civile</p>
+<p class="text-[10px] text-slate-500">14 documents</p>
+</div>
+<div class="bg-white p-4 rounded-xl border border-slate-100 shadow-sm">
+<span class="material-symbols-outlined text-primary mb-2">support_agent</span>
+<p class="font-bold text-sm text-slate-800">Gestion d'Appels</p>
+<p class="text-[10px] text-slate-500">8 documents</p>
+</div>
+</div>
+</div>
+</main>
+<!-- Bottom Navigation Bar -->
+<nav class="fixed bottom-0 left-0 right-0 bg-white dark:bg-background-dark border-t border-slate-200 dark:border-slate-800 px-6 py-3 z-20">
+<div class="flex items-center justify-between max-w-lg mx-auto">
+<a class="flex flex-col items-center gap-1 text-slate-400 dark:text-slate-500" href="#">
+<span class="material-symbols-outlined" style="">home</span>
+<span class="text-[10px] font-medium" style="">Accueil</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-slate-400 dark:text-slate-500" href="#">
+<span class="material-symbols-outlined" style="">map</span>
+<span class="text-[10px] font-medium" style="">Parcours</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-primary" href="#">
+<span class="material-symbols-outlined fill-1" style="">folder</span>
+<span class="text-[10px] font-bold" style="">Répertoire</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-slate-400 dark:text-slate-500" href="#">
+<span class="material-symbols-outlined" style="">person</span>
+<span class="text-[10px] font-medium" style="">Profil</span>
+</a>
+</div>
+</nav>
+<style>
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</body></html>
