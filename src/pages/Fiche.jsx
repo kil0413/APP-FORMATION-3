@@ -104,7 +104,7 @@ export default function Fiche() {
             className="text-2xl md:text-3xl font-black tracking-tight"
             style={{ color: currentTheme.text }}
           >
-            Fiches de Révision
+            Fiches de Révision <span className="text-[10px] opacity-30">(V3)</span>
           </h1>
           <p 
             className="text-sm md:text-base font-bold mt-1"
@@ -179,7 +179,7 @@ export default function Fiche() {
             <button
               onClick={handleComplete}
               disabled={completed}
-              className={`flex-1 flex items-center justify-center gap-2 rounded-2xl py-4 md:py-6 font-[1000] uppercase tracking-tighter transition-all active:scale-95 shadow-lg ${
+              className={`flex-1 flex items-center justify-center gap-2 rounded-xl py-3 md:py-6 font-black uppercase tracking-tighter transition-all active:scale-95 shadow-md text-xs ${
                 completed 
                 ? 'bg-[#34C759] text-white shadow-green-500/20' 
                 : 'bg-[#1A1A2E] text-white shadow-black/30'
@@ -229,7 +229,9 @@ export default function Fiche() {
           </button>
           
           <div className="flex-1 overflow-hidden">
-            <h1 className="text-base md:text-2xl font-black truncate uppercase tracking-tighter" style={{ color: currentTheme.text }}>{currentFiche.title}</h1>
+            <h1 className="text-base md:text-2xl font-black truncate uppercase tracking-tighter" style={{ color: currentTheme.text }}>
+               {currentFiche.title} <span className="text-[8px] opacity-30">(V3)</span>
+            </h1>
             <div className="flex gap-2 text-[9px] md:text-xs font-black uppercase tracking-widest opacity-70" style={{ color: currentTheme.text }}>
               <span>{categoryName}</span>
               <span>•</span>
@@ -348,7 +350,7 @@ export default function Fiche() {
           <button
             onClick={handleComplete}
             disabled={completed}
-            className={`flex-1 flex items-center justify-center gap-2 rounded-2xl py-4 md:py-6 font-black uppercase tracking-tighter transition-all active:scale-95 shadow-lg ${
+            className={`flex-1 flex items-center justify-center gap-3 rounded-xl py-3 md:py-6 font-black uppercase tracking-tighter transition-all active:scale-95 shadow-lg text-xs ${
               completed 
               ? 'bg-[#34C759] text-white shadow-green-500/10' 
               : 'bg-[#1A1A2E] text-white shadow-black/20'

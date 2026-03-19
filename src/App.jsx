@@ -63,7 +63,7 @@ function App() {
           {/* User App - Responsive Layout */}
           <Route path="*" element={
             <div className="flex w-full min-h-screen">
-              <div className="mx-auto w-full max-w-screen-2xl flex relative">
+              <div className="mx-auto w-full flex relative">
                 <ErrorBoundary>
                   <Routes>
                     <Route path="/" element={<Home />} />
