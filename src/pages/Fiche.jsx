@@ -216,21 +216,21 @@ export default function Fiche() {
     <div className="min-h-screen relative flex flex-col bg-[#F2F2F7]" style={{ backgroundColor: currentTheme.bg }}>
       {/* Header Responsive */}
       <header 
-        className="fixed top-0 z-50 w-full pt-4 pb-4 px-6 md:px-12 shadow-md border-b border-black/5 backdrop-blur-md"
+        className="fixed top-0 z-50 w-full pt-4 pb-4 px-4 md:px-12 shadow-md border-b border-black/5 backdrop-blur-md"
         style={{ backgroundColor: currentTheme.header }}
       >
-        <div className="max-w-7xl mx-auto flex items-center gap-6">
+        <div className="max-w-7xl mx-auto flex items-center gap-4">
           <button 
             onClick={() => navigate(-1)} 
-            className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/20 active:scale-90 transition-transform"
+            className="flex h-10 w-10 items-center justify-center rounded-2xl bg-white/20 active:scale-90 transition-transform"
             style={{ color: currentTheme.text }}
           >
-            <ChevronLeft size={32} />
+            <ChevronLeft size={28} />
           </button>
           
           <div className="flex-1 overflow-hidden">
-            <h1 className="text-lg md:text-2xl font-black truncate uppercase tracking-tighter" style={{ color: currentTheme.text }}>{currentFiche.title}</h1>
-            <div className="flex gap-3 text-[10px] md:text-xs font-black uppercase tracking-widest opacity-70" style={{ color: currentTheme.text }}>
+            <h1 className="text-base md:text-2xl font-black truncate uppercase tracking-tighter" style={{ color: currentTheme.text }}>{currentFiche.title}</h1>
+            <div className="flex gap-2 text-[9px] md:text-xs font-black uppercase tracking-widest opacity-70" style={{ color: currentTheme.text }}>
               <span>{categoryName}</span>
               <span>•</span>
               <span className="text-red-600">{currentFiche.difficulty}</span>
@@ -238,32 +238,34 @@ export default function Fiche() {
           </div>
           
           <button 
-            className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/10 active:scale-95 transition-transform"
+            className="flex h-10 w-10 items-center justify-center rounded-2xl bg-white/10 active:scale-95 transition-transform"
             style={{ color: currentTheme.text }}
           >
-            <Bookmark size={24} />
+            <Bookmark size={20} />
           </button>
         </div>
       </header>
 
-      <main className="flex-1 w-full max-w-5xl mx-auto px-6 pt-32 pb-48 flex flex-col gap-12">
+      <main className="flex-1 w-full max-w-5xl mx-auto pt-32 pb-48 flex flex-col gap-12">
         {currentFiche.file_data ? (
-           <div className="w-full flex justify-center">
+           <div className="w-full flex justify-center px-0">
               {currentFiche.file_type === 'pdf' ? (
                  <PDFViewer base64Data={currentFiche.file_data} />
               ) : (
-                 <img src={currentFiche.file_data} alt={currentFiche.title} className="w-full h-auto object-contain rounded-[3rem] shadow-2xl border-8 border-white" />
+                 <img src={currentFiche.file_data} alt={currentFiche.title} className="w-full h-auto object-contain md:rounded-[3rem] shadow-2xl md:border-8 border-white" />
               )}
            </div>
         ) : (!currentFiche.sections || currentFiche.sections.length === 0) ? (
-          <div className="py-24 text-center">
+          <div className="py-24 text-center px-6">
              <div className="h-24 w-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
                <Info size={40} className="text-gray-300" />
              </div>
              <p className="text-gray-400 font-black uppercase tracking-widest text-sm">Contenu en cours de rédaction...</p>
           </div>
-        ) : currentFiche.sections.map((section, idx) => (
-          <section key={idx} className="flex flex-col gap-6 animate-in fade-in slide-in-from-bottom-4 duration-500" style={{ delay: `${idx * 100}ms` }}>
+        ) : (
+          <div className="flex flex-col gap-12 px-5 md:px-0">
+            {currentFiche.sections.map((section, idx) => (
+              <section key={idx} className="flex flex-col gap-6 animate-in fade-in slide-in-from-bottom-4 duration-500" style={{ delay: `${idx * 100}ms` }}>
             <h2 className="text-2xl md:text-3xl font-black text-[#1A1A2E] flex items-center gap-3 tracking-tighter uppercase italic">
               <span className="h-8 w-2 bg-[#CC1A1A] rounded-full" />
               {section.title}
@@ -331,8 +333,10 @@ export default function Fiche() {
                 </div>
               </div>
             )}
-          </section>
-        ))}
+            </section>
+          ))}
+          </div>
+        )}
       </main>
 
       {/* Footer Boutons Fixes */}
