@@ -1,96 +1,180 @@
-import { Lock, Map, BookOpen, ChevronRight, PlayCircle, Trophy, Flag, Shield, Flame } from 'lucide-react';
+import { Lock, Map, BookOpen, ChevronRight, PlayCircle, Trophy, Flag, Shield, Flame, CheckCircle2, Star, Zap, Target, MousePointer2 } from 'lucide-react';
 import { Header } from '../components/layout/Header';
 import { PageWrapper } from '../components/layout/PageWrapper';
 import { Card, CardContent } from '../components/ui/Card';
 import { Badge } from '../components/ui/Badge';
 import { useFicheStore } from '../store/useFicheStore';
+import { useNavigate } from 'react-router-dom';
 
 export default function Parcours() {
-  const { categories } = useFicheStore();
+  const { categories, fiches } = useFicheStore();
+  const navigate = useNavigate();
+
+  // On sépare les catégories en "Unités" de formation
+  const units = [
+    { 
+      id: 'u1', 
+      title: 'UNITÉ 1 : LES FONDAMENTAUX', 
+      desc: 'Maîtrisez les bases du secours à personne et des incendies urbains.',
+      categoryIds: ['c1', 'c2'] 
+    },
+    { 
+      id: 'u2', 
+      title: 'UNITÉ 2 : RISQUES SPÉCIFIQUES', 
+      desc: 'Intervention en milieu périlleux et risques NRBC.',
+      categoryIds: ['c3', 'c6'] 
+    },
+    { 
+      id: 'u3', 
+      title: 'UNITÉ 3 : LEADERSHIP & COM', 
+      desc: 'Gestion des transmissions et commandement opérationnel.',
+      categoryIds: ['c4', 'c5'] 
+    }
+  ];
 
   return (
     <PageWrapper>
-      <Header title="Parcours SP" className="md:hidden" />
+      <Header title="Mon Parcours" className="md:hidden" />
       
-      <main className="flex flex-col gap-10 px-5 py-8 md:px-10 md:py-12 relative max-w-4xl mx-auto w-full">
-        {/* Title Desktop */}
-        <div className="hidden md:flex flex-col gap-3 mb-4">
-          <h1 className="text-4xl font-black text-[#1A1A2E] tracking-tighter uppercase italic">Mon <span className="text-[#CC1A1A]">Avancement</span></h1>
-          <p className="text-gray-500 font-bold uppercase tracking-widest text-xs">Suis ton parcours de formation étape par étape.</p>
-        </div>
+      <main className="flex flex-col gap-16 px-5 py-8 md:px-10 md:py-16 relative max-w-4xl mx-auto w-full mb-20">
+        
+        {/* Header Parcours */}
+        <section className="flex flex-col items-center text-center gap-6 mb-8 mt-4">
+          <div className="h-24 w-24 bg-red-600 rounded-[2rem] flex items-center justify-center shadow-2xl shadow-red-500/20 rotate-3">
+            <Map size={48} className="text-white" />
+          </div>
+          <div className="flex flex-col gap-2">
+            <h1 className="text-4xl md:text-5xl font-black text-[#1A1A2E] tracking-tighter uppercase italic">Mon <span className="text-[#CC1A1A]">Odyssée</span></h1>
+            <p className="text-gray-400 font-bold uppercase tracking-[0.2em] text-[10px]">Parcours de progression opérationnel</p>
+          </div>
+          
+          <div className="w-full max-w-xs bg-gray-100 h-3 rounded-full overflow-hidden mt-4 p-0.5 border border-gray-200">
+             <div className="h-full bg-[#CC1A1A] rounded-full w-[35%] shadow-sm" />
+          </div>
+          <p className="text-[9px] font-black uppercase text-gray-400 tracking-widest">Global : 35% de la formation complétée</p>
+        </section>
 
-        <h2 className="text-3xl font-black text-[#1A1A2E] tracking-tighter uppercase italic md:hidden">Vos Modules</h2>
-
-        {/* Style Duolingo Path: Ligne de connexion */}
-        <div className="absolute left-[33px] md:left-[53px] top-[140px] md:top-[220px] bottom-0 w-1.5 bg-gray-100 z-0" />
-
-        <div className="flex flex-col gap-10 z-10 relative">
-          {categories.map((mod, i) => (
-            <div key={mod.id} className="flex gap-4 md:gap-8 group">
-              {/* Point de la timeline */}
-              <div className="relative z-10">
-                <div 
-                  className={`mt-4 flex h-10 w-10 md:h-14 md:w-14 items-center justify-center rounded-full border-4 shadow-xl transition-all ${mod.locked ? 'bg-gray-100 border-gray-100 text-gray-300' : 'bg-white border-[#CC1A1A] text-[#CC1A1A] active:scale-90 group-hover:scale-110'}`}
-                  style={{ borderColor: !mod.locked ? mod.theme_header : '#e5e7eb' }}
-                >
-                  {mod.locked ? <Lock size={14} strokeWidth={4} /> : <div className="h-3 w-3 md:h-5 md:w-5 rounded-full" style={{ backgroundColor: mod.theme_header }} />}
-                </div>
+        {units.map((unit, unitIdx) => (
+          <div key={unit.id} className="flex flex-col gap-12 relative">
+            
+            {/* Unit Header */}
+            <div className={`p-8 rounded-[3rem] shadow-xl border-4 border-white ${unitIdx === 0 ? 'bg-[#1A1A2E] text-white' : 'bg-white text-gray-400 opacity-60'}`}>
+              <div className="flex flex-col gap-2">
+                 <h2 className="text-xl md:text-2xl font-black tracking-tighter italic uppercase">{unit.title}</h2>
+                 <p className="text-xs font-bold opacity-60 uppercase tracking-widest leading-relaxed">{unit.desc}</p>
               </div>
+            </div>
 
-              {/* Contenu du module */}
-              <Card 
-                className={`flex-1 transition-all rounded-[2.5rem] border-none shadow-2xl overflow-hidden hover:shadow-red-500/10 ${mod.locked ? 'opacity-80 pointer-events-none filter grayscale-[80%]' : 'hover:-translate-y-1'}`}
-                style={{ backgroundColor: mod.theme_bg }}
-              >
-                <CardContent className="flex flex-col md:flex-row md:items-center gap-6 p-6 md:p-10">
-                  <div className="flex-1 flex gap-6">
-                    <div 
-                      className={`flex h-16 w-16 md:h-20 md:w-20 items-center justify-center rounded-[1.5rem] md:rounded-[2rem] shadow-lg text-white shrink-0`}
-                      style={{ backgroundColor: mod.theme_header }}
-                    >
-                       <Shield size={32} />
+            {/* Path Nodes */}
+            <div className="flex flex-col items-center gap-20 relative pt-10">
+              {/* Vertical Path Line (Vrai Zig-Zag possible via SVG, ici simule) */}
+              <div className="absolute top-0 bottom-0 left-1/2 -translate-x-1/2 w-1.5 bg-gray-100 -z-10" />
+
+              {unit.categoryIds.map((catId, idx) => {
+                const cat = categories.find(c => c.id === catId);
+                if (!cat) return null;
+
+                // Calcul du décalage pour le zig-zag
+                const sideShift = idx % 2 === 0 ? '-translate-x-12 md:-translate-x-12' : 'translate-x-12 md:translate-x-12';
+                const isLocked = unitIdx > 0 || (unitIdx === 0 && idx > 1); // Simulation de lock
+
+                return (
+                  <div key={cat.id} className={`flex flex-col items-center gap-4 relative transition-all ${sideShift}`}>
+                    
+                    {/* Level Badge / Node */}
+                    <div className="relative group">
+                       <div 
+                         onClick={() => !isLocked && navigate('/repertoire')}
+                         className={`h-24 w-24 md:h-28 md:w-28 rounded-full flex items-center justify-center border-8 transition-all relative z-10 cursor-pointer ${
+                           isLocked 
+                           ? 'bg-gray-100 border-gray-200 text-gray-300' 
+                           : 'bg-white shadow-2xl active:scale-90 hover:scale-105'
+                         }`}
+                         style={{ borderColor: isLocked ? '#e5e7eb' : cat.theme_header }}
+                       >
+                         {isLocked ? (
+                           <Lock size={32} className="opacity-40" />
+                         ) : (
+                           <div 
+                             className="h-14 w-14 md:h-16 md:w-16 rounded-[1.5rem] flex items-center justify-center text-white shadow-lg"
+                             style={{ backgroundColor: cat.theme_header }}
+                           >
+                             <Shield size={32} />
+                           </div>
+                         )}
+                         
+                         {/* Progress Mini-Circle overlay */}
+                         {!isLocked && (
+                           <div className="absolute -bottom-1 -right-1 bg-white p-1 rounded-full shadow-lg border border-gray-100">
+                             <div className="h-8 w-8 rounded-full bg-green-500 flex items-center justify-center text-white">
+                               <CheckCircle2 size={18} />
+                             </div>
+                           </div>
+                         )}
+                       </div>
+
+                       {/* Hover Label Desktop */}
+                       <div className="absolute top-1/2 -translate-y-1/2 left-full ml-10 hidden md:flex flex-col opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                          <span className="font-black text-xs uppercase tracking-widest text-gray-400">Étape {idx + 1}</span>
+                          <span className="font-black text-xl uppercase tracking-tighter italic text-[#1A1A2E]">{cat.name}</span>
+                       </div>
                     </div>
-                    <div className="flex flex-col justify-center">
-                      <h3 className="font-black text-[#1A1A2E] text-2xl leading-tight uppercase tracking-tighter italic">{mod.name}</h3>
-                      <p className="text-[11px] font-black uppercase tracking-widest mt-1 opacity-50">Module théorique de base</p>
+
+                    {/* Label Mobile / All */}
+                    <div className="text-center flex flex-col gap-1 mt-2">
+                       <span className={`font-black text-lg md:text-xl uppercase tracking-tighter italic ${isLocked ? 'text-gray-300' : 'text-[#1A1A2E]'}`}>{cat.name}</span>
+                       {idx === 0 && unitIdx === 0 && (
+                         <div className="flex items-center gap-1 justify-center">
+                           <Star size={10} className="fill-yellow-400 text-yellow-400" />
+                           <Star size={10} className="fill-yellow-400 text-yellow-400" />
+                           <Star size={10} className="fill-gray-200 text-gray-200" />
+                         </div>
+                       )}
+                    </div>
+
+                    {/* Side Icon Decorative */}
+                    <div className={`absolute top-0 opacity-10 pointer-events-none ${idx % 2 === 0 ? '-right-32' : '-left-32'}`}>
+                       <Shield size={120} />
                     </div>
                   </div>
+                );
+              })}
 
-                  {/* Bouton d'action / état */}
-                  {!mod.locked ? (
-                    <button 
-                      className="flex md:w-48 items-center justify-center gap-3 rounded-[1.5rem] py-5 md:py-6 font-black uppercase tracking-widest text-xs transition-all shadow-xl hover:brightness-110 active:scale-95"
-                      style={{ backgroundColor: mod.theme_header, color: 'white' }}
-                    >
-                      <PlayCircle size={24} />
-                      Reprendre
-                    </button>
-                  ) : (
-                    <button disabled className="flex md:w-48 items-center justify-center gap-3 rounded-[1.5rem] bg-black/5 py-5 md:py-6 font-black uppercase tracking-widest text-xs text-gray-400 border border-dashed border-black/10">
-                      <Lock size={20} />
-                      Verrouillé
-                    </button>
-                  )}
-                </CardContent>
-              </Card>
+              {/* Boss / Quiz Level */}
+              <div className="flex flex-col items-center gap-4 py-8 relative">
+                 <div className={`h-32 w-32 md:h-40 md:w-40 rounded-[3rem] border-8 flex items-center justify-center transition-all bg-[#CC1A1A] border-[#1A1A2E] rotate-6 shadow-2xl relative z-10 ${unitIdx === 0 ? 'cursor-pointer active:scale-95' : 'opacity-40 grayscale pointer-events-none'}`}>
+                    <Trophy size={64} className="text-white" />
+                    <div className="absolute -top-4 -right-4 bg-yellow-400 text-[#1A1A2E] px-4 py-1.5 rounded-xl font-black text-[10px] uppercase tracking-widest shadow-xl rotate-12">
+                      BIG QUIZ
+                    </div>
+                 </div>
+                 <h3 className="font-black text-lg uppercase tracking-tight text-[#1A1A2E]">ÉVALUATION UNITÉ {unitIdx + 1}</h3>
+              </div>
             </div>
-          ))}
-        </div>
 
-        {/* Trophée de fin */}
-        <div className="flex gap-4 md:gap-8 mt-4 z-10 relative">
-          <div className="relative z-10">
-            <div className={`mt-4 flex h-10 w-10 md:h-14 md:w-14 items-center justify-center rounded-full border-4 bg-gray-100 border-gray-200 text-gray-300 shadow-xl`}>
-              <Trophy size={20} strokeWidth={4} />
-            </div>
+            {/* Connector Lines (SVG style between units) */}
+            {unitIdx < units.length - 1 && (
+               <div className="h-32 flex flex-col items-center relative">
+                  <div className="w-1.5 h-full bg-gradient-to-b from-gray-100 to-gray-200" />
+                  <div className="absolute -bottom-4 bg-gray-200 p-2 rounded-full">
+                     <Lock size={16} className="text-white" />
+                  </div>
+               </div>
+            )}
           </div>
-          <Card className="flex-1 rounded-[3rem] border-4 border-dashed border-gray-100 bg-transparent flex items-center justify-center p-12 md:p-20 grayscale opacity-50 cursor-not-allowed shadow-none">
-            <div className="flex flex-col items-center gap-4">
-               <Flag size={48} className="text-gray-300" />
-               <p className="font-black text-gray-400 text-center text-sm uppercase tracking-widest leading-relaxed max-w-xs">Terminez tous les modules pour accéder à l'examen de garde final</p>
-            </div>
-          </Card>
-        </div>
+        ))}
+
+        {/* Final Exam Section */}
+        <section className="mt-20 flex flex-col items-center gap-12 text-center">
+           <div className="h-40 w-40 bg-gray-50 border-8 border-dashed border-gray-100 rounded-full flex items-center justify-center grayscale opacity-50 relative">
+              <div className="absolute inset-0 rounded-full animate-pulse bg-gray-100/30" />
+              <Flag size={64} className="text-gray-300" />
+           </div>
+           <div className="flex flex-col gap-4 max-w-sm">
+             <h4 className="text-2xl font-black uppercase tracking-tighter italic text-gray-300">EXAMEN DE GARDE</h4>
+             <p className="text-xs font-bold text-gray-400 uppercase tracking-widest leading-relaxed">Terminez toutes les unités pour devenir opérationnel et débloquer ton certificat de fin de parcours.</p>
+           </div>
+        </section>
       </main>
     </PageWrapper>
   );

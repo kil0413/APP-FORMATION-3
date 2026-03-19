@@ -1,137 +1,219 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Search, PlayCircle, FileText, Image, CheckCircle2, ChevronRight, Map, Shield, LayoutGrid, Brain } from 'lucide-react';
+import { Search, PlayCircle, FileText, ImageIcon, CheckCircle2, ChevronRight, Map, Shield, LayoutGrid, Brain, Filter, ArrowUpRight, Clock, Star } from 'lucide-react';
 import { Header } from '../components/layout/Header';
 import { PageWrapper } from '../components/layout/PageWrapper';
 import { Card, CardContent } from '../components/ui/Card';
 import { Badge } from '../components/ui/Badge';
-import { ProgressBar } from '../components/ui/ProgressBar';
 import { useFicheStore } from '../store/useFicheStore';
 import { useAuthStore } from '../store/useAuthStore';
-
-const filters = ['Tous', 'Cours', 'Fiches'];
+import { cn } from '../lib/utils';
 
 export default function Repertoire() {
-  const [activeFilter, setActiveFilter] = useState('Tous');
+  const [activeTab, setActiveTab] = useState('Tous');
+  const [activeCategory, setActiveCategory] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
   const navigate = useNavigate();
   
   const { fiches, categories, isLoading: isFichesLoading } = useFicheStore();
   const { user, isLoading: isAuthLoading } = useAuthStore();
 
+  const tabs = ['Tous', 'PDF', 'Images', 'Favoris'];
+
+  const filteredFiches = useMemo(() => {
+    return (fiches || []).filter(fiche => {
+      const matchesSearch = fiche.title.toLowerCase().includes(searchQuery.toLowerCase());
+      const matchesCategory = activeCategory === 'all' || fiche.category_id === activeCategory;
+      const matchesTab = activeTab === 'Tous' || 
+                        (activeTab === 'PDF' && fiche.file_type === 'pdf') ||
+                        (activeTab === 'Images' && fiche.file_type === 'image') ||
+                        (activeTab === 'Favoris' && user.favorites?.includes(fiche.id));
+      return matchesSearch && matchesCategory && matchesTab;
+    });
+  }, [fiches, searchQuery, activeCategory, activeTab, user]);
+
   if (isAuthLoading || isFichesLoading || !user) {
     return (
-      <div className="flex bg-[#CC1A1A] h-screen items-center justify-center">
-        <div className="text-white font-black uppercase text-xl animate-pulse">
-          CHARGEMENT...
+      <div className="flex bg-[#1A1A2E] h-screen items-center justify-center">
+        <div className="text-white font-black uppercase text-xs tracking-[0.3em] animate-pulse">
+          SYNCHRONISATION...
         </div>
       </div>
     );
   }
 
-  const filteredFiches = (fiches || []).filter(fiche => {
-    const matchesFilter = activeFilter === 'Tous' || (activeFilter === 'Fiches');
-    const matchesSearch = (fiche.title || "").toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesFilter && matchesSearch;
-  });
-
   return (
     <PageWrapper>
-      <Header title="Formation continue" backButton className="md:hidden" />
+      <Header title="Bibliothèque" backButton className="md:hidden" />
       
-      <main className="flex flex-col gap-8 px-5 py-6 md:px-10 md:py-12">
-        {/* Title Desktop */}
-        <div className="hidden md:flex flex-col gap-3">
-          <h1 className="text-4xl font-black text-[#1A1A2E] tracking-tighter uppercase italic">Bibliothèque <span className="text-[#CC1A1A]">Pompier</span></h1>
-          <p className="text-gray-500 font-bold uppercase tracking-widest text-xs">Accédez à l'ensemble du savoir théorique et opérationnel.</p>
-        </div>
+      <main className="flex flex-col gap-10 px-5 py-8 md:px-12 md:py-16">
+        
+        {/* Header Repertoire */}
+        <section className="flex flex-col gap-8">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+            <div className="flex flex-col gap-3">
+              <h1 className="text-4xl md:text-5xl font-black text-[#1A1A2E] tracking-tighter uppercase italic leading-none">Bibliothèque <span className="text-[#CC1A1A]">Opérationnelle</span></h1>
+              <p className="text-gray-400 font-bold uppercase tracking-[0.2em] text-[10px]">Accédez à {fiches.length} documents de formation</p>
+            </div>
+            
+            {/* Tabs Filter */}
+            <div className="flex bg-gray-100 p-1.5 rounded-2xl md:rounded-3xl self-start">
+               {tabs.map(tab => (
+                 <button
+                   key={tab}
+                   onClick={() => setActiveTab(tab)}
+                   className={cn(
+                     "px-6 py-2.5 md:px-8 md:py-3.5 rounded-xl md:rounded-2xl text-[10px] md:text-xs font-black uppercase tracking-widest transition-all",
+                     activeTab === tab ? "bg-[#1A1A2E] text-white shadow-lg" : "text-gray-400 hover:text-gray-600"
+                   )}
+                 >
+                   {tab}
+                 </button>
+               ))}
+            </div>
+          </div>
 
-        {/* Barre de recherche Premium */}
-        <section>
-          <div className="relative flex items-center h-16 md:h-20 w-full rounded-[1.5rem] md:rounded-[2.5rem] bg-white shadow-2xl ring-1 ring-gray-100 px-6 md:px-10 focus-within:ring-4 focus-within:ring-red-100 transition-all">
-            <Search className="text-gray-300 mr-4" size={28} />
+          {/* Search Bar Premium */}
+          <div className="relative group">
+            <div className="absolute inset-y-0 left-0 pl-8 flex items-center pointer-events-none">
+              <Search className="text-gray-300 group-focus-within:text-[#CC1A1A] transition-colors" size={24} />
+            </div>
             <input 
               type="text" 
-              placeholder="Rechercher par titre ou mot-clé..." 
-              className="flex-1 bg-transparent border-none outline-none text-[#1A1A2E] placeholder-gray-300 text-lg md:text-xl font-black italic tracking-tighter"
+              placeholder="Rechercher une fiche, un grade ou un module..." 
+              className="w-full bg-white border-none rounded-[2.5rem] py-6 md:py-8 pl-20 pr-10 text-[#1A1A2E] shadow-[0_10px_40px_rgba(0,0,0,0.03)] placeholder-gray-300 font-bold italic text-lg md:text-xl focus:ring-4 focus:ring-red-100 transition-all outline-none"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>
         </section>
 
-        {/* Thématiques / Catégories */}
-        <section className="-mx-5 px-5 md:mx-0 md:px-0">
-           <h2 className="hidden md:block text-sm font-black text-gray-400 uppercase tracking-[0.2em] mb-6">Catégories</h2>
-           <div className="flex overflow-x-auto no-scrollbar md:grid md:grid-cols-4 lg:grid-cols-6 gap-4 md:gap-6 pb-4">
+        {/* Horizontal Categories */}
+        <section className="flex flex-col gap-6">
+           <div className="flex items-center justify-between">
+              <h2 className="text-xs font-black text-gray-400 uppercase tracking-[0.3em]">Catégories Thématiques</h2>
+              {activeCategory !== 'all' && (
+                <button onClick={() => setActiveCategory('all')} className="text-[#CC1A1A] font-black text-[10px] uppercase tracking-widest">Réinitialiser</button>
+              )}
+           </div>
+           
+           <div className="flex overflow-x-auto no-scrollbar gap-5 pb-4 -mx-5 px-5 md:mx-0 md:px-0">
               {categories.map((cat) => (
                 <button 
                   key={cat.id}
-                  onClick={() => navigate(`/categorie/${cat.id}`)}
-                  className="shrink-0 flex flex-col items-center gap-4 p-5 md:p-8 bg-white rounded-[2rem] md:rounded-[3rem] shadow-xl border border-gray-50 hover:border-red-500/30 hover:shadow-red-500/10 transition-all group"
+                  onClick={() => setActiveCategory(activeCategory === cat.id ? 'all' : cat.id)}
+                  className={cn(
+                    "shrink-0 flex items-center gap-4 p-4 md:p-6 rounded-[2rem] border transition-all duration-300 group shadow-sm",
+                    activeCategory === cat.id 
+                      ? "bg-[#1A1A2E] border-[#1A1A2E] shadow-xl shadow-red-500/10 scale-105" 
+                      : "bg-white border-gray-100 hover:border-red-500/20"
+                  )}
                 >
                    <div 
-                     className="h-16 w-16 md:h-20 md:w-20 rounded-2xl md:rounded-[2rem] bg-gray-50 flex items-center justify-center text-[#1A1A2E] group-hover:bg-red-50 group-hover:text-[#CC1A1A] transition-colors"
-                     style={{ color: cat.theme_header }}
+                     className={cn(
+                       "h-14 w-14 rounded-2xl flex items-center justify-center transition-colors",
+                       activeCategory === cat.id ? "bg-white/10 text-white" : "bg-gray-50 text-gray-400 group-hover:bg-red-50 group-hover:text-[#CC1A1A]"
+                     )}
                    >
-                      <LayoutGrid size={32} />
+                      <LayoutGrid size={24} />
                    </div>
-                   <span className="text-[11px] md:text-xs font-black uppercase tracking-widest text-center">{cat.name}</span>
+                   <div className="flex flex-col items-start pr-4">
+                      <span className={cn("text-xs font-black uppercase tracking-widest", activeCategory === cat.id ? "text-white" : "text-[#1A1A2E]")}>{cat.name}</span>
+                      <span className={cn("text-[9px] font-bold mt-0.5", activeCategory === cat.id ? "text-white/40" : "text-gray-400")}>12 documents</span>
+                   </div>
                 </button>
               ))}
            </div>
         </section>
 
-        {/* Liste des fiches */}
-        <section className="space-y-8">
+        {/* Documents Grid */}
+        <section className="flex flex-col gap-10 mb-20">
           <div className="flex items-center justify-between">
-            <h2 className="text-2xl md:text-3xl font-black text-[#1A1A2E] tracking-tighter uppercase italic">Documents ({filteredFiches.length})</h2>
+            <h2 className="text-2xl md:text-3xl font-black text-[#1A1A2E] tracking-tighter uppercase italic">
+               Résultats <span className="text-[#CC1A1A]">({filteredFiches.length})</span>
+            </h2>
+            <div className="flex items-center gap-2 text-gray-400">
+               <Filter size={14} />
+               <span className="text-[10px] font-black uppercase tracking-widest">Trier par : Pertinence</span>
+            </div>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-10">
             {filteredFiches.length > 0 ? filteredFiches.map(fiche => {
-              const isCompleted = user.completed_fiches?.includes(fiche.id);
               const category = categories.find(c => c.id === fiche.category_id);
+              const isCompleted = user.completed_fiches?.includes(fiche.id);
               
               return (
                 <Card 
                   key={fiche.id} 
-                  className="cursor-pointer transition-all hover:shadow-2xl hover:-translate-y-1 rounded-[2.5rem] border-none shadow-xl bg-white overflow-hidden p-0 h-full flex flex-col" 
+                  className="group cursor-pointer border-none shadow-[0_10px_30px_rgba(0,0,0,0.03)] hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 rounded-[3rem] bg-white overflow-hidden p-0" 
                   onClick={() => navigate(`/fiche/${fiche.id}`)}
                 >
-                  <CardContent className="flex flex-col flex-1 p-6 md:p-8">
-                    <div className="flex items-start justify-between mb-6">
-                      <div 
-                        className="flex h-16 w-16 md:h-20 md:w-20 shrink-0 items-center justify-center rounded-[1.5rem] md:rounded-[2rem] text-white shadow-xl"
-                        style={{ backgroundColor: category?.theme_header || '#fae78f' }}
-                      >
-                        <FileText size={32} />
-                      </div>
-                      {isCompleted && (
-                        <div className="h-10 w-10 rounded-full bg-green-50 flex items-center justify-center text-[#34C759]">
-                           <CheckCircle2 size={24} />
+                  <CardContent className="p-8 flex flex-col gap-8">
+                    <div className="flex items-start justify-between">
+                      <div className="relative">
+                        <div 
+                           className="h-20 w-20 md:h-24 md:w-24 shrink-0 items-center justify-center rounded-[2rem] text-white shadow-2xl rotate-3 group-hover:rotate-0 transition-transform duration-500 flex"
+                           style={{ backgroundColor: category?.theme_header || '#CC1A1A' }}
+                        >
+                          {fiche.file_type === 'pdf' ? <FileText size={40} /> : <ImageIcon size={40} />}
                         </div>
-                      )}
+                        {isCompleted && (
+                          <div className="absolute -bottom-2 -right-2 h-10 w-10 rounded-full bg-white shadow-xl border border-gray-50 flex items-center justify-center text-green-500 active:scale-95 transition-transform">
+                             <CheckCircle2 size={24} />
+                          </div>
+                        )}
+                      </div>
+                      <Badge className="bg-gray-50 text-gray-400 border-none font-black uppercase text-[10px] tracking-widest px-4 py-2">
+                         {fiche.difficulty}
+                      </Badge>
                     </div>
                     
-                    <div className="flex flex-col flex-1 gap-2">
-                      <h3 className="font-black text-[#1A1A2E] text-xl md:text-2xl tracking-tighter italic uppercase leading-tight line-clamp-2">{fiche.title}</h3>
-                      <div className="flex items-center gap-3 mt-4">
-                        <Badge className="bg-gray-100 text-gray-400 border-none font-black uppercase text-[10px] tracking-widest px-4 py-1.5">
-                           {category?.name}
-                        </Badge>
-                        <span className="text-[10px] font-black uppercase tracking-widest text-[#CC1A1A]">{fiche.difficulty}</span>
-                      </div>
+                    <div className="flex flex-col gap-4">
+                       <h3 className="font-black text-[#1A1A2E] text-2xl md:text-3xl tracking-tighter italic uppercase leading-tight line-clamp-2">
+                          {fiche.title}
+                       </h3>
+                       <div className="flex flex-wrap gap-2">
+                          <span className="text-[10px] font-black uppercase tracking-widest text-[#CC1A1A] px-3 py-1 bg-red-50 rounded-lg">{category?.name}</span>
+                          <span className="text-[10px] font-black uppercase tracking-widest text-gray-400 px-3 py-1 bg-gray-50 rounded-lg flex items-center gap-1">
+                             <Clock size={12} />
+                             10 min
+                          </span>
+                       </div>
+                    </div>
+
+                    <div className="mt-2 pt-6 border-t border-gray-100 flex items-center justify-between group-hover:border-red-100 transition-colors">
+                       <div className="flex items-center -space-x-3">
+                          {[1, 2, 3].map(i => (
+                            <div key={i} className="h-8 w-8 rounded-full border-2 border-white bg-gray-100 overflow-hidden shadow-sm">
+                               <img src={`https://api.dicebear.com/7.x/avataaars/svg?seed=user${i}`} alt="" />
+                            </div>
+                          ))}
+                          <span className="pl-6 text-[10px] font-black text-gray-400 uppercase tracking-widest">+12 révisés</span>
+                       </div>
+                       <div className="h-10 w-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-300 group-hover:bg-[#CC1A1A] group-hover:text-white transition-all shadow-lg group-hover:shadow-red-500/30">
+                          <ArrowUpRight size={20} />
+                       </div>
                     </div>
                   </CardContent>
-                  
-                  {/* Progress Line */}
-                  <div className={`h-2 w-full ${isCompleted ? 'bg-[#34C759]' : 'bg-gray-50'}`} />
                 </Card>
               );
             }) : (
-              <div className="col-span-full py-24 text-center">
-                 <p className="text-gray-300 font-black uppercase tracking-widest text-xl">Aucun document trouvé</p>
+              <div className="col-span-full py-40 flex flex-col items-center gap-8 animate-in fade-in zoom-in duration-700">
+                 <div className="h-40 w-40 bg-gray-50 rounded-full flex items-center justify-center relative">
+                    <Search size={64} className="text-gray-200" />
+                    <div className="absolute top-0 right-0 h-10 w-10 bg-red-500 rounded-full border-4 border-white animate-bounce" />
+                 </div>
+                 <div className="text-center flex flex-col gap-2">
+                    <p className="text-[#1A1A2E] font-black uppercase tracking-tighter italic text-2xl">Aucun document trouvé</p>
+                    <p className="text-gray-400 font-bold uppercase tracking-widest text-xs">Essaie avec d'autres mots-clés ou filtres.</p>
+                 </div>
+                 <button 
+                   onClick={() => {setSearchQuery(''); setActiveCategory('all'); setActiveTab('Tous');}}
+                   className="mt-4 px-10 py-5 bg-[#1A1A2E] text-white rounded-[2rem] font-black uppercase tracking-widest text-xs shadow-2xl active:scale-95 transition-all"
+                 >
+                    Réinitialiser tout
+                 </button>
               </div>
             )}
           </div>
