@@ -77,11 +77,17 @@ function PDFPage({ pdf, pageNumber }) {
     const renderPage = async () => {
       try {
         const page = await pdf.getPage(pageNumber);
-        const viewport = page.getViewport({ scale: 1.5 }); // Echelle pour meilleure qualité mobile
         const canvas = canvasRef.current;
         if (!canvas) return;
         
+        // Calculate dynamic scale to fit width
+        const containerWidth = canvas.clientWidth || window.innerWidth;
+        const tempViewport = page.getViewport({ scale: 1 });
+        const dynamicScale = containerWidth / tempViewport.width;
+        
+        const viewport = page.getViewport({ scale: dynamicScale * (window.devicePixelRatio || 1) });
         const context = canvas.getContext('2d');
+        
         canvas.height = viewport.height;
         canvas.width = viewport.width;
 

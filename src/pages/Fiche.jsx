@@ -88,48 +88,42 @@ export default function Fiche() {
         style={{ backgroundColor: currentTheme.bg }}
       >
         
-        {/* HEADER */}
+        {/* HEADER - ULTRA COMPACT (V3) */}
         <header 
-          className="pt-6 pb-4 px-4 text-center relative shrink-0 shadow-sm z-20"
+          className="py-1.5 px-4 text-center relative shrink-0 shadow-sm z-20 border-b border-black/5"
           style={{ backgroundColor: currentTheme.header }}
         >
           <button 
             onClick={() => navigate(-1)} 
-            className="absolute left-6 top-8 transition-colors p-2 hover:bg-black/5 rounded-full"
+            className="absolute left-4 top-1/2 -translate-y-1/2 p-2 hover:bg-black/5 rounded-full transition-colors"
             style={{ color: currentTheme.text === 'white' ? 'rgba(255,255,255,0.7)' : 'rgba(0,0,0,0.7)' }}
           >
-            <ChevronLeft size={32} />
+            <ChevronLeft size={24} />
           </button>
           <h1 
-            className="text-2xl md:text-3xl font-black tracking-tight"
+            className="text-sm md:text-xl font-black tracking-tight"
             style={{ color: currentTheme.text }}
           >
-            Fiches de Révision <span className="text-[10px] opacity-30">(V3)</span>
+            DOCUMENT <span className="text-[9px] opacity-40">(V3)</span>
           </h1>
-          <p 
-            className="text-sm md:text-base font-bold mt-1"
-            style={{ color: currentTheme.text === 'white' ? 'rgba(255,255,255,0.6)' : 'rgba(0,0,0,0.6)' }}
-          >
-            {currentFiche.title}
-          </p>
         </header>
 
-        {/* INDICATOR AREA */}
+        {/* INDICATOR AREA - COMPACT */}
         <div 
-          className="py-4 flex flex-col items-center gap-2 shrink-0 z-10"
+          className="pb-2 pt-1 flex flex-col items-center gap-1 shrink-0 z-10"
           style={{ backgroundColor: currentTheme.bg }}
         >
-          <div className="flex gap-2 items-center">
+          <div className="flex gap-1.5 items-center">
             {[1, 2, 3].map((p) => (
               <div 
                 key={p}
                 className={`transition-all duration-300 rounded-full ${
-                  activePage === p ? 'w-10 h-2.5 bg-[#405663]' : 'w-2.5 h-2.5 bg-gray-200'
+                  activePage === p ? 'w-6 h-1 bg-[#405663]' : 'w-1 h-1 bg-gray-200'
                 }`}
               />
             ))}
           </div>
-          <span className="text-gray-400 text-[10px] font-black uppercase tracking-widest">Fiche {activePage} sur {totalPages}</span>
+          <span className="text-gray-400 text-[8px] font-black uppercase tracking-[0.2em] leading-none mt-1">page {activePage} / {totalPages}</span>
         </div>
 
         {/* MAIN SWIPER AREA */}
@@ -214,41 +208,36 @@ export default function Fiche() {
   // Fallback pour les fiches standards
   return (
     <div className="min-h-screen relative flex flex-col bg-[#F2F2F7]" style={{ backgroundColor: currentTheme.bg }}>
-      {/* Header Responsive */}
+      {/* Header Responsive - ULTRA COMPACT (V3) */}
       <header 
-        className="fixed top-0 z-50 w-full pt-4 pb-4 px-4 md:px-12 shadow-md border-b border-black/5 backdrop-blur-md"
+        className="fixed top-0 z-50 w-full pt-1.5 pb-1.5 px-4 shadow-sm border-b border-black/5 backdrop-blur-md"
         style={{ backgroundColor: currentTheme.header }}
       >
         <div className="max-w-7xl mx-auto flex items-center gap-4">
           <button 
             onClick={() => navigate(-1)} 
-            className="flex h-10 w-10 items-center justify-center rounded-2xl bg-white/20 active:scale-90 transition-transform"
+            className="flex h-8 w-8 items-center justify-center rounded-xl bg-white/20 active:scale-90 transition-transform"
             style={{ color: currentTheme.text }}
           >
-            <ChevronLeft size={28} />
+            <ChevronLeft size={20} />
           </button>
           
           <div className="flex-1 overflow-hidden">
-            <h1 className="text-base md:text-2xl font-black truncate uppercase tracking-tighter" style={{ color: currentTheme.text }}>
+            <h1 className="text-xs md:text-xl font-black truncate uppercase tracking-tighter" style={{ color: currentTheme.text }}>
                {currentFiche.title} <span className="text-[8px] opacity-30">(V3)</span>
             </h1>
-            <div className="flex gap-2 text-[9px] md:text-xs font-black uppercase tracking-widest opacity-70" style={{ color: currentTheme.text }}>
-              <span>{categoryName}</span>
-              <span>•</span>
-              <span className="text-red-600">{currentFiche.difficulty}</span>
-            </div>
           </div>
           
           <button 
-            className="flex h-10 w-10 items-center justify-center rounded-2xl bg-white/10 active:scale-95 transition-transform"
+            className="flex h-8 w-8 items-center justify-center rounded-xl bg-white/10 active:scale-95 transition-transform"
             style={{ color: currentTheme.text }}
           >
-            <Bookmark size={20} />
+            <Bookmark size={18} />
           </button>
         </div>
       </header>
 
-      <main className="flex-1 w-full max-w-5xl mx-auto pt-32 pb-48 flex flex-col gap-12">
+      <main className="flex-1 w-full max-w-5xl mx-auto pt-16 pb-40 flex flex-col gap-12">
         {currentFiche.file_data ? (
            <div className="w-full flex justify-center px-0">
               {currentFiche.file_type === 'pdf' ? (
