@@ -80,13 +80,17 @@ function PDFPage({ pdf, pageNumber }) {
         const canvas = canvasRef.current;
         if (!canvas) return;
         
-        // Calculate dynamic scale to fit width
+        // Dynamic scale + Super-sampling for maximum sharpness
         const containerWidth = canvas.clientWidth || window.innerWidth;
         const tempViewport = page.getViewport({ scale: 1 });
-        const dynamicScale = containerWidth / tempViewport.width;
+        const scaleToFit = containerWidth / tempViewport.width;
         
-        const viewport = page.getViewport({ scale: dynamicScale * (window.devicePixelRatio || 1) });
+        // We multiply by 2 (or devicePixelRatio) for SHARPNESS
+        const qualityMultiplier = Math.max(window.devicePixelRatio || 1, 2);
+        const viewport = page.getViewport({ scale: scaleToFit * qualityMultiplier });
+        
         const context = canvas.getContext('2d');
+        if (!context) return;
         
         canvas.height = viewport.height;
         canvas.width = viewport.width;
@@ -94,6 +98,8 @@ function PDFPage({ pdf, pageNumber }) {
         const renderContext = {
           canvasContext: context,
           viewport: viewport,
+          intent: 'display',
+          renderInteractiveForms: false
         };
 
         renderTask = page.render(renderContext);
