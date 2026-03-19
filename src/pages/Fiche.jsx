@@ -84,30 +84,30 @@ export default function Fiche() {
   if (currentFiche.id === 'f4') {
     return (
       <div 
-        className="h-screen w-full max-w-[390px] mx-auto flex flex-col overflow-hidden font-['Inter',_sans-serif]"
+        className="h-screen w-full flex flex-col overflow-hidden font-['Inter',_sans-serif]"
         style={{ backgroundColor: currentTheme.bg }}
       >
         
         {/* HEADER */}
         <header 
-          className="pt-6 pb-4 px-4 text-center relative shrink-0 shadow-sm"
+          className="pt-6 pb-4 px-4 text-center relative shrink-0 shadow-sm z-20"
           style={{ backgroundColor: currentTheme.header }}
         >
           <button 
             onClick={() => navigate(-1)} 
-            className="absolute left-4 top-8 transition-colors"
+            className="absolute left-6 top-8 transition-colors p-2 hover:bg-black/5 rounded-full"
             style={{ color: currentTheme.text === 'white' ? 'rgba(255,255,255,0.7)' : 'rgba(0,0,0,0.7)' }}
           >
-            <ChevronLeft size={28} />
+            <ChevronLeft size={32} />
           </button>
           <h1 
-            className="text-2xl font-black tracking-tight"
+            className="text-2xl md:text-3xl font-black tracking-tight"
             style={{ color: currentTheme.text }}
           >
             Fiches de Révision
           </h1>
           <p 
-            className="text-sm font-bold mt-1"
+            className="text-sm md:text-base font-bold mt-1"
             style={{ color: currentTheme.text === 'white' ? 'rgba(255,255,255,0.6)' : 'rgba(0,0,0,0.6)' }}
           >
             {currentFiche.title}
@@ -124,7 +124,7 @@ export default function Fiche() {
               <div 
                 key={p}
                 className={`transition-all duration-300 rounded-full ${
-                  activePage === p ? 'w-8 h-2.5 bg-[#405663]' : 'w-2.5 h-2.5 bg-gray-200'
+                  activePage === p ? 'w-10 h-2.5 bg-[#405663]' : 'w-2.5 h-2.5 bg-gray-200'
                 }`}
               />
             ))}
@@ -137,7 +137,6 @@ export default function Fiche() {
           className="flex-1 relative flex flex-col items-center justify-center overflow-hidden"
           style={{ backgroundColor: currentTheme.bg }}
         >
-          
           {/* Vertical Scroll Container with Snap (Hidden Scrollbar) */}
           <div 
             ref={scrollContainerRef}
@@ -148,56 +147,53 @@ export default function Fiche() {
               WebkitOverflowScrolling: 'touch'
             }}
           >
-            
             {/* PAGE 1 */}
-            <div className="h-full w-full snap-start flex-shrink-0 flex items-center justify-center p-0">
-              <div className="w-full h-full overflow-hidden flex flex-col">
+            <div className="h-full w-full snap-start flex-shrink-0 flex items-center justify-center p-0 md:p-4">
+              <div className="w-full h-full max-w-4xl overflow-hidden flex flex-col md:rounded-3xl md:shadow-2xl">
                 <img src="/assets/fiches/page1.jpg" alt={`${currentFiche.title} - Page 1`} className="w-full h-full object-contain" />
               </div>
             </div>
 
             {/* PAGE 2 */}
-            <div className="h-full w-full snap-start flex-shrink-0 flex items-center justify-center p-0">
-              <div className="w-full h-full overflow-hidden flex flex-col">
+            <div className="h-full w-full snap-start flex-shrink-0 flex items-center justify-center p-0 md:p-4">
+              <div className="w-full h-full max-w-4xl overflow-hidden flex flex-col md:rounded-3xl md:shadow-2xl">
                 <img src="/assets/fiches/page2.jpg" alt={`${currentFiche.title} - Page 2`} className="w-full h-full object-contain" />
               </div>
             </div>
 
             {/* PAGE 3 */}
-            <div className="h-full w-full snap-start flex-shrink-0 flex items-center justify-center p-0">
-              <div className="w-full h-full overflow-hidden flex flex-col">
+            <div className="h-full w-full snap-start flex-shrink-0 flex items-center justify-center p-0 md:p-4">
+              <div className="w-full h-full max-w-4xl overflow-hidden flex flex-col md:rounded-3xl md:shadow-2xl">
                 <img src="/assets/fiches/page3.jpg" alt={`${currentFiche.title} - Page 3`} className="w-full h-full object-contain" />
               </div>
             </div>
-
           </div>
-
         </main>
 
         {/* FOOTER */}
         <footer 
-          className="py-3 px-4 border-t border-gray-100 text-center shrink-0"
+          className="py-6 px-6 md:px-12 border-t border-gray-100 text-center shrink-0 z-20"
           style={{ backgroundColor: currentTheme.bg }}
         >
-          <div className="flex flex-col gap-3">
+          <div className="flex flex-col md:flex-row gap-4 max-w-4xl mx-auto">
             <button
               onClick={handleComplete}
               disabled={completed}
-              className={`w-full flex items-center justify-center gap-3 rounded-[1.5rem] py-5 font-[1000] uppercase tracking-tighter transition-all active:scale-95 shadow-xl ${
+              className={`flex-1 flex items-center justify-center gap-3 rounded-[2rem] py-6 md:py-8 font-[1000] uppercase tracking-tighter transition-all active:scale-95 shadow-2xl ${
                 completed 
                 ? 'bg-[#34C759] text-white shadow-green-500/20' 
                 : 'bg-[#1A1A2E] text-white shadow-black/30'
               }`}
             >
-              {completed ? <><CheckCircle2 size={24} /> Fiche Assimilée</> : 'Valider la leçon (+10 XP)'}
+              {completed ? <><CheckCircle2 size={32} /> Fiche Assimilée</> : 'Valider la leçon (+10 XP)'}
             </button>
             
             {completed && quiz && (
               <button
                 onClick={() => navigate(`/quiz/${id}`)}
-                className="w-full flex items-center justify-center gap-3 rounded-[1.5rem] py-5 font-[1000] uppercase tracking-tighter transition-all active:scale-95 shadow-xl bg-[#CC1A1A] text-white shadow-red-500/20"
+                className="flex-1 flex items-center justify-center gap-3 rounded-[2rem] py-6 md:py-8 font-[1000] uppercase tracking-tighter transition-all active:scale-95 shadow-xl bg-[#CC1A1A] text-white shadow-red-500/20"
               >
-                <Zap size={24} /> Lancer le Quiz
+                <Zap size={32} /> Lancer le Quiz
               </button>
             )}
           </div>
@@ -216,96 +212,105 @@ export default function Fiche() {
   }
 
   // Fallback pour les fiches standards
-  // ... rest of the standard component logic (removed for brevity but I should keep it for the complete file)
   return (
-    <div className="min-h-screen pb-24 relative" style={{ backgroundColor: currentTheme.bg }}>
-      <div 
-        className="fixed top-0 z-50 w-full max-w-[390px] pt-2 pb-2 px-4 shadow-sm border-b border-gray-100"
+    <div className="min-h-screen relative flex flex-col bg-[#F2F2F7]" style={{ backgroundColor: currentTheme.bg }}>
+      {/* Header Responsive */}
+      <header 
+        className="fixed top-0 z-50 w-full pt-4 pb-4 px-6 md:px-12 shadow-md border-b border-black/5 backdrop-blur-md"
         style={{ backgroundColor: currentTheme.header }}
       >
-        <div className="flex items-center gap-3">
+        <div className="max-w-7xl mx-auto flex items-center gap-6">
           <button 
             onClick={() => navigate(-1)} 
-            className="flex h-10 w-10 items-center justify-center rounded-full bg-white/20 active:scale-95"
+            className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/20 active:scale-90 transition-transform"
             style={{ color: currentTheme.text }}
           >
-            <ChevronLeft size={24} />
+            <ChevronLeft size={32} />
           </button>
+          
           <div className="flex-1 overflow-hidden">
-            <h1 className="text-sm font-black truncate uppercase" style={{ color: currentTheme.text }}>{currentFiche.title}</h1>
-            <div className="flex gap-2 text-[10px] font-semibold uppercase tracking-wider" style={{ color: currentTheme.text === 'white' ? 'rgba(255,255,255,0.7)' : 'rgba(0,0,0,0.5)' }}>
+            <h1 className="text-lg md:text-2xl font-black truncate uppercase tracking-tighter" style={{ color: currentTheme.text }}>{currentFiche.title}</h1>
+            <div className="flex gap-3 text-[10px] md:text-xs font-black uppercase tracking-widest opacity-70" style={{ color: currentTheme.text }}>
               <span>{categoryName}</span>
               <span>•</span>
-              <span className="text-orange-300 font-black">{currentFiche.difficulty}</span>
+              <span className="text-red-600">{currentFiche.difficulty}</span>
             </div>
           </div>
+          
           <button 
-            className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 active:scale-95"
+            className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/10 active:scale-95 transition-transform"
             style={{ color: currentTheme.text }}
           >
-            <Bookmark size={20} />
+            <Bookmark size={24} />
           </button>
         </div>
-      </div>
+      </header>
 
-      <main className="px-5 pt-24 pb-32 flex flex-col gap-8">
+      <main className="flex-1 w-full max-w-5xl mx-auto px-6 pt-32 pb-48 flex flex-col gap-12">
         {currentFiche.file_data ? (
            <div className="w-full flex justify-center">
               {currentFiche.file_type === 'pdf' ? (
                  <PDFViewer base64Data={currentFiche.file_data} />
               ) : (
-                 <img src={currentFiche.file_data} alt={currentFiche.title} className="w-full h-auto object-contain rounded-2xl shadow-xl border border-gray-100" />
+                 <img src={currentFiche.file_data} alt={currentFiche.title} className="w-full h-auto object-contain rounded-[3rem] shadow-2xl border-8 border-white" />
               )}
            </div>
         ) : (!currentFiche.sections || currentFiche.sections.length === 0) ? (
-          <div className="py-20 text-center">
-             <p className="text-gray-400 font-bold italic">Cette fiche ne contient pas encore de texte.</p>
+          <div className="py-24 text-center">
+             <div className="h-24 w-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
+               <Info size={40} className="text-gray-300" />
+             </div>
+             <p className="text-gray-400 font-black uppercase tracking-widest text-sm">Contenu en cours de rédaction...</p>
           </div>
         ) : currentFiche.sections.map((section, idx) => (
-          <section key={idx} className="flex flex-col gap-3">
-            <h2 className="text-xl font-black text-[#1A1A2E] flex items-center gap-2 italic">
-              <span className="h-6 w-1 bg-[#CC1A1A] rounded-full mr-1" />
+          <section key={idx} className="flex flex-col gap-6 animate-in fade-in slide-in-from-bottom-4 duration-500" style={{ delay: `${idx * 100}ms` }}>
+            <h2 className="text-2xl md:text-3xl font-black text-[#1A1A2E] flex items-center gap-3 tracking-tighter uppercase italic">
+              <span className="h-8 w-2 bg-[#CC1A1A] rounded-full" />
               {section.title}
             </h2>
             
             {section.type === 'definition' && (
-              <div className="flex flex-col gap-3">
-                {section.content && <p className="text-[#3b3b44] leading-relaxed font-bold">{section.content}</p>}
+              <div className="flex flex-col gap-4">
+                {section.content && <p className="text-lg text-[#3b3b44] leading-relaxed font-bold bg-white p-8 rounded-[2rem] shadow-sm border border-gray-100">{section.content}</p>}
                 {section.items && (
-                  <ul className="grid grid-cols-1 gap-2 mt-1">
+                  <ul className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
                     {section.items.map((item, i) => (
-                      <li key={i} className="flex items-center gap-3 bg-white p-4 rounded-2xl border border-gray-100 shadow-sm">
-                        <div className="h-2 w-2 rounded-full bg-[#CC1A1A]" />
-                        <span className="font-black text-[#1A1A2E] text-sm italic">{item}</span>
+                      <li key={i} className="flex items-center gap-4 bg-white p-6 rounded-[1.5rem] border border-gray-100 shadow-sm transition-all hover:shadow-md">
+                        <div className="h-3 w-3 rounded-full bg-[#CC1A1A] shrink-0" />
+                        <span className="font-black text-[#1A1A2E] text-sm md:text-base italic">{item}</span>
                       </li>
                     ))}
                   </ul>
                 )}
                 {section.steps && (
-                  <div className="flex flex-col gap-2 mt-2">
+                  <div className="grid grid-cols-1 gap-3 mt-4">
                     {section.steps.map((step, i) => (
-                       <div key={i} className="bg-white border border-gray-100 p-4 rounded-2xl shadow-sm font-black text-[#1A1A2E] text-xs">
+                       <div key={i} className="bg-gray-50 border border-gray-200 p-6 rounded-2xl font-black text-[#1A1A2E] text-sm md:text-base flex gap-4">
+                         <span className="text-[#CC1A1A] opacity-30">{i+1}</span>
                          {step}
                        </div>
                     ))}
                   </div>
                 )}
                 {section.warning && (
-                  <div className="mt-4 p-4 bg-red-50 text-red-800 rounded-2xl text-xs font-black border border-red-100 flex items-start gap-3">
-                    <AlertTriangle size={18} className="shrink-0" />
-                    {section.warning}
+                  <div className="mt-8 p-8 bg-red-50 text-red-900 rounded-[2rem] text-sm font-black border-2 border-red-100 flex items-start gap-4 shadow-lg shadow-red-500/5">
+                    <AlertTriangle size={24} className="shrink-0 text-red-600" />
+                    <div className="flex flex-col gap-1">
+                      <span className="text-[10px] uppercase tracking-widest opacity-50">Attention / Danger</span>
+                      {section.warning}
+                    </div>
                   </div>
                 )}
               </div>
             )}
 
             {section.type === 'keypoints' && (
-              <div className="flex flex-col gap-3">
-                <ul className="flex flex-col gap-3">
+              <div className="flex flex-col gap-4">
+                <ul className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {section.items.map((item, i) => (
-                    <li key={i} className="flex gap-4 items-center bg-white p-5 rounded-[1.5rem] border border-gray-100 shadow-md transition-all active:scale-[0.98]">
-                      <CheckCircle2 className="text-[#34C759] shrink-0" size={24} />
-                      <span className="text-[#1A1A2E] leading-tight font-black text-sm italic">{item}</span>
+                    <li key={i} className="flex gap-5 items-center bg-white p-6 md:p-8 rounded-[2rem] border border-gray-100 shadow-xl transition-all hover:-translate-y-1">
+                      <CheckCircle2 className="text-[#34C759] shrink-0" size={32} />
+                      <span className="text-[#1A1A2E] leading-tight font-black text-sm md:text-lg italic tracking-tighter">{item}</span>
                     </li>
                   ))}
                 </ul>
@@ -313,41 +318,47 @@ export default function Fiche() {
             )}
 
             {section.type === 'remember' && (
-              <div className="rounded-[2.5rem] bg-[#1A1A2E] p-8 mt-4 text-white shadow-2xl relative overflow-hidden">
-                <div className="absolute top-0 right-0 p-4 opacity-10">
-                   <Target size={100} />
+              <div className="rounded-[3rem] bg-[#1A1A2E] p-10 md:p-14 mt-8 text-white shadow-2xl relative overflow-hidden group">
+                <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 transition-opacity">
+                   <Target size={180} />
                 </div>
-                <h4 className="text-[10px] font-black uppercase text-red-500 mb-2 tracking-widest italic">À RETENIR</h4>
-                <p className="font-black leading-tight text-lg tracking-tighter italic">{section.content}</p>
+                <div className="relative z-10">
+                  <h4 className="text-xs font-black uppercase text-red-500 mb-4 tracking-[0.3em] italic flex items-center gap-2">
+                    <Zap size={16} className="fill-current" />
+                    À RETENIR IMPÉRATIVEMENT
+                  </h4>
+                  <p className="font-black leading-tight text-xl md:text-3xl tracking-tighter italic max-w-2xl">{section.content}</p>
+                </div>
               </div>
             )}
           </section>
         ))}
       </main>
 
+      {/* Footer Boutons Fixes */}
       <div 
-        className="fixed bottom-0 z-50 w-full max-w-[390px] p-6 border-t border-gray-100 safe-area-bottom pb-8"
+        className="fixed bottom-0 z-50 w-full p-8 md:p-12 border-t border-black/5 shadow-[0_-10px_40px_rgba(0,0,0,0.05)] backdrop-blur-md"
         style={{ backgroundColor: currentTheme.bg }}
       >
-        <div className="flex flex-col gap-3">
+        <div className="max-w-5xl mx-auto flex flex-col md:flex-row gap-4">
           <button
             onClick={handleComplete}
             disabled={completed}
-            className={`w-full flex items-center justify-center gap-3 rounded-[1.5rem] py-5 font-[1000] uppercase tracking-tighter transition-all active:scale-95 shadow-2xl ${
+            className={`flex-1 flex items-center justify-center gap-4 rounded-[2rem] py-6 md:py-8 font-[1000] uppercase tracking-tighter transition-all active:scale-95 shadow-2xl ${
               completed 
               ? 'bg-[#34C759] text-white shadow-green-500/20' 
               : 'bg-[#1A1A2E] text-white shadow-black/30'
             }`}
           >
-            {completed ? <><CheckCircle2 size={24} /> Fiche Assimilée</> : 'Valider la leçon (+10 XP)'}
+            {completed ? <><CheckCircle2 size={32} /> Fiche Assimilée</> : 'Marquer comme lu (+10 XP)'}
           </button>
 
           {completed && quiz && (
             <button
               onClick={() => navigate(`/quiz/${id}`)}
-              className="w-full flex items-center justify-center gap-3 rounded-[1.5rem] py-5 font-[1000] uppercase tracking-tighter transition-all active:scale-95 shadow-xl bg-[#CC1A1A] text-white shadow-red-500/20"
+              className="flex-1 flex items-center justify-center gap-4 rounded-[2rem] py-6 md:py-8 font-[1000] uppercase tracking-tighter transition-all active:scale-95 shadow-xl bg-[#CC1A1A] text-white shadow-red-500/20"
             >
-              <Zap size={24} /> Lancer le Quiz
+              <Zap size={32} /> Lancer le Quiz
             </button>
           )}
         </div>
