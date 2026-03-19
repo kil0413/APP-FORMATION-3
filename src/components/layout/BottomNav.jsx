@@ -14,7 +14,7 @@ export function BottomNav() {
   ];
 
   return (
-    <div className="fixed bottom-0 z-50 w-full max-w-[390px] bg-white pt-2 pb-6 px-6 ring-1 ring-gray-200">
+    <div className="md:hidden fixed bottom-0 z-50 w-full bg-white pt-2 pb-6 px-6 ring-1 ring-gray-200">
       <div className="flex items-center justify-between">
         {tabs.map((tab) => {
           const isActive = location.pathname === tab.path;

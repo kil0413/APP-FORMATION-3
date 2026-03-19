@@ -44,8 +44,8 @@ function App() {
   // App non connectée
   if (!isAuthenticated) {
     return (
-      <div className="font-['Inter'] flex min-h-screen text-gray-900 bg-black">
-        <div className="mx-auto w-full max-w-[390px] shadow-2xl relative bg-[#F2F2F7] overflow-x-hidden md:my-4 md:h-[844px] md:rounded-[40px] md:border-[8px] md:border-black ring-1 ring-gray-900/5">
+      <div className="font-['Inter'] flex min-h-screen text-gray-900 bg-[#F2F2F7]">
+        <div className="mx-auto w-full md:max-w-md lg:max-w-lg md:my-10">
           <Login />
         </div>
       </div>
@@ -55,24 +55,29 @@ function App() {
   // App Connectée
   return (
     <Router>
-      <div className="font-['Inter'] flex min-h-screen text-gray-900 bg-black">
+      <div className="font-['Inter'] flex min-h-screen text-gray-900 bg-[#F2F2F7]">
         <Routes>
+          {/* Admin Dashboard - Always take full screen on its own */}
           <Route path="/admin/*" element={<AdminDashboard />} />
+
+          {/* User App - Responsive Layout */}
           <Route path="*" element={
-            <div className="mx-auto w-full max-w-[390px] shadow-2xl relative bg-[#F2F2F7] overflow-x-hidden md:my-4 md:h-[844px] md:rounded-[40px] md:border-[8px] md:border-black ring-1 ring-gray-900/5">
-              <ErrorBoundary>
-                <Routes>
-                  <Route path="/" element={<Home />} />
-                  <Route path="/parcours" element={<Parcours />} />
-                  <Route path="/repertoire" element={<Repertoire />} />
-                  <Route path="/profil" element={<Profil />} />
-                  <Route path="/fiche/:id" element={<Fiche />} />
-                  <Route path="/quiz/:id" element={<Quiz />} />
-                  <Route path="/procedure/:id" element={<Procedure />} />
-                  <Route path="/quiz-general" element={<Quiz />} />
-                  <Route path="*" element={<Navigate to="/" replace />} />
-                </Routes>
-              </ErrorBoundary>
+            <div className="flex w-full min-h-screen">
+              <div className="mx-auto w-full max-w-screen-2xl flex relative">
+                <ErrorBoundary>
+                  <Routes>
+                    <Route path="/" element={<Home />} />
+                    <Route path="/parcours" element={<Parcours />} />
+                    <Route path="/repertoire" element={<Repertoire />} />
+                    <Route path="/profil" element={<Profil />} />
+                    <Route path="/fiche/:id" element={<Fiche />} />
+                    <Route path="/quiz/:id" element={<Quiz />} />
+                    <Route path="/procedure/:id" element={<Procedure />} />
+                    <Route path="/quiz-general" element={<Quiz />} />
+                    <Route path="*" element={<Navigate to="/" replace />} />
+                  </Routes>
+                </ErrorBoundary>
+              </div>
             </div>
           } />
         </Routes>

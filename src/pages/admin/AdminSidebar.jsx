@@ -1,9 +1,7 @@
-import { LayoutDashboard, FileText, Users, Settings, LogOut, ChevronRight } from 'lucide-react';
-import { useNavigate, useLocation } from 'react-router-dom';
-
 export default function AdminSidebar({ onLogout }) {
   const navigate = useNavigate();
   const location = useLocation();
+  const { user } = useAuthStore();
 
   const menuItems = [
     { id: 'dashboard', label: 'Tableau de bord', icon: LayoutDashboard, path: '/admin' },
@@ -61,11 +59,17 @@ export default function AdminSidebar({ onLogout }) {
           <span>Déconnexion</span>
         </button>
 
-        <div className="mt-4 px-4 py-3 bg-white/5 rounded-2xl flex items-center gap-3">
-          <div className="h-8 w-8 rounded-full bg-blue-500 flex items-center justify-center font-bold text-xs">A</div>
+        <div className="mt-4 px-4 py-3 bg-white/10 rounded-2xl flex items-center gap-3">
+          <div className="h-10 w-10 rounded-full border-2 border-white/10 overflow-hidden bg-gray-100">
+             <img 
+               src={user?.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user?.id}`} 
+               alt="Avatar" 
+               className="w-full h-full object-cover"
+             />
+          </div>
           <div className="overflow-hidden">
-            <p className="text-[11px] font-black truncate uppercase tracking-tighter">Administrateur</p>
-            <p className="text-[9px] text-gray-500 truncate">admin@sdis.fr</p>
+            <p className="text-[11px] font-black truncate uppercase tracking-tighter">{user?.display_name || 'Admin'}</p>
+            <p className="text-[9px] text-gray-400 truncate opacity-60 font-medium">{user?.email}</p>
           </div>
         </div>
       </div>

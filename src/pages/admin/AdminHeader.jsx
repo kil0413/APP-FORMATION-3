@@ -1,6 +1,10 @@
 import { Search, Bell, Sun, Moon, Menu } from 'lucide-react';
+import { useAuthStore } from '../../store/useAuthStore';
 
 export default function AdminHeader({ title, onMenuClick }) {
+  const { user } = useAuthStore();
+  const initials = user?.display_name?.slice(0, 2).toUpperCase() || 'AD';
+
   return (
     <header className="h-16 bg-white border-b border-gray-100 flex items-center justify-between px-8 sticky top-0 z-10 shrink-0 shadow-sm">
       <div className="flex items-center gap-4 flex-1">
@@ -30,11 +34,15 @@ export default function AdminHeader({ title, onMenuClick }) {
         <div className="h-8 w-px bg-gray-100 mx-2 hidden sm:block"></div>
         <div className="hidden sm:flex items-center gap-3 pl-2 cursor-pointer hover:bg-gray-50 py-1.5 px-3 rounded-xl transition-all">
           <div className="text-right">
-            <p className="text-xs font-black uppercase tracking-tighter text-[#1A1A2E]">SDIS Console</p>
-            <p className="text-[10px] text-green-500 font-bold uppercase tracking-widest">En ligne</p>
+            <p className="text-xs font-black uppercase tracking-tighter text-[#1A1A2E]">{user?.display_name || 'Admin'}</p>
+            <p className="text-[10px] text-green-500 font-bold uppercase tracking-widest leading-none">Console</p>
           </div>
-          <div className="h-9 w-9 rounded-xl bg-[#CC1A1A]/10 text-[#CC1A1A] flex items-center justify-center font-black">
-            JD
+          <div className="h-10 w-10 rounded-full border-2 border-red-500/10 overflow-hidden bg-gray-100 shrink-0">
+             <img 
+               src={user?.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user?.id}`} 
+               alt="Avatar" 
+               className="w-full h-full object-cover"
+             />
           </div>
         </div>
       </div>
