@@ -170,30 +170,30 @@ export default function Fiche() {
           </div>
         </main>
 
-        {/* FOOTER */}
+        {/* FOOTER - Buttons reduced size */}
         <footer 
-          className="py-6 px-6 md:px-12 border-t border-gray-100 text-center shrink-0 z-20"
+          className="py-4 px-6 md:px-12 border-t border-gray-100 text-center shrink-0 z-20"
           style={{ backgroundColor: currentTheme.bg }}
         >
-          <div className="flex flex-col md:flex-row gap-4 max-w-4xl mx-auto">
+          <div className="flex flex-col md:flex-row gap-3 max-w-4xl mx-auto">
             <button
               onClick={handleComplete}
               disabled={completed}
-              className={`flex-1 flex items-center justify-center gap-3 rounded-[2rem] py-6 md:py-8 font-[1000] uppercase tracking-tighter transition-all active:scale-95 shadow-2xl ${
+              className={`flex-1 flex items-center justify-center gap-2 rounded-2xl py-4 md:py-6 font-[1000] uppercase tracking-tighter transition-all active:scale-95 shadow-lg ${
                 completed 
                 ? 'bg-[#34C759] text-white shadow-green-500/20' 
                 : 'bg-[#1A1A2E] text-white shadow-black/30'
               }`}
             >
-              {completed ? <><CheckCircle2 size={32} /> Fiche Assimilée</> : 'Valider la leçon (+10 XP)'}
+              {completed ? <><CheckCircle2 size={24} /> Fiche Assimilée</> : 'Valider la leçon (+10 XP)'}
             </button>
             
             {completed && quiz && (
               <button
                 onClick={() => navigate(`/quiz/${id}`)}
-                className="flex-1 flex items-center justify-center gap-3 rounded-[2rem] py-6 md:py-8 font-[1000] uppercase tracking-tighter transition-all active:scale-95 shadow-xl bg-[#CC1A1A] text-white shadow-red-500/20"
+                className="flex-1 flex items-center justify-center gap-2 rounded-2xl py-4 md:py-6 font-[1000] uppercase tracking-tighter transition-all active:scale-95 shadow-md bg-[#CC1A1A] text-white shadow-red-500/20"
               >
-                <Zap size={32} /> Lancer le Quiz
+                <Zap size={24} /> Lancer le Quiz
               </button>
             )}
           </div>
@@ -339,30 +339,30 @@ export default function Fiche() {
         )}
       </main>
 
-      {/* Footer Boutons Fixes */}
+      {/* Footer Boutons Fixes - Reduced size on mobile */}
       <div 
-        className="fixed bottom-0 z-50 w-full p-8 md:p-12 border-t border-black/5 shadow-[0_-10px_40px_rgba(0,0,0,0.05)] backdrop-blur-md"
+        className="fixed bottom-0 z-50 w-full p-4 md:p-10 border-t border-black/5 shadow-[0_-8px_30px_rgba(0,0,0,0.05)] backdrop-blur-md"
         style={{ backgroundColor: currentTheme.bg }}
       >
-        <div className="max-w-5xl mx-auto flex flex-col md:flex-row gap-4">
+        <div className="max-w-5xl mx-auto flex flex-col md:flex-row gap-3">
           <button
             onClick={handleComplete}
             disabled={completed}
-            className={`flex-1 flex items-center justify-center gap-4 rounded-[2rem] py-6 md:py-8 font-[1000] uppercase tracking-tighter transition-all active:scale-95 shadow-2xl ${
+            className={`flex-1 flex items-center justify-center gap-2 rounded-2xl py-4 md:py-6 font-black uppercase tracking-tighter transition-all active:scale-95 shadow-lg ${
               completed 
-              ? 'bg-[#34C759] text-white shadow-green-500/20' 
-              : 'bg-[#1A1A2E] text-white shadow-black/30'
+              ? 'bg-[#34C759] text-white shadow-green-500/10' 
+              : 'bg-[#1A1A2E] text-white shadow-black/20'
             }`}
           >
-            {completed ? <><CheckCircle2 size={32} /> Fiche Assimilée</> : 'Marquer comme lu (+10 XP)'}
+            {completed ? <><CheckCircle2 size={24} /> Fiche Assimilée</> : 'Marquer comme lu (+10 XP)'}
           </button>
 
           {completed && quiz && (
             <button
               onClick={() => navigate(`/quiz/${id}`)}
-              className="flex-1 flex items-center justify-center gap-4 rounded-[2rem] py-6 md:py-8 font-[1000] uppercase tracking-tighter transition-all active:scale-95 shadow-xl bg-[#CC1A1A] text-white shadow-red-500/20"
+              className="flex-1 flex items-center justify-center gap-2 rounded-2xl py-4 md:py-6 font-black uppercase tracking-tighter transition-all active:scale-95 shadow-md bg-[#CC1A1A] text-white shadow-red-500/10"
             >
-              <Zap size={32} /> Lancer le Quiz
+              <Zap size={24} /> Lancer le Quiz
             </button>
           )}
         </div>

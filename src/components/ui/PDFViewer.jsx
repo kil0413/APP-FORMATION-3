@@ -111,7 +111,7 @@ function PDFPage({ pdf, pageNumber }) {
   return (
     <canvas 
       ref={canvasRef} 
-      className="w-full h-auto bg-white rounded-2xl shadow-md border border-gray-100" 
+      className="w-full h-auto bg-white md:rounded-3xl md:shadow-2xl md:border border-gray-100" 
       style={{ display: 'block' }}
     />
   );
