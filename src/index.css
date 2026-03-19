@@ -20,22 +20,15 @@
   html, body {
     margin: 0;
     padding: 0;
-    background-color: #E5E5EA; /* Un gris doux derrière l'app */
+    background-color: #F2F2F7;
     font-family: 'Inter', system-ui, sans-serif;
     color: var(--color-text-main);
-    display: flex;
-    justify-content: center;
     min-height: 100vh;
   }
   
   #root {
     width: 100%;
-    max-width: 390px;
     min-height: 100vh;
-    background-color: var(--color-bg-base);
-    position: relative;
-    box-shadow: 0 0 40px rgba(0,0,0,0.1);
-    overflow-x: hidden;
     display: flex;
     flex-direction: column;
   }
