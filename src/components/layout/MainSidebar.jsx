@@ -20,9 +20,9 @@ export function MainSidebar() {
   return (
     <aside className="hidden md:flex w-80 h-screen sticky top-0 bg-[#0F0A0A] border-r border-red-500/10 flex-col py-10 px-8 transition-all duration-500 overflow-hidden relative shadow-[20px_0_100px_rgba(239,68,68,0.05)]">
       
-      {/* Tactical Grid Pattern Overlay */}
+      {/* Tactical Grid Pattern Overlay - Increased Visibility */}
       <div 
-        className="absolute inset-0 opacity-[0.03] pointer-events-none" 
+        className="absolute inset-0 opacity-[0.20] pointer-events-none" 
         style={{ 
           backgroundImage: 'radial-gradient(circle, #EF4444 1px, transparent 1px)', 
           backgroundSize: '30px 30px' 
