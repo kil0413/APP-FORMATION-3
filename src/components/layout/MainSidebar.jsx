@@ -18,11 +18,11 @@ export function MainSidebar() {
   const isAdmin = user?.role === 'admin';
 
   return (
-    <aside className="hidden md:flex w-80 h-screen sticky top-0 bg-[#0A0A12] border-r border-white/5 flex-col py-10 px-8 transition-all duration-500 overflow-hidden relative">
+    <aside className="hidden md:flex w-80 h-screen sticky top-0 bg-[#0A0A12] border-r border-white/5 flex-col py-10 px-8 transition-all duration-500 overflow-hidden relative shadow-[20px_0_100px_rgba(239,68,68,0.03)] selection:bg-red-500/10">
       
-      {/* Decorative BG pattern - Faint Red Glow */}
-      <div className="absolute top-0 right-0 h-96 w-96 bg-red-600/[0.03] blur-[150px] rounded-full -translate-y-1/2 translate-x-1/2" />
-      <div className="absolute bottom-0 left-0 h-96 w-96 bg-red-600/[0.02] blur-[150px] rounded-full translate-y-1/2 -translate-x-1/2" />
+      {/* Decorative BG pattern - Faint Red Glow Differentiation */}
+      <div className="absolute top-0 right-0 h-[500px] w-full bg-gradient-to-br from-red-600/[0.05] via-transparent to-transparent blur-[120px] rounded-full -translate-y-1/2 translate-x-1/2 pointer-events-none" />
+      <div className="absolute bottom-0 left-0 h-[400px] w-full bg-red-600/[0.03] blur-[100px] rounded-full translate-y-1/2 -translate-x-1/2 pointer-events-none" />
 
       {/* Brand - Modern Vertical Layout */}
       <div className="flex flex-col gap-6 mb-16 relative z-10">
