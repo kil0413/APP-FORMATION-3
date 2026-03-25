@@ -65,7 +65,7 @@ export default function Home() {
 
           {/* Module en cours - Premium Hero Card */}
           <section>
-            <Card className="relative overflow-hidden bg-gradient-to-br from-red-600 to-red-950 text-white border-none shadow-[0_20px_60px_rgba(204,26,26,0.3)] group cursor-pointer" onClick={() => navigate('/fiche/f4')}>
+            <Card className="relative overflow-hidden bg-gradient-to-br from-red-600 to-red-950 text-white border border-red-500/30 shadow-[0_20px_50px_rgba(239,68,68,0.25)] group cursor-pointer" onClick={() => navigate('/fiche/f4')}>
               <div className="absolute top-0 right-0 p-10 opacity-10 group-hover:scale-110 transition-transform duration-700 -rotate-12 translate-x-1/4 -translate-y-1/4">
                  <Zap size={240} className="fill-white" />
               </div>

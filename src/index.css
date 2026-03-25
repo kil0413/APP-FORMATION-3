@@ -19,28 +19,40 @@
 }
 
 @layer base {
+  * {
+    @apply border-white/5;
+  }
   
   html, body {
     margin: 0;
     padding: 0;
     background-color: #0A0A12;
     font-family: 'Inter', system-ui, sans-serif;
-    color: #FFFFFF;
+    color: #F1F5F9;
     min-height: 100vh;
     -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
     letter-spacing: -0.01em;
+    selection-background-color: rgba(239, 68, 68, 0.2);
+    selection-color: #FFFFFF;
   }
-  
-  #root {
-    width: 100%;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-  }
-  
-  h1, h2, h3, h4, h5, h6 {
-    font-weight: 600;
-  }
+}
+
+/* Elite Scrollbars */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+  transition: all 0.3s;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(239, 68, 68, 0.3);
 }
 
 @layer utilities {
@@ -48,7 +60,15 @@
     display: none;
   }
   .no-scrollbar {
-    -ms-overflow-style: none; /* IE and Edge */
-    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  
+  .glass-elite {
+    @apply bg-white/[0.03] backdrop-blur-2xl border border-white/10 shadow-2xl;
+  }
+  
+  .text-glow-red {
+    text-shadow: 0 0 15px rgba(239, 68, 68, 0.5);
   }
 }
