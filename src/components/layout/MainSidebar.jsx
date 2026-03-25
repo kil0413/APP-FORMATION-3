@@ -18,11 +18,22 @@ export function MainSidebar() {
   const isAdmin = user?.role === 'admin';
 
   return (
-    <aside className="hidden md:flex w-80 h-screen sticky top-0 bg-[#0A0A12] border-r border-white/5 flex-col py-10 px-8 transition-all duration-500 overflow-hidden relative shadow-[20px_0_100px_rgba(239,68,68,0.03)] selection:bg-red-500/10">
+    <aside className="hidden md:flex w-80 h-screen sticky top-0 bg-[#0F0A0A] border-r border-red-500/10 flex-col py-10 px-8 transition-all duration-500 overflow-hidden relative shadow-[20px_0_100px_rgba(239,68,68,0.05)]">
       
-      {/* Decorative BG pattern - Faint Red Glow Differentiation */}
-      <div className="absolute top-0 right-0 h-[500px] w-full bg-gradient-to-br from-red-600/[0.05] via-transparent to-transparent blur-[120px] rounded-full -translate-y-1/2 translate-x-1/2 pointer-events-none" />
-      <div className="absolute bottom-0 left-0 h-[400px] w-full bg-red-600/[0.03] blur-[100px] rounded-full translate-y-1/2 -translate-x-1/2 pointer-events-none" />
+      {/* Tactical Grid Pattern Overlay */}
+      <div 
+        className="absolute inset-0 opacity-[0.03] pointer-events-none" 
+        style={{ 
+          backgroundImage: 'radial-gradient(circle, #EF4444 1px, transparent 1px)', 
+          backgroundSize: '30px 30px' 
+        }} 
+      />
+
+      {/* Internal Crimson Gradient Wash */}
+      <div className="absolute inset-0 bg-gradient-to-b from-red-600/[0.03] to-transparent pointer-events-none" />
+      
+      {/* Decorative BG pattern - Selective Blur Blobs */}
+      <div className="absolute top-0 right-0 h-[600px] w-full bg-red-600/[0.04] blur-[150px] rounded-full -translate-y-1/2 translate-x-1/2 pointer-events-none" />
 
       {/* Brand - Modern Vertical Layout */}
       <div className="flex flex-col gap-6 mb-16 relative z-10">
