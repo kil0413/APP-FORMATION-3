@@ -3,7 +3,7 @@ import { MainSidebar } from './MainSidebar';
 
 export function PageWrapper({ children, showBottomNav = true }) {
   return (
-    <div className="flex w-full min-h-screen bg-bg-base text-white">
+    <div className="flex w-full min-h-screen bg-[#1E293B] text-white">
       {/* Sidebar - Desktop only */}
       <MainSidebar />
 
