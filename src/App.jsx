@@ -36,7 +36,7 @@ function App() {
   if (isLoading) {
     return (
       <div className="flex h-screen items-center justify-center bg-[#CC1A1A]">
-         <div className="text-white font-black uppercase text-xl animate-pulse">Chargement SP...</div>
+         <h1 className="font-black text-white tracking-tighter uppercase italic text-2xl leading-none">Fire Académie</h1>
       </div>
     );
   }
@@ -64,6 +64,9 @@ function App() {
           <Route path="*" element={
             <div className="flex w-full min-h-screen">
               <div className="mx-auto w-full flex relative">
+                <h1 className="text-4xl md:text-5xl font-black text-white hover:text-red-500 transition-colors uppercase tracking-tighter italic leading-none">
+                  FIRE <span className="text-red-600">ACADEMIE</span>
+                </h1>
                 <ErrorBoundary>
                   <Routes>
                     <Route path="/" element={<Home />} />

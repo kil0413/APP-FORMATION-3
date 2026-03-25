@@ -32,7 +32,7 @@ export function MainSidebar() {
             <span className="font-black text-white italic text-2xl">SP</span>
           </div>
           <div className="flex flex-col">
-            <h1 className="font-black text-white tracking-tighter uppercase italic text-2xl leading-none">V-Formation</h1>
+            <h1 className="font-black text-white tracking-tighter uppercase italic text-2xl leading-none">Fire Académie</h1>
             <p className="text-[9px] font-black text-white/30 uppercase tracking-[0.3em] mt-1.5 flex items-center gap-1.5">
                <Sparkles size={10} className="text-red-500" />
                Sapeurs-Pompiers

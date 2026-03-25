@@ -11,9 +11,9 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'pwa-192x192.png', 'pwa-512x512.png'],
       manifest: {
-        name: "Pompier Formation",
-        short_name: "PompierApp",
-        description: "Application de formation et révision pour les Sapeurs-Pompiers",
+        name: "Fire Academie",
+        short_name: "Fire Acad",
+        description: "Application de formation d'élite pour Sapeurs-Pompiers",
         theme_color: "#CC1A1A",
         background_color: "#F2F2F7",
         display: "standalone",
