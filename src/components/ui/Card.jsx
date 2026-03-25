@@ -5,8 +5,8 @@ const Card = React.forwardRef(({ className, selected, ...props }, ref) => (
   <div
     ref={ref}
     className={cn(
-      "rounded-3xl border border-white/5 bg-white/[0.04] backdrop-blur-3xl text-white shadow-2xl transition-all duration-300",
-      selected && "ring-2 ring-red-600 ring-offset-2 ring-offset-[#0A0A12]",
+      "rounded-3xl border border-white/5 bg-gradient-to-b from-white/[0.06] to-transparent backdrop-blur-3xl text-white shadow-card transition-all duration-500",
+      selected && "ring-2 ring-red-600 ring-offset-4 ring-offset-[#05050A]",
       className
     )}
     {...props}

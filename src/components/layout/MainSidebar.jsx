@@ -19,7 +19,7 @@ export function MainSidebar() {
   const isAdmin = user?.role === 'admin';
 
   return (
-    <aside className="hidden md:flex w-80 h-screen sticky top-0 bg-[#1A1A2E] flex-col py-10 px-8 transition-all duration-500 overflow-hidden relative">
+    <aside className="hidden md:flex w-80 h-screen sticky top-0 bg-[#05050A] border-r border-white/5 flex-col py-10 px-8 transition-all duration-500 overflow-hidden relative">
       
       {/* Decorative BG pattern */}
       <div className="absolute top-0 right-0 h-96 w-96 bg-red-600/5 blur-[120px] rounded-full -translate-y-1/2 translate-x-1/2" />
