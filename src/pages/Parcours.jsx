@@ -105,8 +105,8 @@ export default function Parcours() {
                          
                          {/* Progress Mini-Circle overlay */}
                          {!isLocked && (
-                           <div className="absolute -bottom-1 -right-1 bg-white p-1 rounded-full shadow-lg border border-gray-100">
-                             <div className="h-8 w-8 rounded-full bg-green-500 flex items-center justify-center text-white">
+                           <div className="absolute -bottom-1 -right-1 bg-white/10 p-1 rounded-full shadow-lg border border-white/10 backdrop-blur-md">
+                             <div className="h-8 w-8 rounded-full bg-green-500 flex items-center justify-center text-white shadow-[0_0_10px_rgba(34,197,94,0.4)]">
                                <CheckCircle2 size={18} />
                              </div>
                            </div>
@@ -115,14 +115,14 @@ export default function Parcours() {
 
                        {/* Hover Label Desktop */}
                        <div className="absolute top-1/2 -translate-y-1/2 left-full ml-10 hidden md:flex flex-col opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
-                          <span className="font-black text-xs uppercase tracking-widest text-gray-400">Étape {idx + 1}</span>
-                          <span className="font-black text-xl uppercase tracking-tighter italic text-[#1A1A2E]">{cat.name}</span>
+                          <span className="font-black text-xs uppercase tracking-widest text-white/40">Étape {idx + 1}</span>
+                          <span className="font-black text-xl uppercase tracking-tighter italic text-white">{cat.name}</span>
                        </div>
                     </div>
 
                     {/* Label Mobile / All */}
                     <div className="text-center flex flex-col gap-1 mt-2">
-                       <span className={`font-black text-lg md:text-xl uppercase tracking-tighter italic ${isLocked ? 'text-gray-300' : 'text-[#1A1A2E]'}`}>{cat.name}</span>
+                       <span className={`font-black text-lg md:text-xl uppercase tracking-tighter italic ${isLocked ? 'text-white/20' : 'text-white'}`}>{cat.name}</span>
                        {idx === 0 && unitIdx === 0 && (
                          <div className="flex items-center gap-1 justify-center">
                            <Star size={10} className="fill-yellow-400 text-yellow-400" />

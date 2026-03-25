@@ -1,12 +1,12 @@
-import { Heart, Zap, Flame, Play, LayoutGrid, Brain, CheckCircle2, ChevronRight, Trophy, Star, Target, TrendingUp, Sparkles } from 'lucide-react';
+import { Heart, Zap, Flame, Play, LayoutGrid, Brain, CheckCircle2, ChevronRight, Trophy, Star, Target, TrendingUp, Sparkles, AlertTriangle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Header } from '../components/layout/Header';
 import { PageWrapper } from '../components/layout/PageWrapper';
 import { Card, CardContent } from '../components/ui/Card';
-import { ProgressBar } from '../components/ui/ProgressBar';
 import { Badge } from '../components/ui/Badge';
 import { useAuthStore } from '../store/useAuthStore';
 import { useFicheStore } from '../store/useFicheStore';
+import { cn } from '../lib/utils';
 
 export default function Home() {
   const navigate = useNavigate();
@@ -15,9 +15,9 @@ export default function Home() {
 
   if (isAuthLoading || isFichesLoading || !user) {
     return (
-      <div className="flex bg-[#1A1A2E] h-screen items-center justify-center">
+      <div className="flex bg-[#0A0A12] h-screen items-center justify-center">
         <div className="flex flex-col items-center gap-6">
-           <div className="h-20 w-20 bg-[#CC1A1A] rounded-[2rem] flex items-center justify-center animate-bounce shadow-2xl shadow-red-500/40">
+           <div className="h-20 w-20 bg-red-600 rounded-[2rem] flex items-center justify-center animate-bounce shadow-2xl shadow-red-500/40">
               <span className="text-white font-black italic text-2xl">SP</span>
            </div>
            <div className="text-white/40 font-black uppercase text-xs tracking-[0.3em] animate-pulse">
@@ -48,7 +48,7 @@ export default function Home() {
                 </span>
               </div>
               <div className="flex flex-col gap-2">
-                <h1 className="text-4xl md:text-5xl font-black text-white tracking-tighter uppercase italic leading-none">Bonjour <span className="text-red-600">{user.display_name}</span></h1>
+                <h1 className="text-4xl md:text-5xl font-black text-white tracking-tighter uppercase italic leading-none">Bonjour <span className="text-red-500">{user.display_name}</span></h1>
                 <p className="text-white/40 font-bold uppercase tracking-[0.2em] text-[11px]">Prêt pour tes {user.daily_goal - user.daily_xp > 0 ? user.daily_goal - user.daily_xp : 0} XP du jour ?</p>
               </div>
             </div>
@@ -105,52 +105,38 @@ export default function Home() {
               
               {/* Animated BG patterns */}
               <div className="absolute -bottom-10 -right-10 h-64 w-64 rounded-full bg-red-600/20 blur-[100px]" />
-              <div className="absolute inset-0 bg-gradient-to-tr from-[#1A1A2E] via-transparent to-red-600/5" />
             </Card>
           </section>
 
           {/* Outils d'apprentissage - Grid Layout */}
-          <section>
-            <div className="mb-8 flex items-center justify-between">
-               <div className="flex items-center gap-3">
-                 <div className="h-2 w-8 bg-[#CC1A1A] rounded-full" />
-                 <h2 className="text-2xl font-black text-[#1A1A2E] tracking-tighter uppercase italic leading-none">Outils de formation</h2>
-               </div>
-               <button onClick={() => navigate('/repertoire')} className="text-gray-400 font-bold text-[10px] uppercase tracking-widest hover:text-[#CC1A1A] flex items-center gap-2 group transition-colors">
-                  Explorer le répertoire
-                  <ChevronRight size={14} className="group-hover:translate-x-1 transition-transform" />
-               </button>
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {[
-                { title: 'Bibliothèque', sub: 'Fiches de révision', icon: <LayoutGrid size={32} />, color: 'bg-purple-100 text-purple-600', route: '/repertoire' },
-                { title: 'Auto-Quiz', sub: 'Tests de connaissances', icon: <Brain size={32} />, color: 'bg-blue-100 text-blue-600', route: '/repertoire' },
-                { title: 'Quiz Surprise', sub: 'Défis chronométrés', icon: <Zap size={32} />, color: 'bg-orange-100 text-orange-600', route: '/repertoire' }
-              ].map((tool, i) => (
-                <Card 
-                  key={i} 
-                  className="border-none shadow-[0_10px_30px_rgba(0,0,0,0.03)] hover:shadow-[0_15px_40px_rgba(0,0,0,0.08)] transition-all cursor-pointer group rounded-[2.5rem] overflow-hidden bg-white" 
-                  onClick={() => navigate(tool.route)}
-                >
-                  <CardContent className="flex flex-col items-start gap-8 p-10">
-                    <div className={`rounded-[1.5rem] ${tool.color} p-5 transition-all duration-500 group-hover:scale-110 group-hover:rotate-3 shadow-lg shadow-current/10`}>
-                      {tool.icon}
-                    </div>
-                    <div className="flex flex-col gap-1">
-                      <h3 className="text-xl font-black text-[#1A1A2E] uppercase tracking-tighter italic">{tool.title}</h3>
-                      <p className="text-[10px] text-gray-400 font-black uppercase tracking-widest">{tool.sub}</p>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
+          <section className="flex flex-col gap-8">
+             <h2 className="text-sm font-black text-white uppercase tracking-[0.4em] mb-4">Outils de Formation</h2>
+             <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+                {[
+                  { id: 't1', title: 'QCM', sub: 'Flash Test', icon: <Zap />, color: 'bg-orange-600/20 text-orange-400' },
+                  { id: 't4', title: 'GRADE', sub: 'Simulation', icon: <Flame />, color: 'bg-red-600/20 text-red-400' },
+                  { id: 't3', title: 'BILAN', sub: 'Secourisme', icon: <CheckCircle2 />, color: 'bg-green-600/20 text-green-400' },
+                  { id: 't2', title: 'DANGER', sub: 'Signalétique', icon: <AlertTriangle />, color: 'bg-blue-600/20 text-blue-400' }
+                ].map((tool) => (
+                  <Card key={tool.id} className="cursor-pointer group hover:scale-[1.02] transition-all border-white/5 bg-[#1E293B]/20">
+                    <CardContent className="flex flex-col gap-6 p-8">
+                      <div className={cn("h-14 w-14 rounded-2xl flex items-center justify-center transition-all group-hover:rotate-12", tool.color)}>
+                        {tool.icon}
+                      </div>
+                      <div className="flex flex-col gap-1">
+                        <h3 className="text-xl font-black text-white uppercase tracking-tighter italic">{tool.title}</h3>
+                        <p className="text-[10px] text-white/40 font-black uppercase tracking-widest">{tool.sub}</p>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+             </div>
           </section>
 
           {/* Activités Récentes */}
           <section>
-            <h2 className="mb-8 text-2xl font-black text-[#1A1A2E] tracking-tighter uppercase italic flex items-center gap-3">
-               <TrendingUp className="text-[#CC1A1A]" size={28} />
+            <h2 className="mb-8 text-2xl font-black text-white tracking-tighter uppercase italic flex items-center gap-3">
+               <TrendingUp className="text-red-500" size={28} />
                Dernières Activités
             </h2>
             <div className="flex flex-col gap-5">
@@ -159,21 +145,21 @@ export default function Home() {
                 { id: 2, title: 'Pose d\'un garrot', sub: 'Procédure • 11/03', done: true, points: '+80 XP', icon: '🩸' },
                 { id: 3, title: 'Protection et alerte', sub: 'Sécurité Civile • 10/03', done: false, points: '0 XP', icon: '⚠️' }
               ].map((item) => (
-                <Card key={item.id} className="border-none shadow-[0_5px_20px_rgba(0,0,0,0.02)] hover:shadow-xl transition-all cursor-pointer group bg-white rounded-[2rem]">
+                <Card key={item.id} className="border-white/5 bg-[#1E293B]/20 rounded-[2rem] hover:bg-[#1E293B]/40 transition-all cursor-pointer group">
                   <CardContent className="flex items-center gap-6 p-6">
-                    <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-gray-50 text-2xl group-hover:rotate-6 transition-transform">
+                    <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-white/5 text-2xl group-hover:rotate-6 transition-transform">
                       {item.icon}
                     </div>
                     <div className="flex flex-col flex-1 gap-1">
-                      <h3 className="text-lg font-black text-[#1A1A2E] uppercase tracking-tighter italic">{item.title}</h3>
-                      <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">{item.sub}</p>
+                      <h3 className="text-lg font-black text-white uppercase tracking-tighter italic">{item.title}</h3>
+                      <p className="text-[10px] font-black text-white/40 uppercase tracking-widest">{item.sub}</p>
                     </div>
                     <div className="flex flex-col items-end gap-2">
-                       <span className={`text-[11px] font-black ${item.done ? 'text-green-500' : 'text-gray-300'}`}>{item.points}</span>
+                       <span className={`text-[11px] font-black ${item.done ? 'text-green-500' : 'text-white/20'}`}>{item.points}</span>
                        {item.done ? (
-                         <CheckCircle2 size={24} className="text-green-500" />
+                         <CheckCircle2 size={24} className="text-green-500 shadow-[0_0_10px_rgba(34,197,94,0.3)]" />
                        ) : (
-                         <div className="h-6 w-6 rounded-full border-2 border-dashed border-gray-200" />
+                         <div className="h-6 w-6 rounded-full border-2 border-dashed border-white/10" />
                        )}
                     </div>
                   </CardContent>
@@ -187,63 +173,60 @@ export default function Home() {
         <aside className="lg:col-span-4 flex flex-col gap-10">
           
           {/* Points & Stats Card */}
-          <section className="bg-white rounded-[3rem] p-10 border-none shadow-[0_20px_50px_rgba(0,0,0,0.05)] relative overflow-hidden group">
+          <Card className="rounded-[3rem] p-10 border border-white/5 bg-[#1E293B]/20 shadow-2xl relative overflow-hidden group">
              <div className="flex flex-col gap-8 relative z-10">
                 <div className="flex items-center justify-between">
-                   <h2 className="text-xs font-black text-gray-400 uppercase tracking-[0.3em]">Tableau de Bord</h2>
-                   <div className="flex items-center gap-2 bg-orange-50 px-4 py-2 rounded-full border border-orange-100">
+                   <h2 className="text-xs font-black text-white uppercase tracking-[0.3em]">Tableau de Bord</h2>
+                   <div className="flex items-center gap-2 bg-orange-500/10 px-4 py-2 rounded-full border border-orange-500/20">
                       <Flame size={18} className="fill-orange-500 text-orange-500" />
-                      <span className="font-black text-orange-600 text-sm">{user.streak_days}</span>
+                      <span className="font-black text-orange-500 text-sm">{user.streak_days}</span>
                    </div>
                 </div>
 
                 <div className="flex flex-col items-center py-6 gap-2">
-                   <div className="relative">
-                      <div className="h-32 w-32 rounded-full border-[12px] border-gray-50 flex items-center justify-center relative z-10">
-                         <Star size={48} className="fill-yellow-400 text-yellow-400" />
-                      </div>
-                      <svg className="absolute top-0 left-0 w-32 h-32 -rotate-90">
-                         <circle 
-                           cx="64" cy="64" r="58" 
-                           fill="transparent" 
-                           stroke="#CC1A1A" 
-                           strokeWidth="12" 
-                           strokeDasharray={364} 
-                           strokeDashoffset={364 * (1 - user.daily_xp / user.daily_goal)} 
-                           strokeLinecap="round"
-                         />
+                   <div className="relative h-44 w-44">
+                      <svg className="h-full w-full -rotate-90">
+                        <circle cx="88" cy="88" r="80" stroke="currentColor" strokeWidth="12" fill="transparent" className="text-white/5" />
+                        <circle cx="88" cy="88" r="80" stroke="currentColor" strokeWidth="12" fill="transparent" strokeDasharray={502} strokeDashoffset={502 - (502 * user.daily_xp / user.daily_goal)} className="text-red-500 transition-all duration-1000 stroke-round" />
                       </svg>
-                   </div>
-                   <div className="text-center mt-4">
-                      <span className="text-4xl font-black text-[#1A1A2E] leading-none">{user.daily_xp}</span>
-                      <span className="text-gray-400 font-bold ml-1 uppercase text-[10px] tracking-widest">/ {user.daily_goal} XP</span>
-                      <p className="text-[10px] font-black text-gray-500 uppercase tracking-widest mt-2">{user.daily_goal - user.daily_xp <= 0 ? 'Objectif atteint !' : `Encore ${user.daily_goal - user.daily_xp} XP`}</p>
+                      <div className="absolute inset-0 flex flex-col items-center justify-center">
+                         <span className="text-4xl font-black text-white italic">{user.daily_xp}</span>
+                         <span className="text-[9px] font-black text-white/30 uppercase tracking-widest">/ {user.daily_goal} XP</span>
+                      </div>
                    </div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="bg-gray-50 p-6 rounded-[2rem] flex flex-col items-center gap-2">
-                     <Heart size={24} className="fill-red-500 text-red-500" />
-                     <span className="text-xl font-black text-[#1A1A2E]">{user.lives}</span>
-                     <span className="text-[9px] font-black text-gray-400 uppercase tracking-widest">Énergies</span>
-                  </div>
-                  <div className="bg-gray-50 p-6 rounded-[2rem] flex flex-col items-center gap-2">
-                     <Trophy size={24} className="fill-yellow-500 text-yellow-500" />
-                     <span className="text-xl font-black text-[#1A1A2E]">{Math.floor(user.xp_total / 100)}</span>
-                     <span className="text-[9px] font-black text-gray-400 uppercase tracking-widest">Rank</span>
-                  </div>
+                   <div className="bg-white/5 p-6 rounded-3xl border border-white/5 text-center">
+                      <p className="text-[8px] font-black text-white/20 uppercase tracking-widest mb-1">XP TOTAL</p>
+                      <p className="text-lg font-black text-white italic">{user.xp_total.toLocaleString()}</p>
+                   </div>
+                   <div className="bg-white/5 p-6 rounded-3xl border border-white/5 text-center">
+                      <p className="text-[8px] font-black text-white/20 uppercase tracking-widest mb-1">MODULES</p>
+                      <p className="text-lg font-black text-white italic">14/25</p>
+                   </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                   <div className="bg-white/5 p-4 rounded-3xl border border-white/5 flex flex-col items-center gap-2">
+                      <Heart size={20} className="fill-red-500 text-red-500" />
+                      <span className="text-lg font-black text-white">{user.lives}</span>
+                      <span className="text-[8px] font-black text-white/20 uppercase tracking-widest">Énergies</span>
+                   </div>
+                   <div className="bg-white/5 p-4 rounded-3xl border border-white/5 flex flex-col items-center gap-2">
+                      <Trophy size={20} className="fill-yellow-500 text-yellow-500" />
+                      <span className="text-lg font-black text-white">{Math.floor(user.xp_total / 100)}</span>
+                      <span className="text-[8px] font-black text-white/20 uppercase tracking-widest">Rank</span>
+                   </div>
                 </div>
              </div>
-             
-             {/* Subtle background decoration */}
-             <div className="absolute top-0 right-0 w-full h-full bg-gradient-to-br from-transparent to-red-500/5 pointer-events-none" />
-          </section>
+          </Card>
 
           {/* Leaderboard Preview */}
-          <section className="bg-[#1A1A2E] rounded-[3rem] p-10 border-none shadow-2xl relative overflow-hidden">
+          <section className="bg-[#1E293B]/20 rounded-[3rem] p-10 border border-white/5 shadow-2xl relative overflow-hidden">
              <div className="relative z-10 flex flex-col gap-8">
                <div className="flex items-center justify-between">
-                  <h2 className="text-[10px] font-black text-white/40 uppercase tracking-[0.3em]">Classement Général</h2>
+                  <h2 className="text-xs font-black text-white uppercase tracking-[0.3em]">Classement Général</h2>
                   <Target size={20} className="text-red-500" />
                </div>
 
@@ -253,7 +236,7 @@ export default function Home() {
                     { rank: 2, name: 'Jean P.', xp: '1,2k', me: true },
                     { rank: 3, name: 'Sophie L.', xp: '0,9k', me: false }
                   ].map((entry) => (
-                    <div key={entry.rank} className={`flex items-center gap-4 p-4 rounded-2xl transition-all ${entry.me ? 'bg-red-600 text-white scale-105 shadow-xl shadow-red-500/20' : 'text-white/60 hover:bg-white/5'}`}>
+                    <div key={entry.rank} className={`flex items-center gap-4 p-4 rounded-2xl transition-all ${entry.me ? 'bg-red-600 text-white scale-105 shadow-xl shadow-red-500/20' : 'text-white/40 hover:bg-white/5'}`}>
                        <span className="text-xs font-black opacity-40">#{entry.rank}</span>
                        <div className="h-8 w-8 rounded-full bg-white/10 overflow-hidden border border-white/10 shrink-0">
                           <img src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${entry.name}`} alt="" />
