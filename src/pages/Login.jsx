@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useAuthStore } from '../store/useAuthStore';
 import { Flame, Shield, ArrowRight, Mail, Lock, User as UserIcon, Zap, Sparkles } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { cn } from '../lib/utils';
 
 export default function Login() {
   const { loginWithGoogle, loginWithEmail, signUpWithEmail, isLoading } = useAuthStore();
