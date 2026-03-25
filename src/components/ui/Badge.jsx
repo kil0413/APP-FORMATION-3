@@ -3,12 +3,12 @@ import { cn } from "../../lib/utils"
 
 function Badge({ className, variant = "default", ...props }) {
   const variants = {
-    default: "border-transparent bg-[#CC1A1A] text-white",
-    secondary: "border-transparent bg-gray-100 text-gray-900",
-    destructive: "border-transparent bg-red-500 text-white",
-    outline: "text-gray-950",
-    success: "border-transparent bg-[#34C759] text-white",
-    warning: "border-transparent bg-[#FF9500] text-white",
+    default: "border-transparent bg-red-600 text-white shadow-lg shadow-red-600/20",
+    secondary: "border-white/5 bg-white/10 text-white/70",
+    destructive: "border-transparent bg-red-900 text-red-200",
+    outline: "border-white/20 text-white/50",
+    success: "border-transparent bg-green-600/20 text-green-400 border border-green-600/30",
+    warning: "border-transparent bg-orange-600/20 text-orange-400 border border-orange-600/30",
   }
 
   return (

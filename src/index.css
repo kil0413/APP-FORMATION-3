@@ -2,17 +2,18 @@
 
 @theme {
   --color-primary: #CC1A1A;
-  --color-primary-light: #FFECEC;
-  --color-bg-base: #F2F2F7;
-  --color-text-main: #1A1A2E;
-  --color-text-muted: #8E8E93;
+  --color-primary-light: #450A0A;
+  --color-bg-base: #0A0A12;
+  --color-text-main: #FFFFFF;
+  --color-text-muted: rgba(255, 255, 255, 0.4);
   --color-success: #34C759;
   --color-xp: #FF9500;
   
   --radius-xl: 16px;
   --radius-2xl: 20px;
+  --radius-3xl: 24px;
   
-  --shadow-card: 0 2px 12px rgba(0,0,0,0.06);
+  --shadow-card: 0 4px 24px rgba(0,0,0,0.4);
 }
 
 @layer base {
@@ -20,10 +21,12 @@
   html, body {
     margin: 0;
     padding: 0;
-    background-color: #F2F2F7;
+    background-color: #0A0A12;
     font-family: 'Inter', system-ui, sans-serif;
-    color: var(--color-text-main);
+    color: #FFFFFF;
     min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+    letter-spacing: -0.01em;
   }
   
   #root {

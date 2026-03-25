@@ -48,19 +48,19 @@ export default function Parcours() {
             <p className="text-gray-400 font-bold uppercase tracking-[0.2em] text-[10px]">Parcours de progression opérationnel</p>
           </div>
           
-          <div className="w-full max-w-xs bg-gray-100 h-3 rounded-full overflow-hidden mt-4 p-0.5 border border-gray-200">
-             <div className="h-full bg-[#CC1A1A] rounded-full w-[35%] shadow-sm" />
+          <div className="w-full max-w-xs bg-white/5 h-3 rounded-full overflow-hidden mt-4 p-0.5 border border-white/5">
+             <div className="h-full bg-red-600 rounded-full w-[35%] shadow-[0_0_15px_rgba(204,26,26,0.3)]" />
           </div>
-          <p className="text-[9px] font-black uppercase text-gray-400 tracking-widest">Global : 35% de la formation complétée</p>
+          <p className="text-[9px] font-black uppercase text-white/30 tracking-widest mt-2">Global : 35% de la formation complétée</p>
         </section>
 
         {units.map((unit, unitIdx) => (
           <div key={unit.id} className="flex flex-col gap-12 relative">
             
             {/* Unit Header */}
-            <div className={`p-8 rounded-[3rem] shadow-xl border-4 border-white ${unitIdx === 0 ? 'bg-[#1A1A2E] text-white' : 'bg-white text-gray-400 opacity-60'}`}>
+            <div className={`p-8 rounded-[3.5rem] shadow-2xl border ${unitIdx === 0 ? 'bg-gradient-to-r from-red-600 to-red-900 border-white/10 text-white' : 'bg-white/5 border-white/5 text-white/40'}`}>
               <div className="flex flex-col gap-2">
-                 <h2 className="text-xl md:text-2xl font-black tracking-tighter italic uppercase">{unit.title}</h2>
+                 <h2 className={`text-xl md:text-2xl font-black tracking-tighter italic uppercase ${unitIdx === 0 ? 'text-white' : 'text-white/80'}`}>{unit.title}</h2>
                  <p className="text-xs font-bold opacity-60 uppercase tracking-widest leading-relaxed">{unit.desc}</p>
               </div>
             </div>
@@ -68,7 +68,7 @@ export default function Parcours() {
             {/* Path Nodes */}
             <div className="flex flex-col items-center gap-20 relative pt-10">
               {/* Vertical Path Line (Vrai Zig-Zag possible via SVG, ici simule) */}
-              <div className="absolute top-0 bottom-0 left-1/2 -translate-x-1/2 w-1.5 bg-gray-100 -z-10" />
+              <div className="absolute top-0 bottom-0 left-1/2 -translate-x-1/2 w-1.5 bg-white/5 -z-10" />
 
               {unit.categoryIds.map((catId, idx) => {
                 const cat = categories.find(c => c.id === catId);
@@ -87,10 +87,10 @@ export default function Parcours() {
                          onClick={() => !isLocked && navigate('/repertoire')}
                          className={`h-24 w-24 md:h-28 md:w-28 rounded-full flex items-center justify-center border-8 transition-all relative z-10 cursor-pointer ${
                            isLocked 
-                           ? 'bg-gray-100 border-gray-200 text-gray-300' 
-                           : 'bg-white shadow-2xl active:scale-90 hover:scale-105'
+                           ? 'bg-white/5 border-white/10 text-white/20' 
+                           : 'bg-[#1A1A2E] border-white/20 shadow-[0_20px_50px_rgba(0,0,0,0.5)] active:scale-90 hover:scale-105'
                          }`}
-                         style={{ borderColor: isLocked ? '#e5e7eb' : cat.theme_header }}
+                         style={{ borderColor: isLocked ? 'rgba(255,255,255,0.05)' : cat.theme_header }}
                        >
                          {isLocked ? (
                            <Lock size={32} className="opacity-40" />

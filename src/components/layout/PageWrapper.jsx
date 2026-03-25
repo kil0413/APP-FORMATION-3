@@ -3,14 +3,14 @@ import { MainSidebar } from './MainSidebar';
 
 export function PageWrapper({ children, showBottomNav = true }) {
   return (
-    <div className="flex w-full min-h-screen bg-[#F2F2F7]">
+    <div className="flex w-full min-h-screen bg-[#0A0A12] text-white">
       {/* Sidebar - Desktop only */}
       <MainSidebar />
 
       {/* Main Content Area */}
       <div className={`relative flex flex-1 flex-col hide-scrollbar ${showBottomNav ? 'pb-24 md:pb-0' : ''}`}>
         <div className="mx-auto w-full max-w-screen-xl h-full flex flex-col items-center">
-           <div className="w-full h-full max-w-[390px] md:max-w-none transition-all duration-500">
+           <div className="w-full h-full max-w-[390px] md:max-w-none transition-all duration-700">
              {children}
            </div>
         </div>

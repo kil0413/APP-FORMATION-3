@@ -52,19 +52,19 @@ export default function Repertoire() {
         <section className="flex flex-col gap-8">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
             <div className="flex flex-col gap-3">
-              <h1 className="text-4xl md:text-5xl font-black text-[#1A1A2E] tracking-tighter uppercase italic leading-none">Bibliothèque <span className="text-[#CC1A1A]">Opérationnelle</span></h1>
-              <p className="text-gray-400 font-bold uppercase tracking-[0.2em] text-[10px]">Accédez à {fiches.length} documents de formation</p>
+              <h1 className="text-4xl md:text-5xl font-black text-white tracking-tighter uppercase italic leading-none">Bibliothèque <span className="text-red-600">Opérationnelle</span></h1>
+              <p className="text-white/40 font-bold uppercase tracking-[0.2em] text-[10px]">Accédez à {fiches.length} documents de formation</p>
             </div>
             
             {/* Tabs Filter */}
-            <div className="flex bg-gray-100 p-1.5 rounded-2xl md:rounded-3xl self-start">
+            <div className="flex bg-white/5 p-1.5 rounded-2xl md:rounded-3xl self-start border border-white/5">
                {tabs.map(tab => (
                  <button
                    key={tab}
                    onClick={() => setActiveTab(tab)}
                    className={cn(
                      "px-6 py-2.5 md:px-8 md:py-3.5 rounded-xl md:rounded-2xl text-[10px] md:text-xs font-black uppercase tracking-widest transition-all",
-                     activeTab === tab ? "bg-[#1A1A2E] text-white shadow-lg" : "text-gray-400 hover:text-gray-600"
+                     activeTab === tab ? "bg-red-600 text-white shadow-lg shadow-red-600/20" : "text-white/40 hover:text-white/60"
                    )}
                  >
                    {tab}
@@ -75,13 +75,13 @@ export default function Repertoire() {
 
           {/* Search Bar Premium */}
           <div className="relative group">
-            <div className="absolute inset-y-0 left-0 pl-8 flex items-center pointer-events-none">
-              <Search className="text-gray-300 group-focus-within:text-[#CC1A1A] transition-colors" size={24} />
+            <div className="absolute inset-y-0 left-0 pl-10 flex items-center pointer-events-none">
+              <Search className="text-white/20 group-focus-within:text-red-500 transition-colors" size={28} />
             </div>
             <input 
               type="text" 
               placeholder="Rechercher une fiche, un grade ou un module..." 
-              className="w-full bg-white border-none rounded-[2.5rem] py-6 md:py-8 pl-20 pr-10 text-[#1A1A2E] shadow-[0_10px_40px_rgba(0,0,0,0.03)] placeholder-gray-300 font-bold italic text-lg md:text-xl focus:ring-4 focus:ring-red-100 transition-all outline-none"
+              className="w-full bg-white/[0.04] backdrop-blur-3xl border border-white/5 rounded-[2.5rem] py-8 md:py-10 pl-24 pr-10 text-white shadow-2xl placeholder-white/10 font-black italic text-xl md:text-2xl focus:ring-4 focus:ring-red-600/10 transition-all outline-none"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />

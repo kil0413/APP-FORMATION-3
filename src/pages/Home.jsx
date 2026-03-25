@@ -42,28 +42,30 @@ export default function Home() {
           <section className="flex flex-col md:flex-row md:items-end justify-between gap-6">
             <div className="flex flex-col gap-3">
               <div className="flex items-center gap-3">
-                <span className="px-3 py-1 bg-red-50 text-[#CC1A1A] text-[10px] font-black rounded-full uppercase tracking-widest border border-red-100 flex items-center gap-2">
+                <span className="px-3 py-1 bg-red-600/10 text-red-500 text-[10px] font-black rounded-full uppercase tracking-widest border border-red-600/20 flex items-center gap-2">
                    <Sparkles size={12} className="fill-current" />
                    Niveau {Math.floor(user.xp_total / 1000) + 1}
                 </span>
               </div>
-              <h1 className="text-4xl md:text-5xl font-black text-[#1A1A2E] tracking-tighter uppercase italic leading-none">Bonjour <span className="text-[#CC1A1A]">{user.display_name}</span></h1>
-              <p className="text-gray-400 font-bold uppercase tracking-[0.2em] text-[11px]">Prêt pour tes {user.daily_goal - user.daily_xp > 0 ? user.daily_goal - user.daily_xp : 0} XP du jour ?</p>
+              <div className="flex flex-col gap-2">
+                <h1 className="text-4xl md:text-5xl font-black text-white tracking-tighter uppercase italic leading-none">Bonjour <span className="text-red-600">{user.display_name}</span></h1>
+                <p className="text-white/40 font-bold uppercase tracking-[0.2em] text-[11px]">Prêt pour tes {user.daily_goal - user.daily_xp > 0 ? user.daily_goal - user.daily_xp : 0} XP du jour ?</p>
+              </div>
             </div>
 
             {/* Streak Counter Mobile Only */}
-            <div className="md:hidden flex items-center gap-4 bg-orange-50 p-4 rounded-[2rem] border border-orange-100 self-start">
+            <div className="md:hidden flex items-center gap-4 bg-orange-500/10 p-4 rounded-[2rem] border border-orange-500/20 self-start">
                <Flame size={24} className="fill-orange-500 text-orange-500 animate-pulse" />
                <div className="flex flex-col">
-                  <span className="text-xl font-black text-[#1A1A2E] leading-none">{user.streak_days}</span>
-                  <span className="text-[9px] font-black uppercase text-orange-600 tracking-widest">Série</span>
+                  <span className="text-xl font-black text-white leading-none">{user.streak_days}</span>
+                  <span className="text-[9px] font-black uppercase text-orange-500 tracking-widest">Série</span>
                </div>
             </div>
           </section>
 
           {/* Module en cours - Premium Hero Card */}
           <section>
-            <Card className="relative overflow-hidden bg-[#1A1A2E] text-white border-none shadow-[0_20px_50px_rgba(204,26,26,0.15)] group cursor-pointer" onClick={() => navigate('/fiche/f4')}>
+            <Card className="relative overflow-hidden bg-gradient-to-br from-red-600 to-red-950 text-white border-none shadow-[0_20px_60px_rgba(204,26,26,0.3)] group cursor-pointer" onClick={() => navigate('/fiche/f4')}>
               <div className="absolute top-0 right-0 p-10 opacity-10 group-hover:scale-110 transition-transform duration-700 -rotate-12 translate-x-1/4 -translate-y-1/4">
                  <Zap size={240} className="fill-white" />
               </div>
@@ -71,22 +73,22 @@ export default function Home() {
               <CardContent className="flex flex-col md:flex-row md:items-center justify-between p-10 md:p-14 relative z-10 gap-8">
                 <div className="flex flex-col gap-6 max-w-lg">
                   <div className="flex flex-wrap gap-3">
-                    <Badge className="bg-red-600 text-white border-none px-4 py-1.5 text-[10px] font-black uppercase tracking-widest animate-pulse">
+                    <Badge className="bg-white text-red-600 border-none px-4 py-1.5 text-[10px] font-black uppercase tracking-widest animate-pulse">
                        MODULE PRIORITAIRE
                     </Badge>
-                    <Badge className="bg-white/10 text-white/70 border-none px-4 py-1.5 text-[10px] font-black uppercase tracking-widest">
+                    <Badge className="bg-black/20 text-white/70 border-none px-4 py-1.5 text-[10px] font-black uppercase tracking-widest">
                        {nrbcCategory}
                     </Badge>
                   </div>
                   
                   <div className="flex flex-col gap-2">
                     <h2 className="text-4xl md:text-5xl font-black tracking-tighter uppercase italic leading-none">RISQUE GAZ</h2>
-                    <p className="text-sm md:text-lg text-white/50 font-bold uppercase tracking-widest">Étape 4 : Plage d'explosivité et BLEVE</p>
+                    <p className="text-sm md:text-lg text-white/70 font-bold uppercase tracking-widest">Étape 4 : Plage d'explosivité et BLEVE</p>
                   </div>
 
                   <div className="flex items-center gap-4 mt-2">
-                     <span className="h-1 flex-1 bg-white/10 rounded-full overflow-hidden">
-                        <span className="block h-full bg-red-600 w-[60%] shadow-lg shadow-red-600/50" />
+                     <span className="h-1 flex-1 bg-black/20 rounded-full overflow-hidden">
+                        <span className="block h-full bg-white w-[60%] shadow-lg shadow-white/50" />
                      </span>
                      <span className="text-[10px] font-black text-white/40 uppercase tracking-widest">PROGRÈS 60%</span>
                   </div>
@@ -94,7 +96,7 @@ export default function Home() {
                 
                 <button 
                   onClick={(e) => { e.stopPropagation(); navigate('/fiche/f4'); }}
-                  className="inline-flex items-center justify-center gap-4 rounded-[2rem] bg-white px-12 py-6 text-sm font-black uppercase tracking-widest text-[#1A1A2E] transition-all hover:scale-105 active:scale-95 shadow-[0_10px_30px_rgba(255,255,255,0.2)]"
+                  className="inline-flex items-center justify-center gap-4 rounded-[2rem] bg-white px-12 py-6 text-sm font-black uppercase tracking-widest text-red-600 transition-all hover:scale-105 active:scale-95 shadow-[0_10px_30px_rgba(255,255,255,0.2)]"
                 >
                   Continuer
                   <Play size={20} className="fill-current" />

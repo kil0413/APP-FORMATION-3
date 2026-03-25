@@ -5,8 +5,8 @@ const Card = React.forwardRef(({ className, selected, ...props }, ref) => (
   <div
     ref={ref}
     className={cn(
-      "rounded-2xl border border-gray-100 bg-white text-gray-950 shadow-[0_2px_12px_rgba(0,0,0,0.06)]",
-      selected && "ring-2 ring-primary ring-offset-2",
+      "rounded-3xl border border-white/5 bg-white/[0.04] backdrop-blur-3xl text-white shadow-2xl transition-all duration-300",
+      selected && "ring-2 ring-red-600 ring-offset-2 ring-offset-[#0A0A12]",
       className
     )}
     {...props}
@@ -42,7 +42,7 @@ const CardDescription = React.forwardRef(({ className, ...props }, ref) => (
 CardDescription.displayName = "CardDescription"
 
 const CardContent = React.forwardRef(({ className, ...props }, ref) => (
-  <div ref={ref} className={cn("p-5 pt-0", className)} {...props} />
+  <div ref={ref} className={cn("p-6 pt-0", className)} {...props} />
 ))
 CardContent.displayName = "CardContent"
 
