@@ -3,8 +3,8 @@
 @theme {
   --color-primary: #EF4444;
   --color-primary-light: rgba(239, 68, 68, 0.1);
-  --color-bg-base: #1A1B26;
-  --color-bg-card: rgba(255, 255, 255, 0.05);
+  --color-bg-base: #0A0A12;
+  --color-bg-card: rgba(30, 41, 59, 0.5);
   --color-text-main: #F1F5F9;
   --color-text-muted: #94A3B8;
   --color-success: #10B981;
@@ -14,8 +14,8 @@
   --radius-2xl: 20px;
   --radius-3xl: 28px;
   
-  --shadow-card: 0 10px 40px rgba(0, 0, 0, 0.3);
-  --shadow-glow: 0 0 25px rgba(239, 68, 68, 0.12);
+  --shadow-card: 0 10px 40px rgba(0, 0, 0, 0.4);
+  --shadow-glow: 0 0 25px rgba(239, 68, 68, 0.15);
 }
 
 @layer base {

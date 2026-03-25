@@ -23,11 +23,16 @@ export function Header({ title, backButton = false, rightElement, showLogo = fal
         )}
       </div>
 
-      <div className="flex flex-2 justify-center text-center">
+      <div className="flex flex-2 justify-center text-center items-center">
         {title ? (
-          <h1 className="text-xl font-black text-white truncate px-4 uppercase tracking-tighter italic">{title}</h1>
+          <h1 className="text-xl font-black text-white truncate px-4 uppercase tracking-tighter italic">
+            {title}
+            <span className="text-[8px] text-white/20 ml-2 not-italic font-black tracking-widest opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">V4.2 M-ELITE</span>
+          </h1>
         ) : (
-          <h1 className="text-xl font-black text-white uppercase tracking-tighter italic">Fire Académie</h1>
+          <h1 className="text-xl font-black text-white uppercase tracking-tighter italic">
+            Fire Académie <span className="text-[8px] text-white/20 ml-2 not-italic font-black tracking-widest">V4.2</span>
+          </h1>
         )}
       </div>
 
