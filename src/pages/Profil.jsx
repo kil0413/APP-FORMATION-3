@@ -64,44 +64,44 @@ export default function Profil() {
             
             {/* Stats Cards */}
             <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
-              <div className="bg-white p-6 md:p-8 rounded-[2.5rem] shadow-xl shadow-gray-200/50 border border-gray-100 flex flex-col items-center text-center transition-transform hover:-translate-y-1">
-                 <div className="h-16 w-16 bg-blue-50 rounded-[1.5rem] flex items-center justify-center text-blue-500 mb-4 shadow-inner">
-                   <Award size={32} />
-                 </div>
-                 <p className="text-3xl md:text-4xl font-black text-[#1A1A2E] tracking-tighter leading-none">{user?.xp_total || 0}</p>
-                 <p className="text-[10px] md:text-xs font-black uppercase text-gray-400 tracking-widest mt-2">Points XP</p>
-              </div>
-              <div className="bg-white p-6 md:p-8 rounded-[2.5rem] shadow-xl shadow-gray-200/50 border border-gray-100 flex flex-col items-center text-center transition-transform hover:-translate-y-1">
-                 <div className="h-16 w-16 bg-green-50 rounded-[1.5rem] flex items-center justify-center text-green-500 mb-4 shadow-inner">
-                   <BookOpen size={32} />
-                 </div>
-                 <p className="text-3xl md:text-4xl font-black text-[#1A1A2E] tracking-tighter leading-none">{user?.completed_fiches?.length || 0}</p>
-                 <p className="text-[10px] md:text-xs font-black uppercase text-gray-400 tracking-widest mt-2">Dossiers</p>
-              </div>
-              <div className="hidden md:flex bg-white p-6 md:p-8 rounded-[2.5rem] shadow-xl shadow-gray-200/50 border border-gray-100 flex flex-col items-center text-center transition-transform hover:-translate-y-1">
-                 <div className="h-16 w-16 bg-orange-50 rounded-[1.5rem] flex items-center justify-center text-orange-500 mb-4 shadow-inner">
-                   <Clock size={32} />
-                 </div>
-                 <p className="text-3xl md:text-4xl font-black text-[#1A1A2E] tracking-tighter leading-none">{Math.floor((user?.xp_total || 0) / 10)}h</p>
-                 <p className="text-[10px] md:text-xs font-black uppercase text-gray-400 tracking-widest mt-2">Temps total</p>
-              </div>
+               <div className="bg-[#1E293B]/20 p-6 md:p-8 rounded-[2.5rem] shadow-2xl border border-white/5 flex flex-col items-center text-center transition-transform hover:-translate-y-1">
+                  <div className="h-16 w-16 bg-blue-500/10 rounded-[1.5rem] flex items-center justify-center text-blue-400 mb-4 shadow-xl">
+                    <Award size={32} />
+                  </div>
+                  <p className="text-3xl md:text-4xl font-black text-white tracking-tighter leading-none">{user?.xp_total || 0}</p>
+                  <p className="text-[10px] md:text-xs font-black uppercase text-white/40 tracking-widest mt-2">Points XP</p>
+               </div>
+               <div className="bg-[#1E293B]/20 p-6 md:p-8 rounded-[2.5rem] shadow-2xl border border-white/5 flex flex-col items-center text-center transition-transform hover:-translate-y-1">
+                  <div className="h-16 w-16 bg-green-500/10 rounded-[1.5rem] flex items-center justify-center text-green-400 mb-4 shadow-xl">
+                    <BookOpen size={32} />
+                  </div>
+                  <p className="text-3xl md:text-4xl font-black text-white tracking-tighter leading-none">{user?.completed_fiches?.length || 0}</p>
+                  <p className="text-[10px] md:text-xs font-black uppercase text-white/40 tracking-widest mt-2">Dossiers</p>
+               </div>
+               <div className="hidden md:flex bg-[#1E293B]/20 p-6 md:p-8 rounded-[2.5rem] shadow-2xl border border-white/5 flex flex-col items-center text-center transition-transform hover:-translate-y-1">
+                  <div className="h-16 w-16 bg-orange-500/10 rounded-[1.5rem] flex items-center justify-center text-orange-400 mb-4 shadow-xl">
+                    <Clock size={32} />
+                  </div>
+                  <p className="text-3xl md:text-4xl font-black text-white tracking-tighter leading-none">{Math.floor((user?.xp_total || 0) / 10)}h</p>
+                  <p className="text-[10px] md:text-xs font-black uppercase text-white/40 tracking-widest mt-2">Temps total</p>
+               </div>
             </div>
 
             {/* Badges Section */}
-            <div className="bg-white p-8 md:p-12 rounded-[3rem] shadow-2xl border border-gray-100">
-               <h3 className="text-xl font-black uppercase italic tracking-tighter text-[#1A1A2E] mb-8 flex items-center gap-3">
-                  <Award className="text-[#CC1A1A]" size={28} />
-                  Récompenses du Sapeur
-               </h3>
-               <div className="grid grid-cols-2 sm:grid-cols-4 gap-6">
-                  {[1, 2, 3, 4, 5, 6, 7, 8].map(badge => (
-                     <div key={badge} className="group relative aspect-square bg-gray-50 rounded-3xl border border-dashed border-gray-200 flex flex-col items-center justify-center gap-2 grayscale opacity-30 hover:grayscale-0 hover:opacity-100 transition-all cursor-help">
-                        <Award size={48} className="text-gray-300 group-hover:text-yellow-500 transition-colors" strokeWidth={1} />
-                        <span className="text-[8px] font-black uppercase text-gray-400">Verrouillé</span>
-                     </div>
-                  ))}
-               </div>
-            </div>
+             <div className="bg-[#1E293B]/20 p-8 md:p-12 rounded-[3rem] shadow-2xl border border-white/5">
+                <h3 className="text-xl font-black uppercase italic tracking-tighter text-white mb-8 flex items-center gap-3">
+                   <Award className="text-red-500" size={28} />
+                   Récompenses du Sapeur
+                </h3>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-6">
+                   {[1, 2, 3, 4, 5, 6, 7, 8].map(badge => (
+                      <div key={badge} className="group relative aspect-square bg-white/5 rounded-3xl border border-dashed border-white/10 flex flex-col items-center justify-center gap-2 grayscale opacity-30 hover:grayscale-0 hover:opacity-100 transition-all cursor-help">
+                         <Award size={48} className="text-white/20 group-hover:text-yellow-500 transition-colors" strokeWidth={1} />
+                         <span className="text-[8px] font-black uppercase text-white/20">Verrouillé</span>
+                      </div>
+                   ))}
+                </div>
+             </div>
           </div>
 
           {/* Col Droite - PWA & Actions (4 cols) */}
@@ -115,7 +115,7 @@ export default function Profil() {
                 <p className="text-sm opacity-80 font-medium mb-8 leading-relaxed">Installez l'application sur votre écran d'accueil pour un accès instantané même sans connexion.</p>
                 <button 
                   onClick={handleInstallApp}
-                  className="w-full flex items-center justify-center gap-3 bg-white text-blue-700 py-5 rounded-2xl font-black uppercase tracking-widest text-xs shadow-xl hover:bg-gray-50 transition-all active:scale-95"
+                  className="w-full flex items-center justify-center gap-3 bg-blue-500/10 text-blue-400 py-5 rounded-2xl font-black uppercase tracking-widest text-xs shadow-xl hover:bg-blue-500/20 transition-all active:scale-95"
                 >
                   <Download size={20} />
                   Installer maintenant
@@ -123,28 +123,28 @@ export default function Profil() {
               </div>
             )}
 
-            <div className="bg-white p-8 rounded-[2.5rem] shadow-xl border border-gray-100">
-               <h3 className="text-sm font-black text-gray-400 uppercase tracking-[0.2em] mb-6">Paramètres Compte</h3>
-               <div className="space-y-4">
-                  <button className="w-full flex items-center justify-between p-4 bg-gray-50 hover:bg-gray-100 rounded-2xl transition-colors text-left group">
-                    <div className="flex items-center gap-3">
-                       <Settings size={20} className="text-gray-400 group-hover:text-red-500 transition-colors" />
-                       <span className="font-bold text-sm text-[#1A1A2E]">Préférences</span>
-                    </div>
-                    <ChevronRight size={18} className="text-gray-300" />
-                  </button>
-                  <button onClick={handleLogout} className="md:hidden w-full flex items-center gap-3 p-4 bg-red-50 hover:bg-red-100 text-red-600 rounded-2xl transition-colors text-left font-black uppercase text-[10px] tracking-widest">
-                    <LogOut size={20} />
-                    Déconnexion
-                  </button>
-               </div>
-            </div>
+             <div className="bg-[#1E293B]/20 p-8 rounded-[2.5rem] shadow-2xl border border-white/5">
+                <h3 className="text-sm font-black text-white/40 uppercase tracking-[0.2em] mb-6">Paramètres Compte</h3>
+                <div className="space-y-4">
+                   <button className="w-full flex items-center justify-between p-4 bg-white/5 hover:bg-white/10 rounded-2xl transition-colors text-left group">
+                     <div className="flex items-center gap-3">
+                        <Settings size={20} className="text-white/40 group-hover:text-red-500 transition-colors" />
+                        <span className="font-bold text-sm text-white">Préférences</span>
+                     </div>
+                     <ChevronRight size={18} className="text-white/10" />
+                   </button>
+                   <button onClick={handleLogout} className="md:hidden w-full flex items-center gap-3 p-4 bg-red-500/10 hover:bg-red-500/20 text-red-500 rounded-2xl transition-colors text-left font-black uppercase text-[10px] tracking-widest">
+                     <LogOut size={20} />
+                     Déconnexion
+                   </button>
+                </div>
+             </div>
           </div>
 
         </div>
 
         {/* Footer info center */}
-        <p className="text-center text-[10px] font-bold text-gray-300 uppercase tracking-[0.2em] mt-10">Application de Formation - Version 2.0.0 Cloudflare</p>
+         <p className="text-center text-[10px] font-black text-white/10 uppercase tracking-[0.3em] mt-10 italic">Fire Académie — Centre de Préparation Élite</p>
       </main>
     </PageWrapper>
   );

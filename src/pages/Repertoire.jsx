@@ -90,10 +90,10 @@ export default function Repertoire() {
 
         {/* Horizontal Categories */}
         <section className="flex flex-col gap-6">
-           <div className="flex items-center justify-between">
-              <h2 className="text-xs font-black text-gray-400 uppercase tracking-[0.3em]">Catégories Thématiques</h2>
+           <div className="flex items-center justify-between px-2">
+              <h2 className="text-sm font-black text-white/40 uppercase tracking-[0.4em]">Catégories Thématiques</h2>
               {activeCategory !== 'all' && (
-                <button onClick={() => setActiveCategory('all')} className="text-[#CC1A1A] font-black text-[10px] uppercase tracking-widest">Réinitialiser</button>
+                <button onClick={() => setActiveCategory('all')} className="text-red-500 font-black text-[10px] uppercase tracking-widest">Réinitialiser</button>
               )}
            </div>
            
@@ -102,25 +102,25 @@ export default function Repertoire() {
                 <button 
                   key={cat.id}
                   onClick={() => setActiveCategory(activeCategory === cat.id ? 'all' : cat.id)}
-                  className={cn(
-                    "shrink-0 flex items-center gap-4 p-4 md:p-6 rounded-[2rem] border transition-all duration-300 group shadow-sm",
-                    activeCategory === cat.id 
-                      ? "bg-[#1A1A2E] border-[#1A1A2E] shadow-xl shadow-red-500/10 scale-105" 
-                      : "bg-white border-gray-100 hover:border-red-500/20"
-                  )}
+                   className={cn(
+                     "shrink-0 flex items-center gap-4 p-4 md:p-6 rounded-[2rem] border transition-all duration-300 group shadow-2xl",
+                     activeCategory === cat.id 
+                       ? "bg-red-600 border-red-600 shadow-red-500/20 scale-105" 
+                       : "bg-white/5 border-white/5 hover:border-red-600/20"
+                   )}
                 >
-                   <div 
-                     className={cn(
-                       "h-14 w-14 rounded-2xl flex items-center justify-center transition-colors",
-                       activeCategory === cat.id ? "bg-white/10 text-white" : "bg-gray-50 text-gray-400 group-hover:bg-red-50 group-hover:text-[#CC1A1A]"
-                     )}
-                   >
+                    <div 
+                      className={cn(
+                        "h-14 w-14 rounded-2xl flex items-center justify-center transition-colors",
+                        activeCategory === cat.id ? "bg-white/10 text-white" : "bg-white/5 text-white/40 group-hover:bg-red-500/10 group-hover:text-red-500"
+                      )}
+                    >
                       <LayoutGrid size={24} />
                    </div>
-                   <div className="flex flex-col items-start pr-4">
-                      <span className={cn("text-xs font-black uppercase tracking-widest", activeCategory === cat.id ? "text-white" : "text-[#1A1A2E]")}>{cat.name}</span>
-                      <span className={cn("text-[9px] font-bold mt-0.5", activeCategory === cat.id ? "text-white/40" : "text-gray-400")}>12 documents</span>
-                   </div>
+                    <div className="flex flex-col items-start pr-4">
+                       <span className={cn("text-xs font-black uppercase tracking-widest", activeCategory === cat.id ? "text-white" : "text-white")}>{cat.name}</span>
+                       <span className={cn("text-[9px] font-bold mt-0.5", activeCategory === cat.id ? "text-white/40" : "text-white/20")}>12 documents</span>
+                    </div>
                 </button>
               ))}
            </div>
@@ -128,15 +128,15 @@ export default function Repertoire() {
 
         {/* Documents Grid */}
         <section className="flex flex-col gap-10 mb-20">
-          <div className="flex items-center justify-between">
-            <h2 className="text-2xl md:text-3xl font-black text-[#1A1A2E] tracking-tighter uppercase italic">
-               Résultats <span className="text-[#CC1A1A]">({filteredFiches.length})</span>
-            </h2>
-            <div className="flex items-center gap-2 text-gray-400">
-               <Filter size={14} />
-               <span className="text-[10px] font-black uppercase tracking-widest">Trier par : Pertinence</span>
-            </div>
-          </div>
+           <div className="flex items-center justify-between px-2">
+             <h2 className="text-2xl md:text-3xl font-black text-white tracking-tighter uppercase italic">
+                Résultats <span className="text-red-500">({filteredFiches.length})</span>
+             </h2>
+             <div className="flex items-center gap-2 text-white/30">
+                <Filter size={14} />
+                <span className="text-[10px] font-black uppercase tracking-widest">Trier par : Pertinence</span>
+             </div>
+           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-10">
             {filteredFiches.length > 0 ? filteredFiches.map(fiche => {
@@ -144,10 +144,10 @@ export default function Repertoire() {
               const isCompleted = user.completed_fiches?.includes(fiche.id);
               
               return (
-                <Card 
-                  key={fiche.id} 
-                  className="group cursor-pointer border-none shadow-[0_10px_30px_rgba(0,0,0,0.03)] hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 rounded-[3rem] bg-white overflow-hidden p-0" 
-                  onClick={() => navigate(`/fiche/${fiche.id}`)}
+                 <Card 
+                   key={fiche.id} 
+                   className="group cursor-pointer border-white/5 shadow-2xl hover:-translate-y-2 transition-all duration-500 rounded-[3rem] bg-[#1E293B]/20 overflow-hidden p-0" 
+                   onClick={() => navigate(`/fiche/${fiche.id}`)}
                 >
                   <CardContent className="p-8 flex flex-col gap-8">
                     <div className="flex items-start justify-between">
