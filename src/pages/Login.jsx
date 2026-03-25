@@ -60,14 +60,6 @@ export default function Login() {
         <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: 'radial-gradient(circle, #fff 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
 
         <div className="relative z-10 flex flex-col items-center text-center max-w-2xl">
-           <motion.div 
-             initial={{ scale: 0.8, opacity: 0, rotateY: 180 }}
-             animate={{ scale: 1, opacity: 1, rotateY: 0 }}
-             transition={{ duration: 1.2, ease: "easeOut" }}
-             className="h-40 w-40 bg-gradient-to-br from-red-600 to-red-800 rounded-[3.5rem] flex items-center justify-center shadow-[0_30px_90px_rgba(204,26,26,0.4)] border-8 border-white/10 mb-12"
-           >
-              <Shield size={80} className="text-white fill-current drop-shadow-2xl" />
-           </motion.div>
            
            <motion.div
              initial={{ y: 30, opacity: 0 }}
