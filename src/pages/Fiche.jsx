@@ -7,6 +7,7 @@ import { Badge } from '../components/ui/Badge';
 import { ProgressBar } from '../components/ui/ProgressBar';
 import PDFViewer from '../components/ui/PDFViewer';
 import { motion, AnimatePresence } from 'framer-motion';
+import { cn } from '../lib/utils';
 
 export default function Fiche() {
   const { id } = useParams();

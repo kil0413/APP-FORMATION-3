@@ -1,3 +1,7 @@
+import { useNavigate, useLocation } from 'react-router-dom';
+import { useAuthStore } from '../../store/useAuthStore';
+import { LayoutDashboard, FileText, Users, Settings, ChevronRight, LogOut } from 'lucide-react';
+
 export default function AdminSidebar({ onLogout }) {
   const navigate = useNavigate();
   const location = useLocation();
