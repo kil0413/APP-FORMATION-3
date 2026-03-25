@@ -159,25 +159,25 @@ export default function Repertoire() {
                           {fiche.file_type === 'pdf' ? <FileText size={40} /> : <ImageIcon size={40} />}
                         </div>
                         {isCompleted && (
-                          <div className="absolute -bottom-2 -right-2 h-10 w-10 rounded-full bg-white shadow-xl border border-gray-50 flex items-center justify-center text-green-500 active:scale-95 transition-transform">
+                          <div className="absolute -bottom-2 -right-2 h-10 w-10 rounded-full bg-green-500 shadow-xl border border-white/10 flex items-center justify-center text-white active:scale-95 transition-transform shadow-[0_0_15px_rgba(34,197,94,0.4)]">
                              <CheckCircle2 size={24} />
                           </div>
                         )}
                       </div>
-                      <Badge className="bg-gray-50 text-gray-400 border-none font-black uppercase text-[10px] tracking-widest px-4 py-2">
-                         {fiche.difficulty}
-                      </Badge>
+                       <Badge className="bg-white/5 text-white/40 border-none font-black uppercase text-[10px] tracking-widest px-4 py-2">
+                          {fiche.difficulty}
+                       </Badge>
                     </div>
                     
                     <div className="flex flex-col gap-4">
-                       <h3 className="font-black text-[#1A1A2E] text-2xl md:text-3xl tracking-tighter italic uppercase leading-tight line-clamp-2">
-                          {fiche.title}
-                       </h3>
+                        <h3 className="font-black text-white text-2xl md:text-3xl tracking-tighter italic uppercase leading-tight line-clamp-2">
+                           {fiche.title}
+                        </h3>
                        <div className="flex flex-wrap gap-2">
-                          <span className="text-[10px] font-black uppercase tracking-widest text-[#CC1A1A] px-3 py-1 bg-red-50 rounded-lg">{category?.name}</span>
-                          <span className="text-[10px] font-black uppercase tracking-widest text-gray-400 px-3 py-1 bg-gray-50 rounded-lg flex items-center gap-1">
-                             <Clock size={12} />
-                             10 min
+                           <span className="text-[10px] font-black uppercase tracking-widest text-red-400 px-3 py-1 bg-red-500/10 rounded-lg">{category?.name}</span>
+                           <span className="text-[10px] font-black uppercase tracking-widest text-white/40 px-3 py-1 bg-white/5 rounded-lg flex items-center gap-1">
+                              <Clock size={12} />
+                              10 min
                           </span>
                        </div>
                     </div>
