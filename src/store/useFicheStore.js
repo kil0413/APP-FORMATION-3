@@ -21,7 +21,6 @@ export const useFicheStore = create((set, get) => ({
         // Chargement indépendant pour ne pas tout bloquer si une table manque
         try {
           const resC = await supabase.from('categories').select('*');
-          console.log("DB RAW Categories:", resC);
           if (resC.error) throw resC.error;
           categoriesData = resC.data || [];
         } catch (e) { 
@@ -30,13 +29,8 @@ export const useFicheStore = create((set, get) => ({
 
         try {
           const resF = await supabase.from('fiches').select('*');
-          console.log("DB RAW Fiches:", resF);
           if (resF.error) throw resF.error;
           fichesData = resF.data || [];
-          alert("FICHES RECUES DEPUIS SUPABASE : " + fichesData.length);
-          if (fichesData.length === 0) {
-            console.warn("La table fiches a ete lue avec succes mais est VIDE.");
-          }
         } catch (e) {
           console.error("Erreur fiches:", e.message);
           set({ error: "Erreur Supabase: " + e.message });
@@ -44,7 +38,6 @@ export const useFicheStore = create((set, get) => ({
 
         try {
           const resQ = await supabase.from('quizzes').select('*');
-          console.log("DB RAW Quizzes:", resQ);
           if (resQ.error) throw resQ.error;
           quizzesData = resQ.data || [];
         } catch (e) {

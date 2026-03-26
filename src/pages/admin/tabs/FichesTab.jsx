@@ -12,42 +12,6 @@ export default function FichesTab() {
   const [viewMode, setViewMode] = useState('list'); // 'grid' or 'list'
   const [editingFiche, setEditingFiche] = useState(null);
   const [isEditorOpen, setIsEditorOpen] = useState(false);
-  const [isTestingDB, setIsTestingDB] = useState(false);
-
-  const testConnection = async () => {
-    setIsTestingDB(true);
-    try {
-      const isReal = supabase.supabaseUrl && !supabase.supabaseUrl.includes('placeholder');
-      if (!isReal) {
-        alert('⚠️ ERREUR : La connexion Supabase n est pas configurée dans votre fichier .env (URL placeholder detectée).');
-        setIsTestingDB(false);
-        return;
-      }
-
-      // Tentative de lecture
-      const { data: testRead, error: readError } = await supabase.from('fiches').select('id').limit(1);
-      if (readError) throw new Error('LECTURE ECHOUEE : ' + readError.message);
-
-      // Tentative d-insertion test
-      const testFiche = { 
-        title: 'TEST CONNEXION - ' + new Date().toLocaleTimeString(),
-        category_id: 'c1',
-        type: 'classic',
-        is_published: false
-      };
-      
-      const { data: testInsert, error: insertError } = await supabase.from('fiches').insert([testFiche]).select();
-      if (insertError) throw new Error('INSERTION ECHOUEE : ' + insertError.message);
-
-      alert('✅ SUCCÈS : La lecture et l écriture fonctionnent sur Supabase ! Les données sont bien enregistrées en base.');
-      await fetchData();
-      window.location.reload(); 
-    } catch (err) {
-      alert('❌ ERREUR DB : ' + err.message + '\n\nConseil : Verifiez que vous avez bien execute les scripts SQL et desactive le RLS sur Supabase.');
-    } finally {
-      setIsTestingDB(false);
-    }
-  };
 
   const filteredFiches = fiches.filter(f => {
     const matchesSearch = f.title.toLowerCase().includes(searchTerm.toLowerCase());
@@ -73,51 +37,6 @@ export default function FichesTab() {
 
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-      {/* 🔬 DIAGNOSTIC HUD (Temporary) */}
-      <div className="bg-[#1A1A2E] text-white p-6 rounded-[2rem] border border-blue-500/30 shadow-2xl relative overflow-hidden group">
-         <div className="absolute top-0 right-0 p-8 opacity-10 rotate-12 group-hover:rotate-0 transition-transform duration-700">
-            <Database size={120} />
-         </div>
-         <div className="relative z-10">
-            <h3 className="text-[10px] font-black uppercase tracking-[0.4em] text-blue-400 mb-4 flex items-center gap-2">
-               <AlertCircle size={14} /> Diagnostic Système Supabase
-            </h3>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-               <div className="space-y-1">
-                  <span className="text-[9px] font-bold text-gray-500 uppercase tracking-widest">URL Active</span>
-                  <p className="text-xs font-mono text-blue-200 truncate">{supabase.supabaseUrl}</p>
-               </div>
-               <div className="space-y-1">
-                  <span className="text-[9px] font-bold text-gray-500 uppercase tracking-widest">Status de la table fiches</span>
-                  <div className="flex items-center gap-2">
-                     <div className={`h-2 w-2 rounded-full ${isLoading ? 'bg-orange-400 animate-pulse' : (realFichesCount > 0 ? 'bg-green-500' : 'bg-red-500')}`} />
-                     <p className="text-xs font-black uppercase tracking-tighter">
-                        {isLoading ? 'Chargement...' : (realFichesCount > 0 ? `${realFichesCount} fiches détectées en DB` : 'Zéro fiches en DB')}
-                     </p>
-                  </div>
-               </div>
-               <div className="space-y-1">
-                  <span className="text-[9px] font-bold text-gray-500 uppercase tracking-widest">Dernier Message d'erreur</span>
-                  <p className="text-xs font-bold text-red-400 italic">{error || 'Aucune erreur détectée'}</p>
-               </div>
-            </div>
-            
-            <div className="flex gap-2 mt-6">
-               <button 
-                  onClick={() => fetchData()}
-                  className="flex items-center gap-2 px-4 py-2 bg-white/5 hover:bg-white/10 rounded-xl text-[9px] font-black uppercase tracking-widest text-blue-300 transition-all border border-white/10"
-               >
-                  <RefreshCw size={12} className={isLoading ? "animate-spin" : ""} /> Force Fetching
-               </button>
-               <button 
-                  onClick={() => alert(JSON.stringify(fiches.map(f => ({ id: f.id, title: f.title })), null, 2))}
-                  className="flex items-center gap-2 px-4 py-2 bg-white/5 hover:bg-white/10 rounded-xl text-[9px] font-black uppercase tracking-widest text-blue-300 transition-all border border-white/10"
-               >
-                  <Eye size={12} /> Explorer JSON Brut
-               </button>
-            </div>
-         </div>
-      </div>
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h2 className="text-3xl font-black text-[#1A1A2E] tracking-tighter uppercase italic">Catalogue de Formation</h2>
@@ -134,14 +53,6 @@ export default function FichesTab() {
           </div>
         </div>
         <div className="flex gap-3">
-          <button 
-            onClick={testConnection}
-            disabled={isTestingDB}
-            className={`flex items-center justify-center gap-2 px-6 py-4 rounded-2xl font-black uppercase tracking-widest text-[10px] transition-all active:scale-95 ${isTestingDB ? 'bg-gray-100 text-gray-400' : 'bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white border border-blue-100'}`}
-          >
-            {isTestingDB ? <RefreshCw size={14} className="animate-spin" /> : <Database size={14} />}
-            {isTestingDB ? 'Test...' : 'Debug DB'}
-          </button>
           <button 
             onClick={handleAddNew}
             className="bg-[#CC1A1A] text-white flex items-center justify-center gap-2 px-6 py-4 rounded-2xl font-black uppercase tracking-widest text-xs shadow-xl shadow-red-500/20 active:scale-95 hover:bg-black transition-all"
