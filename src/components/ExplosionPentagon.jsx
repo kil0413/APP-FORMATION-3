@@ -77,12 +77,12 @@ export default function ExplosionPentagon() {
   return (
     <div className="w-full h-full flex flex-col overflow-hidden" style={{ background: '#0b0f1a' }}>
       {/* Header with Page Switcher */}
-      <div className="px-8 py-4 md:py-8 border-b shrink-0 flex justify-between items-center" style={{ borderColor: '#1e2a3a' }}>
+      <div className="px-4 py-2 md:px-8 md:py-8 border-b shrink-0 flex justify-between items-center" style={{ borderColor: '#1e2a3a' }}>
         <div>
-          <h2 className="text-xl md:text-3xl font-black tracking-tight uppercase italic mb-1" style={{ color: '#f0e6d3' }}>
-            Les 5 conditions de l'explosion
+          <h2 className="text-lg md:text-3xl font-black tracking-tight uppercase italic" style={{ color: '#f0e6d3' }}>
+            L'explosion
           </h2>
-          <p className="hidden md:block text-sm font-light" style={{ color: '#7a8ba8' }}>
+          <p className="hidden md:block text-sm font-light mt-1" style={{ color: '#7a8ba8' }}>
             Explorez les 5 éléments essentiels pour qu'une explosion se produise
           </p>
         </div>
@@ -121,7 +121,7 @@ export default function ExplosionPentagon() {
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: 20 }}
-              className="absolute inset-0 flex flex-col lg:flex-row p-4 md:p-8 gap-4 md:gap-12 lg:items-center overflow-hidden"
+              className="absolute inset-0 flex flex-col lg:flex-row p-2 md:p-8 gap-2 md:gap-12 lg:items-center overflow-hidden"
             >
               {/* Left: Pentagon */}
               <div className="flex-shrink-0 flex flex-col items-center justify-center min-h-0 lg:w-[45%]">
@@ -253,23 +253,23 @@ export default function ExplosionPentagon() {
                       initial={{ opacity: 0, scale: 0.95 }}
                       animate={{ opacity: 1, scale: 1 }}
                       exit={{ opacity: 0, scale: 0.95 }}
-                      className="w-full max-w-md md:max-w-2xl rounded-[2rem] p-5 md:p-8 border shadow-2xl overflow-hidden" 
+                      className="w-full max-w-md md:max-w-2xl rounded-2xl md:rounded-[2rem] p-4 md:p-8 border shadow-2xl overflow-hidden" 
                       style={{ background: '#111827', borderColor: '#1e2a3a' }}
                     >
-                      <div className="flex items-center gap-4 mb-4 md:mb-6">
+                      <div className="flex items-center gap-3 md:gap-6 mb-3 md:mb-6">
                         <div 
-                          className="w-12 h-12 md:w-16 md:h-16 rounded-xl flex items-center justify-center text-4xl shrink-0"
+                          className="w-10 h-10 md:w-16 md:h-16 rounded-lg md:rounded-xl flex items-center justify-center text-2xl md:text-4xl shrink-0"
                           style={{ background: `${activeCondition.color}22` }}
                         >
                           {activeCondition.icon}
                         </div>
                         <div>
-                           <h3 className="font-bold text-lg md:text-2xl" style={{ color: '#f0e6d3' }}>{activeCondition.label}</h3>
-                           <span className="text-[10px] md:text-sm uppercase tracking-widest font-bold" style={{ color: '#7a8ba8' }}>Condition {activeIndex + 1} / 5</span>
+                           <h3 className="font-bold text-sm md:text-2xl" style={{ color: '#f0e6d3' }}>{activeCondition.label}</h3>
+                           <span className="text-[9px] md:text-sm uppercase tracking-widest font-bold" style={{ color: '#7a8ba8' }}>Condition {activeIndex + 1} / 5</span>
                         </div>
                       </div>
-                      <p className="text-[12px] md:text-lg leading-relaxed mb-4" style={{ color: '#a0aec0' }}>{activeCondition.desc}</p>
-                      <div className="rounded-xl p-4 font-medium text-[11px] md:text-base bg-[#0b0f1a]" style={{ color: '#7a8ba8', borderLeft: `4px solid ${activeCondition.color}` }}>
+                      <p className="text-[11px] md:text-lg leading-relaxed mb-3 md:mb-4" style={{ color: '#a0aec0' }}>{activeCondition.desc}</p>
+                      <div className="rounded-lg md:rounded-xl p-3 md:p-4 font-medium text-[10px] md:text-base bg-[#0b0f1a]" style={{ color: '#7a8ba8', borderLeft: `4px solid ${activeCondition.color}` }}>
                         {activeCondition.example}
                       </div>
                     </motion.div>
@@ -283,7 +283,7 @@ export default function ExplosionPentagon() {
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -20 }}
-              className="absolute inset-0 p-4 md:p-12 overflow-y-auto no-scrollbar"
+              className="absolute inset-0 p-2 md:p-12 overflow-y-auto no-scrollbar"
             >
               <div className="max-w-4xl mx-auto flex flex-col gap-6">
                  {triggers.map((t, i) => (
@@ -292,12 +292,12 @@ export default function ExplosionPentagon() {
                      initial={{ opacity: 0, y: 10 }}
                      animate={{ opacity: 1, y: 0 }}
                      transition={{ delay: i * 0.1 }}
-                     className="group rounded-2xl p-6 border transition-all cursor-pointer hover:-translate-y-1"
+                     className="group rounded-xl md:rounded-2xl p-4 md:p-6 border transition-all cursor-pointer hover:-translate-y-1"
                      style={{ background: '#111827', borderColor: '#1e2a3a' }}
                      whileHover={{ borderColor: t.color, background: '#1a2332' }}
                    >
-                     <div className="flex items-start gap-6">
-                       <div className="text-4xl md:text-5xl flex-shrink-0">{t.icon}</div>
+                     <div className="flex items-start gap-4 md:gap-6">
+                       <div className="text-3xl md:text-5xl flex-shrink-0">{t.icon}</div>
                        <div>
                          <h3 className="font-bold text-lg md:text-xl mb-1" style={{ color: '#f0e6d3' }}>{t.title}</h3>
                          <p className="text-sm font-light leading-relaxed" style={{ color: '#a0aec0' }}>{t.desc}</p>
@@ -312,7 +312,7 @@ export default function ExplosionPentagon() {
       </div>
 
       {/* Bottom Nav Dots */}
-      <div className="px-8 py-6 border-t shrink-0 flex justify-center items-center" style={{ borderColor: '#1e2a3a' }}>
+      <div className="px-4 py-4 md:px-8 md:py-6 border-t shrink-0 flex justify-center items-center" style={{ borderColor: '#1e2a3a' }}>
         <div className="flex gap-3">
           <button 
             onClick={() => setCurrentPage(1)}
