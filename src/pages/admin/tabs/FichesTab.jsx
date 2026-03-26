@@ -6,7 +6,7 @@ import { Card } from '../../../components/ui/Card';
 import FicheEditor from '../components/FicheEditor';
 
 export default function FichesTab() {
-  const { fiches, categories, deleteFiche, realFichesCount } = useFicheStore();
+  const { fiches, categories, deleteFiche, realFichesCount, fetchData } = useFicheStore();
   const [searchTerm, setSearchTerm] = useState('');
   const [filterCategory, setFilterCategory] = useState('all');
   const [viewMode, setViewMode] = useState('list'); // 'grid' or 'list'
@@ -40,7 +40,8 @@ export default function FichesTab() {
       if (insertError) throw new Error('INSERTION ECHOUEE : ' + insertError.message);
 
       alert('✅ SUCCÈS : La lecture et l écriture fonctionnent sur Supabase ! Les données sont bien enregistrées en base.');
-      window.location.reload(); // Rafraichir pour voir les changements
+      await fetchData();
+      window.location.reload(); 
     } catch (err) {
       alert('❌ ERREUR DB : ' + err.message + '\n\nConseil : Verifiez que vous avez bien execute les scripts SQL et desactive le RLS sur Supabase.');
     } finally {
