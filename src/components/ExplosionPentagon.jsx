@@ -234,7 +234,7 @@ export default function ExplosionPentagon() {
                 {activeCondition.desc}
               </p>
               
-              <div className="mt-2 md:mt-6 text-[10px] md:text-sm rounded-lg md:rounded-xl p-2 md:p-5 font-medium bg-[#0b0f1a]" style={{ color: '#7a8ba8', borderLeft: `3px md:border-left-4 md:border-left-[activeCondition.color]44` }}>
+              <div className="mt-2 md:mt-6 text-[10px] md:text-sm rounded-lg md:rounded-xl p-2 md:p-5 font-medium bg-[#0b0f1a]" style={{ color: '#7a8ba8', borderLeft: `3px solid ${activeCondition.color}44` }}>
                 {activeCondition.example}
               </div>
             </motion.div>
