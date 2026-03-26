@@ -102,6 +102,12 @@ export const useFicheStore = create((set, get) => ({
       }
     } catch (err) {
       console.error('Erreur addFiche:', err.message);
+      
+      // Afficher l'alerte seulement si c'était censé être une vraie connexion
+      if (isRealSupabase) {
+        alert('Attention : Erreur de sauvegarde réseau (' + err.message + '). La fiche sera visible localement mais risque de disparaître au rafraîchissement.');
+      }
+
       // En mode développement/offline, on ajoute au local quand même pour le test
       const tempFiche = { 
         ...newFiche, 
@@ -137,6 +143,9 @@ export const useFicheStore = create((set, get) => ({
       }
     } catch (err) {
       console.error('Erreur updateFiche:', err.message);
+      if (isRealSupabase) {
+        alert('Erreur de mise à jour réseau: ' + err.message);
+      }
       // Fallback
       set((state) => ({ fiches: state.fiches.map(f => f.id === id ? { ...f, ...updatedFiche } : f) }));
     }
@@ -161,6 +170,10 @@ export const useFicheStore = create((set, get) => ({
       set((state) => ({ fiches: state.fiches.filter((f) => f.id !== id) }));
     } catch (err) {
       console.error('Erreur deleteFiche:', err.message);
+      if (isRealSupabase) {
+        alert('Erreur de suppression réseau: ' + err.message);
+      }
+      // Toujours filtrer localement
       set((state) => ({ fiches: state.fiches.filter((f) => f.id !== id) }));
     }
   }
