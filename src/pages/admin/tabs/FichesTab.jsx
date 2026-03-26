@@ -5,7 +5,7 @@ import { Card } from '../../../components/ui/Card';
 import FicheEditor from '../components/FicheEditor';
 
 export default function FichesTab() {
-  const { fiches, categories, deleteFiche } = useFicheStore();
+  const { fiches, categories, deleteFiche, realFichesCount } = useFicheStore();
   const [searchTerm, setSearchTerm] = useState('');
   const [filterCategory, setFilterCategory] = useState('all');
   const [viewMode, setViewMode] = useState('list'); // 'grid' or 'list'
@@ -39,7 +39,17 @@ export default function FichesTab() {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h2 className="text-3xl font-black text-[#1A1A2E] tracking-tighter uppercase italic">Catalogue de Formation</h2>
-          <p className="text-sm font-medium text-gray-400 mt-1">Gérez vos modules de cours et les documents associés</p>
+          <div className="flex items-center gap-4 mt-1">
+             <p className="text-sm font-medium text-gray-400">Gérez vos modules de cours</p>
+             <div className="flex items-center gap-2 bg-gray-100 px-3 py-1 rounded-full border border-gray-200">
+               <div className="flex items-center gap-1.5">
+                  <div className={`h-1.5 w-1.5 rounded-full ${realFichesCount > 0 ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.5)]' : 'bg-orange-400'}`} />
+                  <span className="text-[10px] font-black uppercase tracking-widest text-[#1A1A2E]">📂 DB: {realFichesCount || 0}</span>
+               </div>
+               <div className="h-2 w-px bg-gray-300" />
+               <span className="text-[10px] font-black uppercase tracking-widest text-gray-400">📦 MOCK: {fiches.length - (realFichesCount || 0)}</span>
+             </div>
+          </div>
         </div>
         <button 
           onClick={handleAddNew}
