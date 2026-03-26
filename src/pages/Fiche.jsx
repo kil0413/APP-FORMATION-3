@@ -48,7 +48,7 @@ export default function Fiche() {
   const currentTheme = {
     header: currentCategory?.theme_header || '#fae78f',
     bg: currentCategory?.theme_bg || '#FBFAEF',
-    text: ['c2', 'c3', 'c1'].includes(currentFiche.category_id) ? (currentFiche.category_id === 'c3' ? 'black' : 'white') : 'black'
+    text: (currentFiche.type === 'interactive' && currentFiche.interactive_id === 'explosion_pentagon') ? 'white' : (['c2', 'c3', 'c1'].includes(currentFiche.category_id) ? (currentFiche.category_id === 'c3' ? 'black' : 'white') : 'black')
   };
 
   const handleComplete = () => {
@@ -64,13 +64,15 @@ export default function Fiche() {
 
   return (
     <div 
-      className="h-screen w-full flex flex-col overflow-hidden font-['Inter',_sans-serif] selection:bg-red-500/30"
-      style={{ backgroundColor: currentTheme.bg }}
+      className="h-screen w-full flex flex-col overflow-hidden font-['Inter',_sans-serif] selection:bg-red-500/30 transition-colors duration-500"
+      style={{ backgroundColor: (currentFiche.type === 'interactive' && currentFiche.interactive_id === 'explosion_pentagon') ? '#0b0f1a' : currentTheme.bg }}
     >
       {/* HEADER - GLASS STYLE (V3) */}
       <header 
-        className="fixed top-0 z-[60] w-full pt-4 pb-4 px-6 flex items-center justify-between backdrop-blur-2xl border-b border-black/5"
-        style={{ backgroundColor: `${currentTheme.header}E6` }} // Add 90% opacity (E6)
+        className={cn("fixed top-0 z-[60] w-full pt-4 pb-4 px-6 flex items-center justify-between border-b backdrop-blur-2xl transition-colors duration-500", (currentFiche.type === 'interactive' && currentFiche.interactive_id === 'explosion_pentagon') ? "bg-[#0b0f1a] border-white/5" : "border-black/5")}
+        style={{ 
+          backgroundColor: (currentFiche.type === 'interactive' && currentFiche.interactive_id === 'explosion_pentagon') ? '#0b0f1aE6' : `${currentTheme.header}E6`
+        }} 
       >
         <div className="flex items-center gap-5 w-full max-w-7xl mx-auto">
           <button 

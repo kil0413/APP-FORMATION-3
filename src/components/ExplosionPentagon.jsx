@@ -91,7 +91,7 @@ export default function ExplosionPentagon() {
       </div>
 
       {/* Pentagon SVG Container */}
-      <div className="flex justify-center px-4 w-full max-w-[320px] md:max-w-xl lg:max-w-2xl flex-1 min-h-0">
+      <div className="flex justify-center px-4 w-full max-w-[320px] md:max-w-3xl lg:max-w-4xl flex-1 min-h-0">
         <svg viewBox="0 0 440 400" className="w-full h-full drop-shadow-2xl overflow-visible">
           <defs>
             <radialGradient id="glowGrad">
