@@ -125,8 +125,8 @@ export default function ExplosionPentagon() {
             >
               {/* Left: Pentagon */}
               <div className="flex-shrink-0 flex flex-col items-center justify-center min-h-0 lg:w-[45%]">
-                <div className="w-full max-w-[320px] md:max-w-xl lg:max-w-2xl flex-1 min-h-0 flex items-center justify-center">
-                  <svg viewBox="0 0 440 400" className="w-full h-full lg:h-auto lg:max-h-[60vh] drop-shadow-2xl overflow-visible">
+                <div className="w-full flex-1 min-h-[300px] md:min-h-0 flex items-center justify-center">
+                  <svg viewBox="0 0 440 400" className="w-full h-full max-w-[380px] md:max-w-xl lg:max-w-2xl lg:h-auto lg:max-h-[60vh] drop-shadow-2xl overflow-visible">
                     <defs>
                       <radialGradient id="glowGrad">
                         <stop offset="0%" stopColor="#e07a3a" stopOpacity="0.4" />
@@ -258,18 +258,18 @@ export default function ExplosionPentagon() {
                     >
                       <div className="flex items-center gap-3 md:gap-6 mb-3 md:mb-6">
                         <div 
-                          className="w-10 h-10 md:w-16 md:h-16 rounded-lg md:rounded-xl flex items-center justify-center text-2xl md:text-4xl shrink-0"
+                          className="w-12 h-12 md:w-16 md:h-16 rounded-xl flex items-center justify-center text-3xl md:text-4xl shrink-0"
                           style={{ background: `${activeCondition.color}22` }}
                         >
                           {activeCondition.icon}
                         </div>
                         <div>
-                           <h3 className="font-bold text-sm md:text-2xl" style={{ color: '#f0e6d3' }}>{activeCondition.label}</h3>
-                           <span className="text-[9px] md:text-sm uppercase tracking-widest font-bold" style={{ color: '#7a8ba8' }}>Condition {activeIndex + 1} / 5</span>
+                           <h3 className="font-bold text-base md:text-2xl" style={{ color: '#f0e6d3' }}>{activeCondition.label}</h3>
+                           <span className="text-[10px] md:text-sm uppercase tracking-widest font-bold" style={{ color: '#7a8ba8' }}>Condition {activeIndex + 1} / 5</span>
                         </div>
                       </div>
-                      <p className="text-[11px] md:text-lg leading-relaxed mb-3 md:mb-4" style={{ color: '#a0aec0' }}>{activeCondition.desc}</p>
-                      <div className="rounded-lg md:rounded-xl p-3 md:p-4 font-medium text-[10px] md:text-base bg-[#0b0f1a]" style={{ color: '#7a8ba8', borderLeft: `4px solid ${activeCondition.color}` }}>
+                      <p className="text-[13px] md:text-lg leading-relaxed mb-3 md:mb-4" style={{ color: '#a0aec0' }}>{activeCondition.desc}</p>
+                      <div className="rounded-xl p-3 md:p-4 font-medium text-[12px] md:text-base bg-[#0b0f1a]" style={{ color: '#7a8ba8', borderLeft: `4px solid ${activeCondition.color}` }}>
                         {activeCondition.example}
                       </div>
                     </motion.div>
