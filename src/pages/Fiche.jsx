@@ -115,7 +115,7 @@ export default function Fiche() {
            className="w-full h-full max-w-7xl mx-auto flex flex-col"
          >
             {currentFiche.type === 'interactive' && currentFiche.interactive_id === 'explosion_pentagon' ? (
-              <div className="flex-1 bg-white/20 backdrop-blur-sm rounded-t-[3rem] overflow-hidden shadow-2xl">
+              <div className="flex-1 bg-white/20 backdrop-blur-sm rounded-t-[3rem] overflow-hidden shadow-2xl flex flex-col h-full">
                  <ExplosionPentagon />
               </div>
             ) : isSpecialFiche ? (
@@ -237,10 +237,11 @@ export default function Fiche() {
       </main>
 
       {/* FLOATING ACTION FOOTER */}
-      <footer 
-        className="fixed bottom-0 z-50 w-full p-6 md:p-10 backdrop-blur-3xl border-t border-black/5 flex justify-center"
-        style={{ backgroundColor: `${currentTheme.bg}F2` }}
-      >
+      {!(currentFiche.type === 'interactive' && currentFiche.interactive_id === 'explosion_pentagon') && (
+        <footer 
+          className="fixed bottom-0 z-50 w-full p-6 md:p-10 backdrop-blur-3xl border-t border-black/5 flex justify-center"
+          style={{ backgroundColor: `${currentTheme.bg}F2` }}
+        >
         <div className="w-full max-w-4xl flex flex-col md:flex-row gap-4 relative">
           
           {/* XP Badge Animation placeholder when clicking */}
@@ -289,6 +290,7 @@ export default function Fiche() {
           )}
         </div>
       </footer>
+      )}
 
       {/* CSS Utilities */}
       <style dangerouslySetInnerHTML={{ __html: `

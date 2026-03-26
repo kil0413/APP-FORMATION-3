@@ -67,7 +67,7 @@ export default function ExplosionPentagon() {
   const activeCondition = activeIndex !== -1 ? conditions[activeIndex] : null;
 
   return (
-    <div className="w-full flex flex-col items-center py-8" style={{ background: '#0b0f1a' }}>
+    <div className="w-full flex-1 flex flex-col items-center py-8" style={{ background: '#0b0f1a' }}>
       {/* Header logic moved into Fiche.jsx header when this is active, or we keep locally if it replaces the whole content */}
       <div className="text-center pb-6 px-4">
         <h2 className="text-2xl md:text-3xl font-bold tracking-tight" style={{ color: '#f0e6d3' }}>Les 5 conditions de l'explosion</h2>
