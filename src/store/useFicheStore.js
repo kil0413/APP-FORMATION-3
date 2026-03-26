@@ -18,18 +18,32 @@ export const useFicheStore = create((set, get) => ({
       let categoriesData = [], fichesData = [], quizzesData = [];
 
       if (isRealSupabase) {
-        const [
-          { data: c },
-          { data: f },
-          { data: q }
-        ] = await Promise.all([
-          supabase.from('categories').select('*'),
-          supabase.from('fiches').select('*'),
-          supabase.from('quizzes').select('*')
-        ]);
-        categoriesData = c || [];
-        fichesData = f || [];
-        quizzesData = q || [];
+        // Chargement indépendant pour ne pas tout bloquer si une table manque
+        try {
+          const { data: c, error: errC } = await supabase.from('categories').select('*');
+          if (errC) throw errC;
+          categoriesData = c || [];
+        } catch (e) { 
+          console.error("Erreur categories:", e.message);
+          alert("Note: Impossible de charger les catégories depuis Supabase.");
+        }
+
+        try {
+          const { data: f, error: errF } = await supabase.from('fiches').select('*');
+          if (errF) throw errF;
+          fichesData = f || [];
+        } catch (e) {
+          console.error("Erreur fiches:", e.message);
+          alert("Erreur critique: Impossible de charger les fiches depuis Supabase. " + e.message);
+        }
+
+        try {
+          const { data: q, error: errQ } = await supabase.from('quizzes').select('*');
+          if (errQ) throw errQ;
+          quizzesData = q || [];
+        } catch (e) {
+          console.error("Erreur quizzes:", e.message);
+        }
       }
 
       // Fusionner avec les données de secours (pour s'assurer qu'il y a toujours du contenu)
