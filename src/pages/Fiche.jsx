@@ -112,10 +112,10 @@ export default function Fiche() {
            initial={{ opacity: 0, y: 20 }}
            animate={{ opacity: 1, y: 0 }}
            transition={{ duration: 0.6 }}
-           className="w-full h-full max-w-7xl mx-auto flex flex-col"
+          className={cn("w-full h-full flex flex-col", (currentFiche.type === 'interactive' && currentFiche.interactive_id === 'explosion_pentagon') ? "max-w-none" : "max-w-7xl mx-auto")}
          >
             {currentFiche.type === 'interactive' && currentFiche.interactive_id === 'explosion_pentagon' ? (
-              <div className="flex-1 bg-[#0b0f1a] rounded-t-[3rem] overflow-hidden shadow-2xl flex flex-col h-full ring-1 ring-white/5">
+              <div className="flex-1 bg-[#0b0f1a] overflow-hidden flex flex-col h-full ring-1 ring-white/5">
                  <ExplosionPentagon />
               </div>
             ) : isSpecialFiche ? (
