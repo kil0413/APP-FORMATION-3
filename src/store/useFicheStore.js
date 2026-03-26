@@ -78,7 +78,7 @@ export const useFicheStore = create((set, get) => ({
       set({ 
         categories: finalCategories,
         fiches: finalFiches,
-        quizzes: finalQuizzes,
+        quizzes: quizzesData,
         isLoading: false,
         realFichesCount: (fichesData || []).length,
         realQuizzesCount: (quizzesData || []).length,
