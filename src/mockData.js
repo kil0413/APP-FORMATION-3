@@ -81,6 +81,12 @@ export const fiches = [
         'Gaz dissous (Acétylène)'
       ] }
     ], is_published: true, created_at: new Date().toISOString()
+  },
+  { id: 'f5', title: 'Conditions de l\'explosion', category_id: 'c3', difficulty: 'Débutant',
+    type: 'interactive',
+    interactive_id: 'explosion_pentagon',
+    sections: [], 
+    is_published: true, created_at: new Date().toISOString()
   }
 ];
 

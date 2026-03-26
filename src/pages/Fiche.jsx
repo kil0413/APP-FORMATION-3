@@ -8,6 +8,7 @@ import { ProgressBar } from '../components/ui/ProgressBar';
 import PDFViewer from '../components/ui/PDFViewer';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '../lib/utils';
+import ExplosionPentagon from '../components/ExplosionPentagon';
 
 export default function Fiche() {
   const { id } = useParams();
@@ -113,7 +114,11 @@ export default function Fiche() {
            transition={{ duration: 0.6 }}
            className="w-full h-full max-w-7xl mx-auto flex flex-col"
          >
-            {isSpecialFiche ? (
+            {currentFiche.type === 'interactive' && currentFiche.interactive_id === 'explosion_pentagon' ? (
+              <div className="flex-1 bg-white/20 backdrop-blur-sm rounded-t-[3rem] overflow-hidden shadow-2xl">
+                 <ExplosionPentagon />
+              </div>
+            ) : isSpecialFiche ? (
               /* FULLSCREEN IMAGE/PAGE VIEWER */
               <div className="flex-1 flex flex-col h-full bg-white/20 backdrop-blur-sm rounded-t-[3rem] overflow-hidden shadow-2xl">
                  <div className="bg-white/50 py-3 px-8 border-b border-black/5 flex items-center justify-between">
