@@ -1,5 +1,6 @@
-import { Search, Bell, Sun, Moon, Menu } from 'lucide-react';
+import { Search, Bell, Sun, Moon, Menu, ExternalLink } from 'lucide-react';
 import { useAuthStore } from '../../store/useAuthStore';
+import { Link } from 'react-router-dom';
 
 export default function AdminHeader({ title, onMenuClick }) {
   const { user } = useAuthStore();
@@ -23,8 +24,14 @@ export default function AdminHeader({ title, onMenuClick }) {
           />
         </div>
       </div>
-
       <div className="flex items-center gap-3">
+        <Link 
+          to="/" 
+          className="flex items-center gap-2 px-4 py-2 rounded-xl bg-gray-50 text-gray-500 hover:bg-[#CC1A1A] hover:text-white transition-all font-black uppercase tracking-widest text-[9px] border border-gray-100"
+        >
+          <ExternalLink size={14} />
+          <span className="hidden md:block text-[9px] font-black uppercase tracking-widest leading-none">Voir le site</span>
+        </Link>
         <button className="h-10 w-10 flex items-center justify-center rounded-xl hover:bg-gray-50 text-gray-500 transition-colors">
           <Bell size={20} />
         </button>
