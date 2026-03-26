@@ -6,7 +6,7 @@ import { Card } from '../../../components/ui/Card';
 import FicheEditor from '../components/FicheEditor';
 
 export default function FichesTab() {
-  const { fiches, categories, deleteFiche, realFichesCount, fetchData } = useFicheStore();
+  const { fiches, categories, deleteFiche, realFichesCount, fetchData, isLoading, error } = useFicheStore();
   const [searchTerm, setSearchTerm] = useState('');
   const [filterCategory, setFilterCategory] = useState('all');
   const [viewMode, setViewMode] = useState('list'); // 'grid' or 'list'
@@ -73,6 +73,43 @@ export default function FichesTab() {
 
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+      {/* 🔬 DIAGNOSTIC HUD (Temporary) */}
+      <div className="bg-[#1A1A2E] text-white p-6 rounded-[2rem] border border-blue-500/30 shadow-2xl relative overflow-hidden group">
+         <div className="absolute top-0 right-0 p-8 opacity-10 rotate-12 group-hover:rotate-0 transition-transform duration-700">
+            <Database size={120} />
+         </div>
+         <div className="relative z-10">
+            <h3 className="text-[10px] font-black uppercase tracking-[0.4em] text-blue-400 mb-4 flex items-center gap-2">
+               <AlertCircle size={14} /> Diagnostic Système Supabase
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+               <div className="space-y-1">
+                  <span className="text-[9px] font-bold text-gray-500 uppercase tracking-widest">URL Active</span>
+                  <p className="text-xs font-mono text-blue-200 truncate">{supabase.supabaseUrl}</p>
+               </div>
+               <div className="space-y-1">
+                  <span className="text-[9px] font-bold text-gray-500 uppercase tracking-widest">Status de la table fiches</span>
+                  <div className="flex items-center gap-2">
+                     <div className={`h-2 w-2 rounded-full ${isLoading ? 'bg-orange-400 animate-pulse' : (realFichesCount > 0 ? 'bg-green-500' : 'bg-red-500')}`} />
+                     <p className="text-xs font-black uppercase tracking-tighter">
+                        {isLoading ? 'Chargement...' : (realFichesCount > 0 ? `${realFichesCount} fiches détectées en DB` : 'Zéro fiches en DB')}
+                     </p>
+                  </div>
+               </div>
+               <div className="space-y-1">
+                  <span className="text-[9px] font-bold text-gray-500 uppercase tracking-widest">Dernier Message d'erreur</span>
+                  <p className="text-xs font-bold text-red-400 italic">{error || 'Aucune erreur détectée'}</p>
+               </div>
+            </div>
+            
+            <button 
+               onClick={() => fetchData()}
+               className="mt-6 flex items-center gap-2 px-4 py-2 bg-white/5 hover:bg-white/10 rounded-xl text-[9px] font-black uppercase tracking-widest text-blue-300 transition-all border border-white/10"
+            >
+               <RefreshCw size={12} className={isLoading ? "animate-spin" : ""} /> Force Fetching
+            </button>
+         </div>
+      </div>
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h2 className="text-3xl font-black text-[#1A1A2E] tracking-tighter uppercase italic">Catalogue de Formation</h2>
