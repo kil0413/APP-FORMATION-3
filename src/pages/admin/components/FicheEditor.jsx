@@ -8,8 +8,10 @@ export default function FicheEditor({ fiche, onClose }) {
     title: '',
     category_id: 'c1',
     difficulty: 'Débutant',
+    type: 'classic', // classic, media, code, interactive
     file_data: null,
     file_type: null,
+    content_html: '',
     sections: [
       { type: 'definition', title: 'Définition', content: '' },
       { type: 'keypoints', title: 'Points clés', items: [''] }
@@ -30,6 +32,7 @@ export default function FicheEditor({ fiche, onClose }) {
       reader.onloadend = () => {
         setFormData({
           ...formData,
+          type: 'media',
           file_data: reader.result,
           file_type: isPdf ? 'pdf' : 'image'
         });
@@ -122,86 +125,128 @@ export default function FicheEditor({ fiche, onClose }) {
                           {categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
                         </select>
                       </div>
-                      <div className="space-y-1">
-                        <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-4">Difficulté</label>
-                        <select 
-                          className="w-full bg-gray-50 border-none rounded-2xl p-4 font-bold text-xs outline-none cursor-pointer"
-                          value={formData.difficulty}
-                          onChange={e => setFormData({...formData, difficulty: e.target.value})}
-                        >
-                          <option>Débutant</option>
-                          <option>Intermédiaire</option>
-                          <option>Avancé</option>
-                        </select>
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-1">
+                          <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-4">Difficulté</label>
+                          <select 
+                            className="w-full bg-gray-50 border-none rounded-2xl p-4 font-bold text-[10px] outline-none cursor-pointer"
+                            value={formData.difficulty}
+                            onChange={e => setFormData({...formData, difficulty: e.target.value})}
+                          >
+                            <option>Débutant</option>
+                            <option>Intermédiaire</option>
+                            <option>Avancé</option>
+                          </select>
+                        </div>
+                        <div className="space-y-1">
+                          <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-4">Format</label>
+                          <select 
+                            className="w-full bg-gray-50 border-none rounded-2xl p-4 font-bold text-[10px] outline-none cursor-pointer"
+                            value={formData.type}
+                            onChange={e => setFormData({...formData, type: e.target.value})}
+                          >
+                            <option value="classic">Sections</option>
+                            <option value="media">Média</option>
+                            <option value="code">HTML</option>
+                          </select>
+                        </div>
                       </div>
                     </div>
                  </div>
 
-                 {/* Media Upload */}
-                 <div className="space-y-4">
-                    <h3 className="text-xs font-black uppercase tracking-widest text-[#CC1A1A] flex items-center gap-2">
-                       <UploadCloud size={14} /> Support Média
-                    </h3>
-                    <label className={`block border-2 border-dashed rounded-[2rem] p-8 text-center cursor-pointer transition-all duration-300 ${
-                      formData.file_data ? 'bg-blue-50/50 border-blue-200' : 'bg-gray-50 border-gray-100 hover:border-red-200'
-                    }`}>
-                        <input 
-                          type="file" 
-                          accept=".pdf, .jpg, .jpeg, .png" 
-                          className="hidden" 
-                          onChange={handleFileUpload}
-                        />
-                        <div className={`mx-auto h-16 w-16 flex items-center justify-center rounded-2xl mb-4 ${
-                           formData.file_data ? 'bg-blue-500 text-white shadow-lg shadow-blue-500/20' : 'bg-gray-100 text-gray-400'
-                        }`}>
-                           <UploadCloud size={32} />
-                        </div>
-                        {formData.file_data ? (
-                          <div className="space-y-1">
-                             <p className="text-xs font-black uppercase text-blue-600">Document {formData.file_type?.toUpperCase()}</p>
-                             <p className="text-[9px] font-bold text-blue-400 uppercase tracking-widest">Cliquez pour remplacer</p>
-                          </div>
-                        ) : (
-                          <div className="space-y-1">
-                             <p className="text-xs font-black uppercase text-gray-800 tracking-tighter">PDF ou Image (JPEG/PNG)</p>
-                             <p className="text-[9px] font-bold text-gray-400 uppercase tracking-widest leading-none">Max 10Mo</p>
-                          </div>
-                        )}
-                    </label>
-                 </div>
+                 {/* Media Upload (Conditional) */}
+                  {formData.type === 'media' && (
+                    <div className="space-y-4 animate-in fade-in slide-in-from-top-2">
+                       <h3 className="text-xs font-black uppercase tracking-widest text-[#CC1A1A] flex items-center gap-2">
+                          <UploadCloud size={14} /> Support Média
+                       </h3>
+                       <label className={`block border-2 border-dashed rounded-[2rem] p-8 text-center cursor-pointer transition-all duration-300 ${
+                         formData.file_data ? 'bg-blue-50/50 border-blue-200' : 'bg-gray-50 border-gray-100 hover:border-red-200'
+                       }`}>
+                           <input 
+                             type="file" 
+                             accept=".pdf, .jpg, .jpeg, .png" 
+                             className="hidden" 
+                             onChange={handleFileUpload}
+                           />
+                           <div className={`mx-auto h-16 w-16 flex items-center justify-center rounded-2xl mb-4 ${
+                              formData.file_data ? 'bg-blue-500 text-white shadow-lg shadow-blue-500/20' : 'bg-gray-100 text-gray-400'
+                           }`}>
+                              <UploadCloud size={32} />
+                           </div>
+                           {formData.file_data ? (
+                             <div className="space-y-1">
+                                <p className="text-xs font-black uppercase text-blue-600">Document {formData.file_type?.toUpperCase()}</p>
+                                <p className="text-[9px] font-bold text-blue-400 uppercase tracking-widest">Cliquez pour remplacer</p>
+                             </div>
+                           ) : (
+                             <div className="space-y-1">
+                                <p className="text-xs font-black uppercase text-gray-800 tracking-tighter">PDF ou Image (JPEG/PNG)</p>
+                                <p className="text-[9px] font-bold text-gray-400 uppercase tracking-widest leading-none">Max 10Mo</p>
+                             </div>
+                           )}
+                       </label>
+                    </div>
+                  )}
 
-                 <div className="p-6 bg-red-50 rounded-[2rem] border border-red-100 flex items-start gap-4">
-                    <AlertCircle className="text-red-400 shrink-0" size={20} />
-                    <p className="text-[10px] font-bold text-red-500 uppercase leading-relaxed tracking-wider">
-                      L'ajout d'un média remplace l'affichage du contenu texte ci-contre au profit d'un lecteur PDF interactif ou d'une visionneuse image.
-                    </p>
-                 </div>
+                  {formData.type === 'code' && (
+                    <div className="p-6 bg-amber-50 rounded-[2rem] border border-amber-100 flex items-start gap-4 animate-in fade-in slide-in-from-top-2">
+                       <AlertCircle className="text-amber-400 shrink-0" size={20} />
+                       <p className="text-[10px] font-bold text-amber-600 uppercase leading-relaxed tracking-wider">
+                         Mode Expert : Saisissez votre code HTML/Tailwind complet. Il sera rendu en plein écran.
+                       </p>
+                    </div>
+                  )}
+
+                  {formData.type === 'classic' && (
+                    <div className="p-6 bg-red-50 rounded-[2rem] border border-red-100 flex items-start gap-4">
+                       <AlertCircle className="text-red-400 shrink-0" size={20} />
+                       <p className="text-[10px] font-bold text-red-500 uppercase leading-relaxed tracking-wider">
+                         Utilisez le constructeur à droite pour structurer votre fiche en sections distinctes.
+                       </p>
+                    </div>
+                  )}
               </div>
 
-              {/* Right Column: Content Builder */}
+              {/* Right Column: Content Builder or Code Editor */}
               <div className="lg:col-span-8 space-y-6 bg-gray-50/50 rounded-[2.5rem] p-8 border border-white">
-                 <div className="flex items-center justify-between mb-2">
-                   <h3 className="text-xs font-black uppercase tracking-widest text-[#CC1A1A] flex items-center gap-2">
-                      <Type size={14} /> Structure du contenu
-                   </h3>
-                   <div className="flex gap-2">
-                      <button 
-                        type="button"
-                        onClick={() => addSection('definition')}
-                        className="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-black hover:text-white transition-all rounded-xl text-[10px] font-black uppercase tracking-widest"
-                      >
-                         <Plus size={14} /> Texte
-                      </button>
-                      <button 
-                        type="button"
-                        onClick={() => addSection('keypoints')}
-                        className="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-black hover:text-white transition-all rounded-xl text-[10px] font-black uppercase tracking-widest"
-                      >
-                         <ListIcon size={14} /> Liste
-                      </button>
-                   </div>
-                 </div>
-
+                  {formData.type === 'code' ? (
+                     <div className="h-full flex flex-col space-y-4">
+                        <div className="flex items-center justify-between">
+                          <h3 className="text-xs font-black uppercase tracking-widest text-[#CC1A1A] flex items-center gap-2">
+                             <Layout size={14} /> Éditeur de Code HTML
+                          </h3>
+                        </div>
+                        <textarea 
+                          className="flex-1 w-full bg-[#1A1A2E] text-blue-300 font-mono text-xs p-6 rounded-3xl border-none focus:ring-4 focus:ring-red-500/10 min-h-[500px]"
+                          placeholder="<!DOCTYPE html>..."
+                          value={formData.content_html}
+                          onChange={e => setFormData({...formData, content_html: e.target.value})}
+                        />
+                     </div>
+                  ) : (
+                    <>
+                       <div className="flex items-center justify-between mb-2">
+                         <h3 className="text-xs font-black uppercase tracking-widest text-[#CC1A1A] flex items-center gap-2">
+                            <Type size={14} /> Structure du contenu
+                         </h3>
+                         <div className="flex gap-2">
+                            <button 
+                              type="button"
+                              onClick={() => addSection('definition')}
+                              className="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-black hover:text-white transition-all rounded-xl text-[10px] font-black uppercase tracking-widest"
+                            >
+                               <Plus size={14} /> Texte
+                            </button>
+                            <button 
+                              type="button"
+                              onClick={() => addSection('keypoints')}
+                              className="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-black hover:text-white transition-all rounded-xl text-[10px] font-black uppercase tracking-widest"
+                            >
+                               <ListIcon size={14} /> Liste
+                            </button>
+                         </div>
+                       </div>
                  <div className="space-y-4">
                     {formData.sections.map((section, idx) => (
                       <div key={idx} className="group bg-white p-6 rounded-3xl shadow-sm border border-gray-100 transition-all hover:shadow-md hover:border-red-100 relative">
@@ -270,6 +315,8 @@ export default function FicheEditor({ fiche, onClose }) {
                       </div>
                     ))}
                  </div>
+                    </>
+                  )}
               </div>
            </form>
         </div>

@@ -48,7 +48,7 @@ export default function Fiche() {
   const currentTheme = {
     header: currentCategory?.theme_header || '#fae78f',
     bg: currentCategory?.theme_bg || '#FBFAEF',
-    text: (currentFiche.type === 'interactive' && currentFiche.interactive_id === 'explosion_pentagon') ? 'white' : (['c2', 'c3', 'c1'].includes(currentFiche.category_id) ? (currentFiche.category_id === 'c3' ? 'black' : 'white') : 'black')
+    text: (currentFiche.type === 'interactive' || currentFiche.type === 'code') ? 'white' : (['c2', 'c3', 'c1'].includes(currentFiche.category_id) ? (currentFiche.category_id === 'c3' ? 'black' : 'white') : 'black')
   };
 
   const handleComplete = () => {
@@ -65,13 +65,13 @@ export default function Fiche() {
   return (
     <div 
       className="h-screen w-full flex flex-col overflow-hidden font-['Inter',_sans-serif] selection:bg-red-500/30 transition-colors duration-500"
-      style={{ backgroundColor: (currentFiche.type === 'interactive' && currentFiche.interactive_id === 'explosion_pentagon') ? '#0b0f1a' : currentTheme.bg }}
+      style={{ backgroundColor: (currentFiche.type === 'interactive' || currentFiche.type === 'code') ? '#0b0f1a' : currentTheme.bg }}
     >
       {/* HEADER - GLASS STYLE (V3) */}
       <header 
-        className={cn("fixed top-0 z-[60] w-full pt-4 pb-4 px-6 flex items-center justify-between border-b backdrop-blur-2xl transition-colors duration-500", (currentFiche.type === 'interactive' && currentFiche.interactive_id === 'explosion_pentagon') ? "bg-[#0b0f1a] border-white/5" : "border-black/5")}
+        className={cn("fixed top-0 z-[60] w-full pt-4 pb-4 px-6 flex items-center justify-between border-b backdrop-blur-2xl transition-colors duration-500", (currentFiche.type === 'interactive' || currentFiche.type === 'code') ? "bg-[#0b0f1a] border-white/5" : "border-black/5")}
         style={{ 
-          backgroundColor: (currentFiche.type === 'interactive' && currentFiche.interactive_id === 'explosion_pentagon') ? '#0b0f1aE6' : `${currentTheme.header}E6`
+          backgroundColor: (currentFiche.type === 'interactive' || currentFiche.type === 'code') ? '#0b0f1aE6' : `${currentTheme.header}E6`
         }} 
       >
         <div className="flex items-center gap-5 w-full max-w-7xl mx-auto">
@@ -114,11 +114,19 @@ export default function Fiche() {
            initial={{ opacity: 0, y: 20 }}
            animate={{ opacity: 1, y: 0 }}
            transition={{ duration: 0.6 }}
-          className={cn("w-full h-full flex flex-col", (currentFiche.type === 'interactive' && currentFiche.interactive_id === 'explosion_pentagon') ? "max-w-none" : "max-w-7xl mx-auto")}
+          className={cn("w-full h-full flex flex-col", (currentFiche.type === 'interactive' || currentFiche.type === 'code') ? "max-w-none" : "max-w-7xl mx-auto")}
          >
             {currentFiche.type === 'interactive' && currentFiche.interactive_id === 'explosion_pentagon' ? (
               <div className="flex-1 bg-[#0b0f1a] overflow-hidden flex flex-col h-full ring-1 ring-white/5">
                  <ExplosionPentagon />
+              </div>
+            ) : currentFiche.type === 'code' ? (
+              <div className="flex-1 bg-black overflow-hidden flex flex-col h-full">
+                 <iframe 
+                   srcDoc={currentFiche.content_html} 
+                   className="w-full h-full border-none shadow-2xl" 
+                   title={currentFiche.title}
+                 />
               </div>
             ) : isSpecialFiche ? (
               /* FULLSCREEN IMAGE/PAGE VIEWER */
@@ -239,7 +247,7 @@ export default function Fiche() {
       </main>
 
       {/* FLOATING ACTION FOOTER */}
-      {!(currentFiche.type === 'interactive' && currentFiche.interactive_id === 'explosion_pentagon') && (
+      {!(currentFiche.type === 'interactive' || currentFiche.type === 'code') && (
         <footer 
           className="fixed bottom-0 z-50 w-full p-6 md:p-10 backdrop-blur-3xl border-t border-black/5 flex justify-center"
           style={{ backgroundColor: `${currentTheme.bg}F2` }}
