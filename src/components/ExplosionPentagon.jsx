@@ -67,7 +67,7 @@ export default function ExplosionPentagon() {
   const activeCondition = activeIndex !== -1 ? conditions[activeIndex] : null;
 
   return (
-    <div className="w-full flex-1 flex flex-col items-center py-8" style={{ background: '#0b0f1a' }}>
+    <div className="w-full h-full flex flex-col items-center py-4 md:py-6 overflow-hidden" style={{ background: '#0b0f1a' }}>
       {/* Header logic moved into Fiche.jsx header when this is active, or we keep locally if it replaces the whole content */}
       <div className="text-center pb-6 px-4">
         <h2 className="text-2xl md:text-5xl font-black tracking-tight uppercase italic" style={{ color: '#f0e6d3' }}>Les 5 conditions de l'explosion</h2>
@@ -91,8 +91,8 @@ export default function ExplosionPentagon() {
       </div>
 
       {/* Pentagon SVG Container */}
-      <div className="flex justify-center px-4 w-full max-w-[440px] md:max-w-[650px] lg:max-w-[800px] flex-1">
-        <svg viewBox="0 0 440 400" className="w-full h-auto drop-shadow-2xl overflow-visible">
+      <div className="flex justify-center px-4 w-full max-w-[400px] md:max-w-xl lg:max-w-2xl flex-1 min-h-0">
+        <svg viewBox="0 0 440 400" className="w-full h-full drop-shadow-2xl overflow-visible">
           <defs>
             <radialGradient id="glowGrad">
               <stop offset="0%" stopColor="#e07a3a" stopOpacity="0.4" />
@@ -203,7 +203,7 @@ export default function ExplosionPentagon() {
       </div>
 
       {/* Detail Card Overlay */}
-      <div className="flex justify-center px-4 w-full mt-4 pb-12">
+      <div className="flex justify-center px-4 w-full mt-2 md:mt-4 pb-4 md:pb-8 shrink-0">
         <AnimatePresence mode='wait'>
           {activeCondition && (
             <motion.div 
