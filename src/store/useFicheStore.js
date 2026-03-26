@@ -33,6 +33,7 @@ export const useFicheStore = create((set, get) => ({
           console.log("DB RAW Fiches:", resF);
           if (resF.error) throw resF.error;
           fichesData = resF.data || [];
+          alert("FICHES RECUES DEPUIS SUPABASE : " + fichesData.length);
           if (fichesData.length === 0) {
             console.warn("La table fiches a ete lue avec succes mais est VIDE.");
           }

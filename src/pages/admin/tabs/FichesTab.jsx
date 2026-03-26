@@ -102,12 +102,20 @@ export default function FichesTab() {
                </div>
             </div>
             
-            <button 
-               onClick={() => fetchData()}
-               className="mt-6 flex items-center gap-2 px-4 py-2 bg-white/5 hover:bg-white/10 rounded-xl text-[9px] font-black uppercase tracking-widest text-blue-300 transition-all border border-white/10"
-            >
-               <RefreshCw size={12} className={isLoading ? "animate-spin" : ""} /> Force Fetching
-            </button>
+            <div className="flex gap-2 mt-6">
+               <button 
+                  onClick={() => fetchData()}
+                  className="flex items-center gap-2 px-4 py-2 bg-white/5 hover:bg-white/10 rounded-xl text-[9px] font-black uppercase tracking-widest text-blue-300 transition-all border border-white/10"
+               >
+                  <RefreshCw size={12} className={isLoading ? "animate-spin" : ""} /> Force Fetching
+               </button>
+               <button 
+                  onClick={() => alert(JSON.stringify(fiches.map(f => ({ id: f.id, title: f.title })), null, 2))}
+                  className="flex items-center gap-2 px-4 py-2 bg-white/5 hover:bg-white/10 rounded-xl text-[9px] font-black uppercase tracking-widest text-blue-300 transition-all border border-white/10"
+               >
+                  <Eye size={12} /> Explorer JSON Brut
+               </button>
+            </div>
          </div>
       </div>
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
