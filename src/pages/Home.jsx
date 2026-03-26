@@ -10,7 +10,7 @@ import { cn } from '../lib/utils';
 
 export default function Home() {
   const navigate = useNavigate();
-  const { categories, isLoading: isFichesLoading } = useFicheStore();
+  const { fiches, categories, isLoading: isFichesLoading } = useFicheStore();
   const { user, isLoading: isAuthLoading } = useAuthStore();
 
   if (isAuthLoading || isFichesLoading || !user) {
@@ -29,6 +29,10 @@ export default function Home() {
   }
 
   const nrbcCategory = categories?.find(c => c.id === 'c3')?.name || 'NRBC';
+  
+  // Trouver dynamiquement la fiche Risque Gaz dans le store (exclut les mocks si possible)
+  const risqueGazFiche = fiches?.find(f => f.title.toUpperCase().includes('RISQUE GAZ'));
+  const risqueGazId = risqueGazFiche?.id || 'f4'; // Fallback au cas où
 
   return (
     <PageWrapper>
@@ -65,7 +69,7 @@ export default function Home() {
 
           {/* Module en cours - Premium Hero Card */}
           <section>
-            <Card className="relative overflow-hidden bg-gradient-to-br from-red-600 to-red-950 text-white border border-red-500/30 shadow-[0_20px_50px_rgba(239,68,68,0.25)] group cursor-pointer" onClick={() => navigate('/fiche/f4')}>
+            <Card className="relative overflow-hidden bg-gradient-to-br from-red-600 to-red-950 text-white border border-red-500/30 shadow-[0_20px_50px_rgba(239,68,68,0.25)] group cursor-pointer" onClick={() => navigate(`/fiche/${risqueGazId}`)}>
               <div className="absolute top-0 right-0 p-10 opacity-10 group-hover:scale-110 transition-transform duration-700 -rotate-12 translate-x-1/4 -translate-y-1/4">
                  <Zap size={240} className="fill-white" />
               </div>
@@ -95,7 +99,7 @@ export default function Home() {
                 </div>
                 
                 <button 
-                  onClick={(e) => { e.stopPropagation(); navigate('/fiche/f4'); }}
+                  onClick={(e) => { e.stopPropagation(); navigate(`/fiche/${risqueGazId}`); }}
                   className="inline-flex items-center justify-center gap-4 rounded-[2rem] bg-white px-12 py-6 text-sm font-black uppercase tracking-widest text-red-600 transition-all hover:scale-105 active:scale-95 shadow-[0_10px_30px_rgba(255,255,255,0.2)]"
                 >
                   Continuer
