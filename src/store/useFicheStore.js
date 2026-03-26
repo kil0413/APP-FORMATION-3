@@ -40,11 +40,11 @@ export const useFicheStore = create((set, get) => ({
         }
       });
 
-      const finalQuizzes = [...(quizzesData || [])];
-      fallbackQuizzes.forEach(fallback => {
-        if (!finalQuizzes.find(q => q.id === fallback.id)) {
-          finalQuizzes.push(fallback);
-        }
+      // Trier les fiches : les plus récentes en premier (id tmp ou created_at)
+      finalFiches.sort((a, b) => {
+        const dateA = new Date(a.created_at || 0);
+        const dateB = new Date(b.created_at || 0);
+        return dateB - dateA;
       });
 
       set({ 
@@ -88,8 +88,15 @@ export const useFicheStore = create((set, get) => ({
     } catch (err) {
       console.error('Erreur addFiche:', err.message);
       // En mode développement/offline, on ajoute au local quand même pour le test
-      const tempFiche = { ...newFiche, id: `tmp-${Date.now()}`, is_published: true };
-      set((state) => ({ fiches: [...state.fiches, tempFiche] }));
+      const tempFiche = { 
+        ...newFiche, 
+        id: `tmp-${Date.now()}`, 
+        is_published: true,
+        created_at: new Date().toISOString()
+      };
+      set((state) => ({ 
+        fiches: [tempFiche, ...state.fiches] 
+      }));
     }
   },
 

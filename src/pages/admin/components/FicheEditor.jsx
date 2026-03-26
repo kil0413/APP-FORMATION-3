@@ -4,6 +4,7 @@ import { useFicheStore } from '../../../store/useFicheStore';
 
 export default function FicheEditor({ fiche, onClose }) {
   const { categories, addFiche, updateFiche } = useFicheStore();
+  const [isSaving, setIsSaving] = useState(false);
   const [formData, setFormData] = useState({
     title: '',
     category_id: 'c1',
@@ -41,14 +42,21 @@ export default function FicheEditor({ fiche, onClose }) {
     }
   };
 
-  const handleSave = (e) => {
+  const handleSave = async (e) => {
     e.preventDefault();
-    if (fiche?.id) {
-      updateFiche(fiche.id, formData);
-    } else {
-      addFiche(formData);
+    setIsSaving(true);
+    try {
+      if (fiche?.id) {
+        await updateFiche(fiche.id, formData);
+      } else {
+        await addFiche(formData);
+      }
+      onClose();
+    } catch (err) {
+      alert('Erreur lors de la sauvegarde: ' + err.message);
+    } finally {
+      setIsSaving(false);
     }
-    onClose();
   };
 
   const addSection = (type) => {
@@ -335,13 +343,14 @@ export default function FicheEditor({ fiche, onClose }) {
              >
                Annuler
              </button>
-             <button 
-               onClick={handleSave}
-               className="bg-[#1A1A2E] text-white flex items-center justify-center gap-3 px-10 py-4 rounded-2xl font-black uppercase tracking-widest text-xs shadow-xl active:scale-95 hover:bg-red-600 transition-all group"
-             >
-               <Save size={18} className="group-hover:translate-y-[-2px] transition-transform" />
-               Publier les changements
-             </button>
+              <button 
+                onClick={handleSave}
+                disabled={isSaving}
+                className="bg-[#1A1A2E] text-white flex items-center justify-center gap-3 px-10 py-4 rounded-2xl font-black uppercase tracking-widest text-xs shadow-xl active:scale-95 hover:bg-red-600 transition-all group disabled:opacity-50"
+              >
+                <Save size={18} className={isSaving ? "animate-spin" : "group-hover:translate-y-[-2px] transition-transform"} />
+                {isSaving ? 'Publication...' : 'Publier les changements'}
+              </button>
            </div>
         </footer>
       </div>
