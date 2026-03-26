@@ -70,7 +70,7 @@ export default function ExplosionPentagon() {
     <div className="w-full flex-1 flex flex-col items-center py-8" style={{ background: '#0b0f1a' }}>
       {/* Header logic moved into Fiche.jsx header when this is active, or we keep locally if it replaces the whole content */}
       <div className="text-center pb-6 px-4">
-        <h2 className="text-2xl md:text-3xl font-bold tracking-tight" style={{ color: '#f0e6d3' }}>Les 5 conditions de l'explosion</h2>
+        <h2 className="text-2xl md:text-5xl font-black tracking-tight uppercase italic" style={{ color: '#f0e6d3' }}>Les 5 conditions de l'explosion</h2>
         <p className="mt-1 text-sm font-light tracking-wide" style={{ color: '#7a8ba8' }}>Cliquez sur chaque élément pour en savoir plus</p>
       </div>
 
@@ -90,8 +90,8 @@ export default function ExplosionPentagon() {
         ))}
       </div>
 
-      {/* Pentagon SVG */}
-      <div className="flex justify-center px-4 w-full max-w-[480px]">
+      {/* Pentagon SVG Container */}
+      <div className="flex justify-center px-4 w-full max-w-[440px] md:max-w-[650px] lg:max-w-[800px] flex-1">
         <svg viewBox="0 0 440 400" className="w-full h-auto drop-shadow-2xl overflow-visible">
           <defs>
             <radialGradient id="glowGrad">
@@ -211,30 +211,30 @@ export default function ExplosionPentagon() {
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -16 }}
-              className="w-full max-w-md rounded-2xl p-6 border shadow-2xl" 
+              className="w-full max-w-md md:max-w-2xl rounded-3xl p-6 md:p-10 border shadow-2xl" 
               style={{ 
                 background: '#111827', 
                 borderColor: `${activeCondition.color}33` 
               }}
             >
-              <div className="flex items-center gap-4 mb-4">
+              <div className="flex items-center gap-4 md:gap-6 mb-4 md:mb-6">
                 <div 
-                  className="w-12 h-12 rounded-xl flex items-center justify-center text-xl"
+                  className="w-12 h-12 md:w-16 md:h-16 rounded-xl md:rounded-2xl flex items-center justify-center text-xl md:text-3xl"
                   style={{ background: `${activeCondition.color}22` }}
                 >
                   {activeCondition.icon}
                 </div>
                 <div>
-                   <h3 className="font-bold text-lg" style={{ color: activeCondition.color }}>{activeCondition.label}</h3>
-                   <span className="text-xs uppercase tracking-widest font-bold" style={{ color: '#7a8ba8' }}>Condition {activeIndex + 1} / 5</span>
+                   <h3 className="font-bold text-lg md:text-2xl" style={{ color: activeCondition.color }}>{activeCondition.label}</h3>
+                   <span className="text-[10px] md:text-xs uppercase tracking-widest font-bold" style={{ color: '#7a8ba8' }}>Condition {activeIndex + 1} / 5</span>
                 </div>
               </div>
               
-              <p className="text-sm leading-relaxed" style={{ color: '#a0aec0' }}>
+              <p className="text-sm md:text-base leading-relaxed" style={{ color: '#a0aec0' }}>
                 {activeCondition.desc}
               </p>
               
-              <div className="mt-4 text-xs rounded-lg p-3 font-medium bg-[#0b0f1a]" style={{ color: '#7a8ba8', borderLeft: `3px solid ${activeCondition.color}44` }}>
+              <div className="mt-4 md:mt-6 text-xs md:text-sm rounded-lg md:rounded-xl p-3 md:p-5 font-medium bg-[#0b0f1a]" style={{ color: '#7a8ba8', borderLeft: `4px solid ${activeCondition.color}44` }}>
                 {activeCondition.example}
               </div>
             </motion.div>

@@ -115,7 +115,7 @@ export default function Fiche() {
            className="w-full h-full max-w-7xl mx-auto flex flex-col"
          >
             {currentFiche.type === 'interactive' && currentFiche.interactive_id === 'explosion_pentagon' ? (
-              <div className="flex-1 bg-white/20 backdrop-blur-sm rounded-t-[3rem] overflow-hidden shadow-2xl flex flex-col h-full">
+              <div className="flex-1 bg-[#0b0f1a] rounded-t-[3rem] overflow-hidden shadow-2xl flex flex-col h-full ring-1 ring-white/5">
                  <ExplosionPentagon />
               </div>
             ) : isSpecialFiche ? (
