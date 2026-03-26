@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useFicheStore } from '../../../store/useFicheStore';
-import { Plus, Search, Filter, Edit2, Trash2, Eye, FileText, ChevronRight, LayoutGrid, List as ListIcon, MoreVertical, UploadCloud } from 'lucide-react';
+import { Plus, Search, Filter, Edit2, Trash2, Eye, FileText, ChevronRight, LayoutGrid, List as ListIcon, MoreVertical, UploadCloud, Database, RefreshCw, AlertCircle } from 'lucide-react';
+import { supabase } from '../../../lib/supabase';
 import { Card } from '../../../components/ui/Card';
 import FicheEditor from '../components/FicheEditor';
 
@@ -11,6 +12,41 @@ export default function FichesTab() {
   const [viewMode, setViewMode] = useState('list'); // 'grid' or 'list'
   const [editingFiche, setEditingFiche] = useState(null);
   const [isEditorOpen, setIsEditorOpen] = useState(false);
+  const [isTestingDB, setIsTestingDB] = useState(false);
+
+  const testConnection = async () => {
+    setIsTestingDB(true);
+    try {
+      const isReal = supabase.supabaseUrl && !supabase.supabaseUrl.includes('placeholder');
+      if (!isReal) {
+        alert('⚠️ ERREUR : La connexion Supabase n est pas configurée dans votre fichier .env (URL placeholder detectée).');
+        setIsTestingDB(false);
+        return;
+      }
+
+      // Tentative de lecture
+      const { data: testRead, error: readError } = await supabase.from('fiches').select('id').limit(1);
+      if (readError) throw new Error('LECTURE ECHOUEE : ' + readError.message);
+
+      // Tentative d-insertion test
+      const testFiche = { 
+        title: 'TEST CONNEXION - ' + new Date().toLocaleTimeString(),
+        category_id: 'c1',
+        type: 'classic',
+        is_published: false
+      };
+      
+      const { data: testInsert, error: insertError } = await supabase.from('fiches').insert([testFiche]).select();
+      if (insertError) throw new Error('INSERTION ECHOUEE : ' + insertError.message);
+
+      alert('✅ SUCCÈS : La lecture et l écriture fonctionnent sur Supabase ! Les données sont bien enregistrées en base.');
+      window.location.reload(); // Rafraichir pour voir les changements
+    } catch (err) {
+      alert('❌ ERREUR DB : ' + err.message + '\n\nConseil : Verifiez que vous avez bien execute les scripts SQL et desactive le RLS sur Supabase.');
+    } finally {
+      setIsTestingDB(false);
+    }
+  };
 
   const filteredFiches = fiches.filter(f => {
     const matchesSearch = f.title.toLowerCase().includes(searchTerm.toLowerCase());
@@ -51,13 +87,23 @@ export default function FichesTab() {
              </div>
           </div>
         </div>
-        <button 
-          onClick={handleAddNew}
-          className="bg-[#CC1A1A] text-white flex items-center justify-center gap-2 px-6 py-4 rounded-2xl font-black uppercase tracking-widest text-xs shadow-xl shadow-red-500/20 active:scale-95 hover:bg-black transition-all"
-        >
-          <Plus size={18} />
-          Nouveau Document
-        </button>
+        <div className="flex gap-3">
+          <button 
+            onClick={testConnection}
+            disabled={isTestingDB}
+            className={`flex items-center justify-center gap-2 px-6 py-4 rounded-2xl font-black uppercase tracking-widest text-[10px] transition-all active:scale-95 ${isTestingDB ? 'bg-gray-100 text-gray-400' : 'bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white border border-blue-100'}`}
+          >
+            {isTestingDB ? <RefreshCw size={14} className="animate-spin" /> : <Database size={14} />}
+            {isTestingDB ? 'Test...' : 'Debug DB'}
+          </button>
+          <button 
+            onClick={handleAddNew}
+            className="bg-[#CC1A1A] text-white flex items-center justify-center gap-2 px-6 py-4 rounded-2xl font-black uppercase tracking-widest text-xs shadow-xl shadow-red-500/20 active:scale-95 hover:bg-black transition-all"
+          >
+            <Plus size={18} />
+            Nouveau Document
+          </button>
+        </div>
       </div>
 
       <Card className="p-6 border-none shadow-sm flex flex-col md:flex-row md:items-center gap-4 bg-white/50 backdrop-blur-sm">
