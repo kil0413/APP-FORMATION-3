@@ -20,27 +20,32 @@ export const useFicheStore = create((set, get) => ({
       if (isRealSupabase) {
         // Chargement indépendant pour ne pas tout bloquer si une table manque
         try {
-          const { data: c, error: errC } = await supabase.from('categories').select('*');
-          if (errC) throw errC;
-          categoriesData = c || [];
+          const resC = await supabase.from('categories').select('*');
+          console.log("DB RAW Categories:", resC);
+          if (resC.error) throw resC.error;
+          categoriesData = resC.data || [];
         } catch (e) { 
           console.error("Erreur categories:", e.message);
-          alert("Note: Impossible de charger les catégories depuis Supabase.");
         }
 
         try {
-          const { data: f, error: errF } = await supabase.from('fiches').select('*');
-          if (errF) throw errF;
-          fichesData = f || [];
+          const resF = await supabase.from('fiches').select('*');
+          console.log("DB RAW Fiches:", resF);
+          if (resF.error) throw resF.error;
+          fichesData = resF.data || [];
+          if (fichesData.length === 0) {
+            console.warn("La table fiches a ete lue avec succes mais est VIDE.");
+          }
         } catch (e) {
           console.error("Erreur fiches:", e.message);
-          alert("Erreur critique: Impossible de charger les fiches depuis Supabase. " + e.message);
+          set({ error: "Erreur Supabase: " + e.message });
         }
 
         try {
-          const { data: q, error: errQ } = await supabase.from('quizzes').select('*');
-          if (errQ) throw errQ;
-          quizzesData = q || [];
+          const resQ = await supabase.from('quizzes').select('*');
+          console.log("DB RAW Quizzes:", resQ);
+          if (resQ.error) throw resQ.error;
+          quizzesData = resQ.data || [];
         } catch (e) {
           console.error("Erreur quizzes:", e.message);
         }
