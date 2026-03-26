@@ -72,6 +72,8 @@ export default function ExplosionPentagon() {
     setSeen(prev => new Set([...prev, i]));
   };
 
+  const activeCondition = activeIndex !== -1 ? conditions[activeIndex] : null;
+
   return (
     <div className="w-full h-full flex flex-col overflow-hidden" style={{ background: '#0b0f1a' }}>
       {/* Header with Page Switcher */}
