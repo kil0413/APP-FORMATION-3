@@ -13,16 +13,24 @@ export const useFicheStore = create((set, get) => ({
   fetchData: async () => {
     set({ isLoading: true });
     try {
-      // Récupérer les données en parallèle
-      const [
-        { data: categoriesData },
-        { data: fichesData },
-        { data: quizzesData }
-      ] = await Promise.all([
-        supabase.from('categories').select('*'),
-        supabase.from('fiches').select('*'),
-        supabase.from('quizzes').select('*')
-      ]);
+      const isRealSupabase = supabase.supabaseUrl && !supabase.supabaseUrl.includes('placeholder');
+      
+      let categoriesData = [], fichesData = [], quizzesData = [];
+
+      if (isRealSupabase) {
+        const [
+          { data: c },
+          { data: f },
+          { data: q }
+        ] = await Promise.all([
+          supabase.from('categories').select('*'),
+          supabase.from('fiches').select('*'),
+          supabase.from('quizzes').select('*')
+        ]);
+        categoriesData = c || [];
+        fichesData = f || [];
+        quizzesData = q || [];
+      }
 
       // Fusionner avec les données de secours (pour s'assurer qu'il y a toujours du contenu)
       // On utilise les données DB en priorité si ID identiques
@@ -71,7 +79,14 @@ export const useFicheStore = create((set, get) => ({
   },
 
   addFiche: async (newFiche) => {
+    // Si Supabase n'est pas configuré (URL placeholder), on passe direct au store local
+    const isRealSupabase = supabase.supabaseUrl && !supabase.supabaseUrl.includes('placeholder');
+    
     try {
+      if (!isRealSupabase) {
+        throw new Error('Supabase not configured, using local fallback');
+      }
+
       const { data, error } = await supabase
         .from('fiches')
         .insert([{
@@ -83,7 +98,7 @@ export const useFicheStore = create((set, get) => ({
       if (error) throw error;
 
       if (data) {
-        set((state) => ({ fiches: [...state.fiches, data[0]] }));
+        set((state) => ({ fiches: [data[0], ...state.fiches] }));
       }
     } catch (err) {
       console.error('Erreur addFiche:', err.message);
@@ -101,9 +116,11 @@ export const useFicheStore = create((set, get) => ({
   },
 
   updateFiche: async (id, updatedFiche) => {
+    const isRealSupabase = supabase.supabaseUrl && !supabase.supabaseUrl.includes('placeholder');
+
     try {
-      if (typeof id === 'string' && id.startsWith('f')) {
-        // Mock data logic
+      if (typeof id === 'string' && id.startsWith('f') || !isRealSupabase) {
+        // Mock data logic ou non configuré
         set((state) => ({ fiches: state.fiches.map(f => f.id === id ? { ...f, ...updatedFiche } : f) }));
         return;
       }
@@ -126,9 +143,11 @@ export const useFicheStore = create((set, get) => ({
   },
 
   deleteFiche: async (id) => {
+    const isRealSupabase = supabase.supabaseUrl && !supabase.supabaseUrl.includes('placeholder');
+
     try {
-      if (typeof id === 'string' && id.startsWith('f')) {
-        // C'est une fiche mockée (f1, f2...), on la retire du local
+      if (typeof id === 'string' && id.startsWith('f') || !isRealSupabase) {
+        // C'est une fiche mockée ou non configuré
         set((state) => ({ fiches: state.fiches.filter((f) => f.id !== id) }));
         return;
       }
