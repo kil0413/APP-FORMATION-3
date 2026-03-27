@@ -25,7 +25,7 @@ export default function Quiz() {
 
   if (!quiz) {
     return (
-      <div className="flex bg-[#1A1A2E] h-screen items-center justify-center p-8 text-center">
+      <div className="flex bg-[#1A1A2E] h-[100dvh] w-full items-center justify-center p-8 text-center">
         <div className="flex flex-col items-center gap-8">
            <div className="h-24 w-24 bg-red-600 rounded-[2rem] flex items-center justify-center shadow-2xl rotate-12">
               <Zap size={48} className="text-white" />
@@ -88,7 +88,7 @@ export default function Quiz() {
     const perfectScore = score === quiz.questions.length;
 
     return (
-      <div className="flex h-screen flex-col items-center justify-center p-8 bg-[#1A1A2E] text-center overflow-hidden relative">
+      <div className="flex h-[100dvh] w-full flex-col items-center justify-center p-8 bg-[#1A1A2E] text-center overflow-hidden relative">
         {/* Confetti simulation (Emojis) */}
         {perfectScore && Array.from({ length: 20 }).map((_, i) => (
           <motion.div
@@ -167,9 +167,9 @@ export default function Quiz() {
   }
 
   return (
-    <div className="flex h-screen flex-col bg-[#F8F9FD] font-['Inter']">
+    <div className="flex h-[100dvh] w-full flex-col bg-[#F8F9FD] font-['Inter']">
       {/* HEADER QUIZ */}
-      <header className="px-6 pt-10 pb-6 flex items-center justify-between bg-white shadow-sm border-b border-gray-50">
+      <header className="px-6 pt-6 pb-4 flex items-center justify-between bg-white shadow-sm border-b border-gray-50">
         <button onClick={() => navigate(-1)} className="text-gray-300 p-2 hover:text-[#1A1A2E] transition-colors rounded-full hover:bg-gray-50">
           <X size={24} strokeWidth={3} />
         </button>
@@ -190,8 +190,8 @@ export default function Quiz() {
       </header>
 
       {/* QUESTION AREA */}
-      <main className="flex-1 px-6 pt-12 pb-32 overflow-y-auto no-scrollbar relative">
-        <div className="mb-12">
+      <main className="flex-1 px-6 md:px-12 pt-10 pb-32 overflow-y-auto no-scrollbar relative w-full max-w-4xl mx-auto">
+        <div className="mb-10">
           <Badge className="bg-[#1A1A2E] text-white border-none font-black text-[9px] px-3 py-1.5 mb-4 tracking-widest uppercase">
              {currentFiche?.title || 'ÉVALUATION'}
           </Badge>
@@ -278,29 +278,31 @@ export default function Quiz() {
       </main>
 
       {/* FOOTER BUTTON - Floating Action Bar */}
-      <footer className="fixed bottom-0 w-full max-w-[390px] p-8 bg-white/90 backdrop-blur-xl border-t border-gray-100 shadow-[0_-20px_50px_rgba(0,0,0,0.05)] rounded-t-[3rem] z-50">
-        {!isConfirmed ? (
-          <button
-            onClick={handleConfirm}
-            disabled={selectedAnswer === null}
-            className={cn(
-              "w-full py-6 rounded-[2rem] font-black uppercase tracking-[0.2em] text-sm transition-all active:scale-95 shadow-2xl",
-              selectedAnswer !== null 
-                ? 'bg-[#1A1A2E] text-white hover:bg-black' 
-                : 'bg-gray-100 text-gray-300 pointer-events-none'
-            )}
-          >
-            VÉRIFIER LA RÉPONSE
-          </button>
-        ) : (
-          <button
-            onClick={nextStep}
-            className="w-full bg-[#CC1A1A] text-white py-6 rounded-[2rem] font-black uppercase tracking-[0.2em] text-sm transition-all active:scale-95 flex items-center justify-center gap-4 shadow-[0_15px_40px_rgba(204,26,26,0.3)] animate-in slide-in-from-bottom duration-300"
-          >
-            {currentStep < quiz.questions.length - 1 ? 'QUESTION SUIVANTE' : 'VOIR MES RÉSULTATS'}
-            <ArrowRight size={20} strokeWidth={3} />
-          </button>
-        )}
+      <footer className="fixed bottom-0 left-0 w-full p-6 md:p-8 bg-white/90 backdrop-blur-xl border-t border-gray-100 shadow-[0_-20px_50px_rgba(0,0,0,0.05)] md:rounded-t-[3rem] z-50 flex justify-center">
+        <div className="w-full max-w-4xl">
+          {!isConfirmed ? (
+            <button
+              onClick={handleConfirm}
+              disabled={selectedAnswer === null}
+              className={cn(
+                "w-full py-5 md:py-6 rounded-[2rem] font-black uppercase tracking-[0.2em] text-sm md:text-base transition-all active:scale-95 shadow-2xl",
+                selectedAnswer !== null 
+                  ? 'bg-[#1A1A2E] text-white hover:bg-black' 
+                  : 'bg-gray-100 text-gray-300 pointer-events-none'
+              )}
+            >
+              VÉRIFIER LA RÉPONSE
+            </button>
+          ) : (
+            <button
+              onClick={nextStep}
+              className="w-full bg-[#CC1A1A] text-white py-5 md:py-6 rounded-[2rem] font-black uppercase tracking-[0.2em] text-sm md:text-base transition-all active:scale-95 flex items-center justify-center gap-4 shadow-[0_15px_40px_rgba(204,26,26,0.3)] animate-in slide-in-from-bottom duration-300"
+            >
+              {currentStep < quiz.questions.length - 1 ? 'QUESTION SUIVANTE' : 'VOIR MES RÉSULTATS'}
+              <ArrowRight size={20} strokeWidth={3} />
+            </button>
+          )}
+        </div>
       </footer>
     </div>
   );

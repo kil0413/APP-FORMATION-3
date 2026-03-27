@@ -42,7 +42,7 @@ export default function Procedure() {
 
   if (completed) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-[#F2F2F7] flex-col gap-6 px-6 relative">
+      <div className="flex h-[100dvh] w-full items-center justify-center bg-[#F2F2F7] flex-col gap-6 px-6 relative">
         <div className="flex h-24 w-24 items-center justify-center rounded-full bg-green-100 text-[#34C759] shadow-xl animate-bounce">
           <Check size={48} strokeWidth={3} />
         </div>
@@ -67,9 +67,9 @@ export default function Procedure() {
   const step = mockProcedure.steps[currentStep];
 
   return (
-    <div className="min-h-screen bg-white flex flex-col relative overflow-hidden">
+    <div className="h-[100dvh] w-full bg-white flex flex-col relative overflow-hidden">
       {/* Header compact */}
-      <div className="flex items-center justify-between px-4 pt-10 pb-4 bg-white z-10 w-full max-w-[390px]">
+      <div className="flex items-center justify-between px-4 pt-6 pb-4 bg-white z-10 w-full max-w-5xl mx-auto">
         <button onClick={() => navigate(-1)} className="p-2 -ml-2 text-gray-400 active:scale-95">
           <ChevronLeft size={28} />
         </button>
@@ -90,17 +90,17 @@ export default function Procedure() {
         </div>
 
         {/* Text Zone */}
-        <div className="flex-1 px-6 py-8 flex flex-col items-center text-center bg-white rounded-t-3xl shadow-[0_-10px_40px_rgba(0,0,0,0.05)] -mt-6 z-20">
+        <div className="flex-1 px-6 md:px-12 py-8 flex flex-col items-center text-center bg-white rounded-t-[2.5rem] shadow-[0_-10px_40px_rgba(0,0,0,0.05)] -mt-6 z-20 overflow-y-auto no-scrollbar">
           <Badge className="mb-4 bg-gray-100 text-[#1A1A2E]">{mockProcedure.title}</Badge>
-          <h2 className="text-2xl font-black text-[#1A1A2E] tracking-tight">{step.title}</h2>
-          <p className="mt-4 text-[16px] text-[#8E8E93] font-medium leading-relaxed max-w-[320px]">
+          <h2 className="text-2xl md:text-3xl font-black text-[#1A1A2E] tracking-tight">{step.title}</h2>
+          <p className="mt-4 text-[16px] md:text-lg text-[#8E8E93] font-medium leading-relaxed max-w-2xl px-4">
             {step.description}
           </p>
         </div>
       </div>
 
       {/* Nav Buttons */}
-      <div className="p-6 pb-safe flex items-center justify-between gap-4 bg-white z-20 shadow-[0_-1px_10px_rgba(0,0,0,0.02)]">
+      <div className="p-6 md:p-8 pb-safe flex items-center justify-between gap-4 bg-white z-20 shadow-[0_-1px_10px_rgba(0,0,0,0.02)] max-w-5xl mx-auto w-full">
         <button 
           onClick={handlePrev} 
           disabled={currentStep === 0}
