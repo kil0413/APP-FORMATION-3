@@ -67,11 +67,11 @@ export default function Fiche() {
       className="h-screen w-full flex flex-col overflow-hidden font-['Inter',_sans-serif] selection:bg-red-500/30 transition-colors duration-500"
       style={{ backgroundColor: (currentFiche.type === 'interactive' || currentFiche.type === 'code') ? '#0b0f1a' : currentTheme.bg }}
     >
-      {/* HEADER - GLASS STYLE (V3) */}
+      {/* HEADER - MINIMALIST (V4) */}
       <header 
-        className={cn("fixed top-0 z-[60] w-full pt-4 pb-4 px-6 flex items-center justify-between border-b backdrop-blur-2xl transition-colors duration-500", (currentFiche.type === 'interactive' || currentFiche.type === 'code') ? "bg-[#0b0f1a] border-white/5" : "border-black/5")}
+        className={cn("relative z-[60] w-full py-3 px-6 flex items-center justify-between border-b backdrop-blur-2xl transition-all duration-500", (currentFiche.type === 'interactive' || currentFiche.type === 'code') ? "bg-[#0b0f1a] border-white/5" : "border-black/5")}
         style={{ 
-          backgroundColor: (currentFiche.type === 'interactive' || currentFiche.type === 'code') ? '#0b0f1aE6' : `${currentTheme.header}E6`
+          backgroundColor: (currentFiche.type === 'interactive' || currentFiche.type === 'code') ? '#0b0f1a' : currentTheme.header
         }} 
       >
         <div className="flex items-center gap-5 w-full max-w-7xl mx-auto">
@@ -109,13 +109,13 @@ export default function Fiche() {
       </header>
 
       {/* MAIN CONTENT AREA */}
-      <main className="flex-1 relative pt-24 overflow-y-auto no-scrollbar scroll-smooth">
-         <motion.div 
-           initial={{ opacity: 0, y: 20 }}
-           animate={{ opacity: 1, y: 0 }}
-           transition={{ duration: 0.6 }}
-          className={cn("w-full h-full flex flex-col", (currentFiche.type === 'interactive' || currentFiche.type === 'code') ? "max-w-none" : "max-w-7xl mx-auto")}
-         >
+      <main className="flex-1 relative overflow-y-auto no-scrollbar scroll-smooth">
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="w-full h-full flex flex-col"
+          >
             {currentFiche.type === 'interactive' && currentFiche.interactive_id === 'explosion_pentagon' ? (
               <div className="flex-1 bg-[#0b0f1a] overflow-hidden flex flex-col h-full ring-1 ring-white/5">
                  <ExplosionPentagon />
@@ -155,7 +155,7 @@ export default function Fiche() {
               </div>
             ) : (
               /* STANDARD TEXT CONTENT */
-              <div className="px-6 md:px-12 pb-48 flex flex-col gap-12">
+              <div className="px-6 md:px-12 pb-32 flex flex-col gap-12 mt-10">
                  {currentFiche.file_data ? (
                     <div className="w-full animate-in zoom-in duration-700">
                        {currentFiche.file_type === 'pdf' ? (
@@ -171,7 +171,7 @@ export default function Fiche() {
                  ) : (
                     (currentFiche.sections || []).map((section, idx) => (
                       <section key={idx} className="flex flex-col gap-6 animate-in fade-in slide-in-from-bottom-8 duration-700">
-                         <h2 className="text-3xl md:text-4xl font-black text-[#1A1A2E] tracking-tighter uppercase italic flex items-center gap-4">
+                         <h2 className="text-2xl md:text-3xl font-black text-[#1A1A2E] tracking-tighter uppercase italic flex items-center gap-4">
                             <span className="h-10 w-2.5 bg-[#CC1A1A] rounded-full shadow-[0_5px_15px_#CC1A1A4D]" />
                             {section.title}
                          </h2>
