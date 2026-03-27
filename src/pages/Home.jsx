@@ -115,14 +115,13 @@ export default function Home() {
           {/* Outils d'apprentissage - Grid Layout */}
           <section className="flex flex-col gap-8">
              <h2 className="text-sm font-black text-white uppercase tracking-[0.4em] mb-4">Outils de Formation</h2>
-             <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {[
-                  { id: 't1', title: 'QCM', sub: 'Flash Test', icon: <Zap />, color: 'bg-orange-600/20 text-orange-400' },
-                  { id: 't4', title: 'GRADE', sub: 'Simulation', icon: <Flame />, color: 'bg-red-600/20 text-red-400' },
-                  { id: 't3', title: 'BILAN', sub: 'Secourisme', icon: <CheckCircle2 />, color: 'bg-green-600/20 text-green-400' },
-                  { id: 't2', title: 'DANGER', sub: 'Signalétique', icon: <AlertTriangle />, color: 'bg-blue-600/20 text-blue-400' }
+                  { id: 't1', title: 'QCM', sub: 'Flash Test', icon: <Zap />, color: 'bg-orange-600/20 text-orange-400', click: () => navigate('/quiz-general') },
+                  { id: 't2', title: 'MSP', sub: 'Mises en situation', icon: <Flame />, color: 'bg-red-600/20 text-red-400', click: () => alert("Le module de Mise en Situation Pratique (MSP) est en cours de développement.") },
+                  { id: 't3', title: 'MATOS', sub: 'Nomenclatures', icon: <Target />, color: 'bg-blue-600/20 text-blue-400', click: () => alert("Le module Matos est en cours de développement.") }
                 ].map((tool) => (
-                  <Card key={tool.id} className="cursor-pointer group hover:scale-[1.02] transition-all border-white/5 bg-[#1E293B]/20">
+                  <Card key={tool.id} onClick={tool.click} className="cursor-pointer group hover:scale-[1.02] transition-all border-white/5 bg-[#1E293B]/20">
                     <CardContent className="flex flex-col gap-6 p-8">
                       <div className={cn("h-14 w-14 rounded-2xl flex items-center justify-center transition-all group-hover:rotate-12", tool.color)}>
                         {tool.icon}
@@ -137,38 +136,51 @@ export default function Home() {
              </div>
           </section>
 
-          {/* Activités Récentes */}
+          {/* Activités Récentes Dynamiques */}
           <section>
             <h2 className="mb-8 text-2xl font-black text-white tracking-tighter uppercase italic flex items-center gap-3">
                <TrendingUp className="text-red-500" size={28} />
                Dernières Activités
             </h2>
             <div className="flex flex-col gap-5">
-              {[
-                { id: 1, title: 'Bilan vital', sub: 'Secourisme • 12/03', done: true, points: '+150 XP', icon: '❤️' },
-                { id: 2, title: 'Pose d\'un garrot', sub: 'Procédure • 11/03', done: true, points: '+80 XP', icon: '🩸' },
-                { id: 3, title: 'Protection et alerte', sub: 'Sécurité Civile • 10/03', done: false, points: '0 XP', icon: '⚠️' }
-              ].map((item) => (
-                <Card key={item.id} className="border-white/5 bg-[#1E293B]/20 rounded-[2rem] hover:bg-[#1E293B]/40 transition-all cursor-pointer group">
-                  <CardContent className="flex items-center gap-6 p-6">
-                    <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-white/5 text-2xl group-hover:rotate-6 transition-transform">
-                      {item.icon}
-                    </div>
-                    <div className="flex flex-col flex-1 gap-1">
-                      <h3 className="text-lg font-black text-white uppercase tracking-tighter italic">{item.title}</h3>
-                      <p className="text-[10px] font-black text-white/40 uppercase tracking-widest">{item.sub}</p>
-                    </div>
-                    <div className="flex flex-col items-end gap-2">
-                       <span className={`text-[11px] font-black ${item.done ? 'text-green-500' : 'text-white/20'}`}>{item.points}</span>
-                       {item.done ? (
-                         <CheckCircle2 size={24} className="text-green-500 shadow-[0_0_10px_rgba(34,197,94,0.3)]" />
-                       ) : (
-                         <div className="h-6 w-6 rounded-full border-2 border-dashed border-white/10" />
-                       )}
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
+              {user?.completed_fiches && user.completed_fiches.length > 0 ? (
+                user.completed_fiches.slice(-4).reverse().map((id, index) => {
+                  const fiche = fiches.find(f => f.id === id);
+                  if (!fiche) return null;
+                  
+                  return (
+                    <Card key={`${id}-${index}`} onClick={() => navigate(`/fiche/${id}`)} className="border-white/5 bg-[#1E293B]/20 rounded-[2rem] hover:bg-[#1E293B]/40 transition-all cursor-pointer group">
+                      <CardContent className="flex items-center gap-6 p-6">
+                        <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-[#CC1A1A]/10 text-red-500 group-hover:rotate-6 transition-transform shadow-inner">
+                          <CheckCircle2 size={28} />
+                        </div>
+                        <div className="flex flex-col flex-1 gap-1">
+                          <h3 className="text-lg font-black text-white uppercase tracking-tighter italic line-clamp-1">{fiche.title}</h3>
+                          <p className="text-[10px] font-black text-white/40 uppercase tracking-widest">
+                            {categories.find(c => c.id === fiche.category_id)?.name || 'Module'} • Validé
+                          </p>
+                        </div>
+                        <div className="flex flex-col items-end gap-2 pr-2">
+                           <span className="text-[11px] font-black text-green-500">+10 XP</span>
+                           <div className="h-6 w-6 rounded-full bg-black/30 flex items-center justify-center shadow-inner">
+                              <ChevronRight size={14} className="text-white/40" />
+                           </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  );
+                })
+              ) : (
+                <div className="w-full py-16 px-6 rounded-[2rem] border-2 border-dashed border-white/5 flex flex-col items-center justify-center gap-4 text-center">
+                   <div className="h-16 w-16 rounded-full bg-white/5 flex items-center justify-center opacity-50">
+                     <Brain size={24} className="text-white/40" />
+                   </div>
+                   <div>
+                     <p className="text-sm font-black text-white uppercase tracking-widest italic opacity-70 mb-1">Aucune activité enregistrée</p>
+                     <p className="text-[10px] text-white/40 font-bold uppercase tracking-widest">Lancez une fiche pour commencer votre entraînement</p>
+                   </div>
+                </div>
+              )}
             </div>
           </section>
         </div>
