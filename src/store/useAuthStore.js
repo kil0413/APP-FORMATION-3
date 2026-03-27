@@ -185,10 +185,17 @@ export const useAuthStore = create((set, get) => ({
     const state = get();
     if (!state.user?.id) return;
 
-    const oldFiches = state.user.completed_fiches || [];
-    if (oldFiches.includes(ficheId)) return; // Déjà faite
+    const now = new Date().toISOString();
+    const entry = `${ficheId}|${now}`;
 
-    const newFiches = [...oldFiches, ficheId];
+    // On retire l'ancienne entrée de cette fiche si elle existe pour éviter les doublons 
+    // et on la replace à la fin pour qu'elle remonte dans "Dernières activités"
+    const oldFiches = (state.user.completed_fiches || []).filter(e => {
+       const id = e.includes('|') ? e.split('|')[0] : e;
+       return id !== ficheId;
+    });
+
+    const newFiches = [...oldFiches, entry];
     
     set({ user: { ...state.user, completed_fiches: newFiches } });
     await supabase.from('profiles').update({ completed_fiches: newFiches }).eq('id', state.user.id);

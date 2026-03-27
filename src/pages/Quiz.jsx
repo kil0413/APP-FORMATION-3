@@ -78,7 +78,7 @@ export default function Quiz() {
 
   const finishQuiz = () => {
     const finalScore = selectedAnswer === currentQuestion.correct ? score + 1 : score;
-    const xpGained = finalScore * 50; // Points doublés pour la sortie
+    const xpGained = finalScore * 5; // 5 XP par bonne réponse
     addXp(xpGained);
     setIsFinished(true);
   };
@@ -128,7 +128,7 @@ export default function Quiz() {
                 <div className="text-[10px] uppercase font-black text-white/30 tracking-widest leading-none">Précision</div>
              </div>
              <div className="flex-1 bg-white/[0.03] backdrop-blur-md p-8 rounded-[2.5rem] border border-white/5 shadow-2xl">
-                <div className="text-4xl font-black text-[#CC1A1A] mb-1 leading-none">+{score * 50}</div>
+                <div className="text-4xl font-black text-[#CC1A1A] mb-1 leading-none">+{score * 5}</div>
                 <div className="text-[10px] uppercase font-black text-white/30 tracking-widest leading-none">Points XP</div>
              </div>
           </div>

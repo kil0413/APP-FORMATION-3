@@ -20,13 +20,23 @@ export default function Fiche() {
   
   const [activePage, setActivePage] = useState(1);
   const [completed, setCompleted] = useState(false);
+  const [isValidating, setIsValidating] = useState(false);
   const scrollContainerRef = useRef(null);
 
+  const completedEntry = user?.completed_fiches?.find(entry => {
+     const eId = entry.includes('|') ? entry.split('|')[0] : entry;
+     return eId === id;
+  });
+
+  const lastRevisionDate = completedEntry && completedEntry.includes('|') 
+     ? new Date(completedEntry.split('|')[1])
+     : null;
+
   useEffect(() => {
-    if (user?.completed_fiches?.includes(id)) {
+    if (completedEntry) {
       setCompleted(true);
     }
-  }, [user, id]);
+  }, [completedEntry]);
 
   if (!currentFiche || isStoreLoading || isAuthLoading || !user) {
     return (
@@ -51,13 +61,16 @@ export default function Fiche() {
     text: (currentFiche.type === 'interactive' || currentFiche.type === 'code') ? 'white' : (['c2', 'c3', 'c1'].includes(currentFiche.category_id) ? (currentFiche.category_id === 'c3' ? 'black' : 'white') : 'black')
   };
 
-  const handleComplete = () => {
-    if (!completed) {
-      setCompleted(true);
-      addXp(10);
-      completeFiche(id);
-      if ("vibrate" in navigator) navigator.vibrate([100, 50, 100]);
-    }
+  const handleComplete = async () => {
+    if (isValidating) return;
+    setIsValidating(true);
+    
+    // Le XP est ajouté directement dans completeFiche
+    await completeFiche(id);
+    setCompleted(true);
+    
+    if ("vibrate" in navigator) navigator.vibrate([100, 50, 100]);
+    setTimeout(() => setIsValidating(false), 2000); // Anti-spam
   };
 
   const isSpecialFiche = currentFiche.id === 'f4';
@@ -85,7 +98,9 @@ export default function Fiche() {
           
           <div className="flex-1 flex flex-col min-w-0">
              <div className="flex items-center gap-2">
-                <span className="text-[9px] font-black uppercase tracking-widest text-black/30" style={{ color: `${currentTheme.text}4D` }}>Module {currentCategory?.name || 'V-Formation'}</span>
+                <span className="text-[9px] font-black uppercase tracking-widest text-black/30" style={{ color: `${currentTheme.text}4D` }}>
+                   {lastRevisionDate ? `Dernière révision : ${lastRevisionDate.toLocaleDateString('fr-FR')}` : `Module ${currentCategory?.name || 'V-Formation'}`}
+                </span>
                 <span className="h-1 w-1 bg-black/20 rounded-full" />
                 <span className="text-[9px] font-black uppercase tracking-widest text-[#CC1A1A]">Version 3.1</span>
              </div>
@@ -97,11 +112,20 @@ export default function Fiche() {
              </h1>
           </div>
 
-          <div className="flex items-center gap-3">
-             <button className="hidden md:flex h-12 w-12 items-center justify-center rounded-[1.2rem] bg-black/5 hover:bg-black/10 transition-all">
-                <Bookmark size={22} style={{ color: currentTheme.text }} />
+          <div className="flex items-center gap-2 md:gap-3">
+             <button 
+                onClick={handleComplete}
+                disabled={isValidating}
+                className={cn(
+                  "h-12 flex items-center justify-center gap-2 px-3 md:px-4 rounded-[1.2rem] font-black uppercase tracking-widest text-[10px] transition-all shadow-sm active:scale-95",
+                  completed ? "bg-[#34C759]/20 text-[#34C759] border border-[#34C759]/30" : "bg-black/5 hover:bg-black/10"
+                )}
+                style={!completed ? { color: currentTheme.text } : {}}
+             >
+                {completed ? <CheckCircle2 size={16} /> : <Check size={16} />}
+                <span className="hidden sm:block">{completed ? 'Revalider' : 'Valider (+10 XP)'}</span>
              </button>
-             <button className="h-12 w-12 flex items-center justify-center rounded-[1.2rem] bg-black/5 hover:bg-black/10 transition-all">
+             <button className="hidden md:flex h-12 w-12 items-center justify-center rounded-[1.2rem] bg-black/5 hover:bg-black/10 transition-all">
                 <Share2 size={22} style={{ color: currentTheme.text }} />
              </button>
           </div>
@@ -270,7 +294,7 @@ export default function Fiche() {
 
           <button
             onClick={handleComplete}
-            disabled={completed}
+            disabled={isValidating}
             className={cn(
               "flex-1 flex items-center justify-center gap-4 rounded-[2rem] py-5 md:py-8 font-black uppercase tracking-widest text-sm transition-all active:scale-95 shadow-2xl",
               completed 
@@ -278,7 +302,7 @@ export default function Fiche() {
                 : 'bg-[#1A1A2E] text-white hover:bg-black shadow-black/20'
             )}
           >
-            {completed ? <><CheckCircle2 size={24} strokeWidth={3} /> Leçon Validée</> : 'Marquer comme lu (+10 XP)'}
+            {completed ? <><CheckCircle2 size={24} strokeWidth={3} /> Revalider la lecture (+10 XP)</> : 'Marquer comme lu (+10 XP)'}
           </button>
 
           {completed && (
