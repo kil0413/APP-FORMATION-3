@@ -196,9 +196,13 @@ export const useAuthStore = create((set, get) => ({
     });
 
     const newFiches = [...oldFiches, entry];
+    const newXpTotal = (state.user.xp_total || 0) + 10;
     
-    set({ user: { ...state.user, completed_fiches: newFiches } });
-    await supabase.from('profiles').update({ completed_fiches: newFiches }).eq('id', state.user.id);
+    set({ user: { ...state.user, completed_fiches: newFiches, xp_total: newXpTotal } });
+    await supabase.from('profiles').update({ 
+      completed_fiches: newFiches,
+      xp_total: newXpTotal
+    }).eq('id', state.user.id);
   },
 
   loseLife: async () => {
