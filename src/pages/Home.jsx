@@ -144,12 +144,15 @@ export default function Home() {
             </h2>
             <div className="flex flex-col gap-5">
               {user?.completed_fiches && user.completed_fiches.length > 0 ? (
-                user.completed_fiches.slice(-4).reverse().map((id, index) => {
-                  const fiche = fiches.find(f => f.id === id);
+                user.completed_fiches.slice(-4).reverse().map((entry, index) => {
+                  const entryId = entry.includes('|') ? entry.split('|')[0] : entry;
+                  const entryDate = entry.includes('|') ? new Date(entry.split('|')[1]).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit' }) : 'Récent';
+                  const fiche = fiches.find(f => f.id === entryId);
+                  
                   if (!fiche) return null;
                   
                   return (
-                    <Card key={`${id}-${index}`} onClick={() => navigate(`/fiche/${id}`)} className="border-white/5 bg-[#1E293B]/20 rounded-[2rem] hover:bg-[#1E293B]/40 transition-all cursor-pointer group">
+                    <Card key={`${entryId}-${index}`} onClick={() => navigate(`/fiche/${entryId}`)} className="border-white/5 bg-[#1E293B]/20 rounded-[2rem] hover:bg-[#1E293B]/40 transition-all cursor-pointer group">
                       <CardContent className="flex items-center gap-6 p-6">
                         <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-[#CC1A1A]/10 text-red-500 group-hover:rotate-6 transition-transform shadow-inner">
                           <CheckCircle2 size={28} />
@@ -157,7 +160,7 @@ export default function Home() {
                         <div className="flex flex-col flex-1 gap-1">
                           <h3 className="text-lg font-black text-white uppercase tracking-tighter italic line-clamp-1">{fiche.title}</h3>
                           <p className="text-[10px] font-black text-white/40 uppercase tracking-widest">
-                            {categories.find(c => c.id === fiche.category_id)?.name || 'Module'} • Validé
+                            {categories.find(c => c.id === fiche.category_id)?.name || 'Module'} • {entryDate}
                           </p>
                         </div>
                         <div className="flex flex-col items-end gap-2 pr-2">

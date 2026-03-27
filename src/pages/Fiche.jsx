@@ -98,10 +98,10 @@ export default function Fiche() {
           
           <div className="flex-1 flex flex-col min-w-0">
              <div className="flex items-center gap-2">
-                <span className="text-[9px] font-black uppercase tracking-widest text-black/30" style={{ color: `${currentTheme.text}4D` }}>
+                <span className="text-[9px] font-black uppercase tracking-widest opacity-50" style={{ color: currentTheme.text }}>
                    {lastRevisionDate ? `Dernière révision : ${lastRevisionDate.toLocaleDateString('fr-FR')}` : `Module ${currentCategory?.name || 'V-Formation'}`}
                 </span>
-                <span className="h-1 w-1 bg-black/20 rounded-full" />
+                <span className="h-1 w-1 rounded-full opacity-20" style={{ backgroundColor: currentTheme.text }} />
                 <span className="text-[9px] font-black uppercase tracking-widest text-[#CC1A1A]">Version 3.1</span>
              </div>
              <h1 
