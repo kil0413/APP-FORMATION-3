@@ -2,6 +2,7 @@ import { Heart, Zap, Flame, Play, LayoutGrid, Brain, CheckCircle2, ChevronRight,
 import { useNavigate } from 'react-router-dom';
 import { Header } from '../components/layout/Header';
 import { PageWrapper } from '../components/layout/PageWrapper';
+import HeroEmbers from '../components/layout/HeroEmbers';
 import { Card, CardContent } from '../components/ui/Card';
 import { Badge } from '../components/ui/Badge';
 import { useAuthStore } from '../store/useAuthStore';
@@ -36,9 +37,135 @@ export default function Home() {
 
   return (
     <PageWrapper>
-      <Header showLogo className="md:hidden" />
+      <HeroEmbers />
       
-      <main className="flex flex-col lg:grid lg:grid-cols-12 gap-10 px-4 py-8 md:px-12 md:py-16">
+      {/* NOUVEAU BLOC HERO FOURNI PAR L'UTILISATEUR */}
+      <section className="relative w-full h-[100dvh] flex flex-col items-center justify-center z-10 overflow-hidden">
+        <style dangerouslySetInnerHTML={{__html: `
+          @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Rajdhani:wght@300;400;500;600&display=swap');
+          
+          .hero-line-top {
+            width: 60px;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(200,90,40,0.6), transparent);
+            margin: 0 auto 2rem;
+            animation: fadeIn 1.5s ease 0.3s both;
+          }
+          
+          .pre-title {
+            font-family: 'Rajdhani', sans-serif;
+            font-weight: 300;
+            font-size: clamp(0.65rem, 1.2vw, 0.85rem);
+            color: rgba(200,140,100,0.5);
+            letter-spacing: 0.6em;
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+            animation: fadeIn 1.5s ease 0.5s both;
+          }
+          
+          .hero-title {
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
+            font-size: clamp(2.8rem, 8vw, 7rem);
+            line-height: 0.95;
+            letter-spacing: 0.06em;
+            color: #f5f0ea;
+            animation: titleReveal 2s cubic-bezier(0.16, 1, 0.3, 1) 0.2s both;
+          }
+          
+          .hero-title .fire {
+            display: block;
+            background: linear-gradient(180deg, #f5f0ea 30%, #c8784a 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+          }
+          
+          .hero-title .academie {
+            display: block;
+            font-weight: 400;
+            font-size: 0.42em;
+            letter-spacing: 0.45em;
+            color: rgba(200,140,100,0.45);
+            margin-top: 0.3em;
+          }
+          
+          .hero-line-bottom {
+            width: 60px;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(200,90,40,0.6), transparent);
+            margin: 2rem auto 0;
+            animation: fadeIn 1.5s ease 0.3s both;
+          }
+          
+          .hero-scroll-hint {
+            position: absolute;
+            bottom: 6rem;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            animation: fadeIn 2s ease 2s both;
+            pointer-events: none;
+          }
+          
+          .hero-scroll-hint span {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 0.6rem;
+            letter-spacing: 0.3em;
+            color: rgba(255,255,255,0.15);
+            text-transform: uppercase;
+          }
+          
+          .hero-scroll-line {
+            width: 1px;
+            height: 30px;
+            background: linear-gradient(180deg, rgba(200,90,40,0.4), transparent);
+            animation: scrollPulse 2s ease-in-out infinite;
+          }
+          
+          @keyframes scrollPulse {
+            0%, 100% { opacity: 0.3; transform: scaleY(0.6); }
+            50%      { opacity: 1; transform: scaleY(1); }
+          }
+          
+          @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to   { opacity: 1; transform: translateY(0); }
+          }
+          
+          @keyframes titleReveal {
+            from { opacity: 0; transform: translateY(30px) scale(0.97); }
+            to   { opacity: 1; transform: translateY(0) scale(1); }
+          }
+        `}} />
+
+        {/* Le Header natif reste positionné par-dessus le fond animé en haut */}
+        <div className="absolute top-4 left-0 w-full px-4 md:hidden z-20 flex justify-end">
+          {/* Uniquement pour le bouton de menu sans casser le layout CSS du hero */}
+          <Header showLogo={false} />
+        </div>
+
+        <div className="text-center pointer-events-none relative z-10 w-full px-4 mt-16 md:mt-0">
+          <div className="hero-line-top"></div>
+          <div className="pre-title">Centre de Formation</div>
+          <h1 className="hero-title">
+            <span className="fire">FIRE</span>
+            <span className="academie">ACADEMIE</span>
+          </h1>
+          <div className="hero-line-bottom"></div>
+        </div>
+
+        <div className="hero-scroll-hint pb-10">
+          <span>Découvrir</span>
+          <div className="hero-scroll-line"></div>
+        </div>
+      </section>
+
+      {/* DASHBOARD EXISTANT (Apparaît sous l'écran d'accueil) */}
+      <main className="flex flex-col lg:grid lg:grid-cols-12 gap-10 px-4 pt-16 pb-32 md:px-12 md:py-16 relative z-10 max-w-full">
         
         {/* Main Content Area (8 cols) */}
         <div className="lg:col-span-8 flex flex-col gap-12">
