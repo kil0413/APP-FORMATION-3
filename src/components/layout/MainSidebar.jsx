@@ -38,8 +38,8 @@ export function MainSidebar() {
       {/* Brand - Modern Vertical Layout */}
       <div className="flex flex-col gap-6 mb-16 relative z-10">
         <div className="flex items-center gap-4 group cursor-pointer" onClick={() => navigate('/')}>
-          <div className="h-14 w-14 flex items-center justify-center group-hover:rotate-6 transition-transform duration-700 relative shrink-0">
-            <img src="/logo.png" alt="Logo" className="w-[120%] h-[120%] object-contain absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
+          <div className="h-20 w-20 flex items-center justify-center group-hover:rotate-6 transition-transform duration-700 relative shrink-0">
+            <img src="/logo.png" alt="Logo" className="w-[150%] h-[150%] object-contain absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 drop-shadow-2xl" />
           </div>
           <div className="flex flex-col">
             <h1 className="font-black text-white tracking-tighter uppercase italic text-2xl leading-none">Fire Académie</h1>

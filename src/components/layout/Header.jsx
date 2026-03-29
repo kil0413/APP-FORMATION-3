@@ -15,8 +15,8 @@ export function Header({ title, backButton = false, rightElement, showLogo = fal
             <ChevronLeft size={28} />
           </button>
         ) : showLogo ? (
-          <div className="flex h-12 w-12 items-center justify-center relative">
-            <img src="/logo.png" alt="Logo" className="w-[120%] h-[120%] object-contain absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
+          <div className="flex h-16 w-16 items-center justify-center relative">
+            <img src="/logo.png" alt="Logo" className="w-[160%] h-[160%] object-contain absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 drop-shadow-2xl" />
           </div>
         ) : (
           <div className="w-12 h-12" />
