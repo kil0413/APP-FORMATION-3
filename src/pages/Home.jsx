@@ -101,11 +101,12 @@ export default function Home() {
           .hero-scroll-hint {
             position: absolute;
             bottom: 6rem;
-            left: 50%;
-            transform: translateX(-50%);
+            left: 0;
+            width: 100%;
             display: flex;
             flex-direction: column;
             align-items: center;
+            justify-content: center;
             gap: 0.5rem;
             animation: fadeIn 2s ease 2s both;
             pointer-events: none;
@@ -115,7 +116,7 @@ export default function Home() {
             font-family: 'Rajdhani', sans-serif;
             font-size: 0.6rem;
             letter-spacing: 0.3em;
-            margin-right: -0.3em; /* Fix pour centrage exact dû au letter spacing */
+            text-indent: 0.3em; /* Parfait équilibre sans affecter la box CSS */
             color: rgba(255,255,255,0.15);
             text-transform: uppercase;
           }

@@ -4,8 +4,8 @@
   "description": "Application de formation et révision pour les Sapeurs-Pompiers",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#F2F2F7",
-  "theme_color": "#CC1A1A",
+  "background_color": "#0b0a0d",
+  "theme_color": "#0b0a0d",
   "icons": [
     {
       "src": "/pwa-192x192.png",
