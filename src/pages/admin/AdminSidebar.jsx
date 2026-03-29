@@ -24,8 +24,8 @@ export default function AdminSidebar({ onLogout }) {
       {/* Logo */}
       <div className="p-8 border-b border-white/5">
         <div className="flex items-center gap-3">
-          <div className="h-8 w-8 bg-[#CC1A1A] rounded-lg shadow-lg shadow-red-500/20 flex items-center justify-center">
-            <span className="font-black text-xs italic">SP</span>
+          <div className="h-8 w-8 rounded-lg shadow-lg shadow-red-500/20 flex items-center justify-center overflow-hidden bg-black/20 border border-white/5 relative shrink-0">
+            <img src="/logo.png" alt="Logo" className="w-[120%] h-[120%] object-cover absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
           </div>
           <div>
             <h1 className="text-sm font-black uppercase tracking-tighter">Console Admin</h1>

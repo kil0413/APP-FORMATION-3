@@ -35,8 +35,10 @@ function App() {
   // Écran de chargement rapide
   if (isLoading) {
     return (
-      <div className="flex h-screen items-center justify-center bg-[#CC1A1A]">
-         <div className="text-white font-black uppercase text-xl animate-pulse">Chargement SP...</div>
+      <div className="flex flex-col gap-6 h-screen items-center justify-center bg-[#0b0a0d]">
+         <div className="h-24 w-24 rounded-[2rem] overflow-hidden shadow-[0_10px_40px_rgba(200,100,60,0.3)] border border-white/10 bg-black/20 relative animate-pulse">
+            <img src="/logo.png" alt="Logo" className="w-[120%] h-[120%] object-cover absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
+         </div>
       </div>
     );
   }

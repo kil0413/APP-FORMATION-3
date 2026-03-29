@@ -143,6 +143,9 @@ export default function Login() {
         <div className="max-w-md mx-auto w-full">
           {/* Mobile Branding (Style Accueil) */}
           <header className="lg:hidden flex flex-col items-center text-center gap-4 mb-10 animate-in fade-in slide-in-from-top duration-700 pointer-events-none relative z-10">
+             <div className="h-20 w-20 mb-2 rounded-[2rem] overflow-hidden shadow-[0_10px_40px_rgba(200,100,60,0.3)] border border-white/10 bg-black/20 relative">
+                 <img src="/logo.png" alt="Logo" className="w-[120%] h-[120%] object-cover absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
+             </div>
              <h1 className="hero-title-login mt-4">
                 <span className="fire">FIRE</span>
                 <span className="academie">ACADEMIE</span>
