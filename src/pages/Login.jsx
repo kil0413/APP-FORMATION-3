@@ -3,6 +3,7 @@ import { useAuthStore } from '../store/useAuthStore';
 import { Flame, Shield, ArrowRight, Mail, Lock, User as UserIcon, Zap, Sparkles } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '../lib/utils';
+import HeroEmbers from '../components/layout/HeroEmbers';
 
 export default function Login() {
   const { loginWithGoogle, loginWithEmail, signUpWithEmail, isLoading } = useAuthStore();
@@ -48,8 +49,39 @@ export default function Login() {
   }
 
   return (
-    <div className="flex h-screen w-full bg-[#0A0A12] overflow-hidden relative">
+    <div className="flex h-screen w-full bg-[#0b0a0d] overflow-hidden relative">
+      <HeroEmbers />
       
+      {/* Styles globaux pour le branding type Hero Acceuil */}
+      <style dangerouslySetInnerHTML={{__html: `
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Rajdhani:wght@300;400;500;600&display=swap');
+        
+        .hero-title-login {
+          font-family: 'Playfair Display', serif;
+          font-weight: 700;
+          font-size: clamp(3rem, 10vw, 5rem);
+          line-height: 0.95;
+          letter-spacing: 0.06em;
+          color: #f5f0ea;
+        }
+        
+        .hero-title-login .fire {
+          display: block;
+          background: linear-gradient(180deg, #f5f0ea 30%, #c8784a 100%);
+          -webkit-background-clip: text;
+          background-clip: text;
+          color: transparent;
+        }
+        
+        .hero-title-login .academie {
+          display: block;
+          font-weight: 400;
+          font-size: 0.42em;
+          letter-spacing: 0.45em;
+          color: rgba(200,140,100,0.45);
+          margin-top: 0.3em;
+        }
+      `}} />
       {/* --- LEFT SIDE: CINEMATIC BRANDING (Desktop Only) --- */}
       <div className="hidden lg:flex lg:w-3/5 relative flex-col items-center justify-center p-20 overflow-hidden border-r border-white/5">
         {/* Dynamic Blobs */}
@@ -109,13 +141,11 @@ export default function Login() {
         <div className="lg:hidden absolute -top-40 -left-40 h-[600px] w-[600px] bg-red-600/10 blur-[160px] rounded-full" />
 
         <div className="max-w-md mx-auto w-full">
-          {/* Mobile Branding (Hidden on Laptop) */}
-          <header className="lg:hidden flex flex-col items-center text-center gap-4 mb-10 animate-in fade-in slide-in-from-top duration-700">
-             <div className="h-16 w-16 bg-red-600 rounded-[1.5rem] flex items-center justify-center shadow-xl border-2 border-white/10">
-                <Shield size={32} className="text-white fill-current" />
-             </div>
-             <h1 className="text-3xl font-black text-white uppercase tracking-tighter italic leading-none">
-                FIRE <span className="text-red-600">ACADEMIE</span>
+          {/* Mobile Branding (Style Accueil) */}
+          <header className="lg:hidden flex flex-col items-center text-center gap-4 mb-10 animate-in fade-in slide-in-from-top duration-700 pointer-events-none relative z-10">
+             <h1 className="hero-title-login mt-4">
+                <span className="fire">FIRE</span>
+                <span className="academie">ACADEMIE</span>
              </h1>
           </header>
 

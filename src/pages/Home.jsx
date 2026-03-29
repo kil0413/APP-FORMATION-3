@@ -115,6 +115,7 @@ export default function Home() {
             font-family: 'Rajdhani', sans-serif;
             font-size: 0.6rem;
             letter-spacing: 0.3em;
+            margin-right: -0.3em; /* Fix pour centrage exact dû au letter spacing */
             color: rgba(255,255,255,0.15);
             text-transform: uppercase;
           }
@@ -142,13 +143,7 @@ export default function Home() {
           }
         `}} />
 
-        {/* Le Header natif reste positionné par-dessus le fond animé en haut */}
-        <div className="absolute top-4 left-0 w-full px-4 md:hidden z-20 flex justify-end">
-          {/* Uniquement pour le bouton de menu sans casser le layout CSS du hero */}
-          <Header showLogo={false} />
-        </div>
-
-        <div className="text-center pointer-events-none relative z-10 w-full px-4 mt-16 md:mt-0">
+        <div className="text-center pointer-events-none relative z-10 w-full px-4 mt-6 md:mt-0">
           <div className="hero-line-top"></div>
           <div className="pre-title">Centre de Formation</div>
           <h1 className="hero-title">
