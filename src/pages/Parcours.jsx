@@ -212,24 +212,33 @@ function NodeSheet({ node, chapter, onClose, onStart }) {
 
         <div className="flex gap-3">
           {isDone && (
-            <button onClick={() => onStart(node, true)}
+            <button onClick={() => node.navigateToFiche()}
               className="flex-shrink-0 flex items-center justify-center py-4 px-5 rounded-xl border border-white/10 text-white/60 hover:border-white/20 hover:text-white transition-all font-bold text-sm">
-              <RotateCcw size={15} />
+              <FileText size={15} />
             </button>
           )}
           {node.type === 'lesson' ? (
-            <button onClick={() => node.navigateTo()}
-              className="flex-1 flex items-center justify-center gap-2 py-4 rounded-xl font-black text-sm text-white transition-all active:scale-95 shadow-lg"
-              style={{ background: chapter.color }}>
-              <FileText size={15} />
-              Ouvrir la Fiche
-            </button>
+            <>
+              {!isDone && (
+                <button onClick={() => node.navigateToFiche()}
+                  className="flex-1 flex items-center justify-center gap-2 py-4 rounded-xl font-bold border border-white/10 bg-white/5 text-white hover:bg-white/10 transition-all text-sm">
+                  <FileText size={15} />
+                  Lire la Fiche
+                </button>
+              )}
+              <button onClick={() => node.navigateToQuiz()}
+                className="flex-1 flex items-center justify-center gap-2 py-4 rounded-xl font-black text-sm text-white transition-all active:scale-95 shadow-lg"
+                style={{ background: node.hasQuiz ? chapter.color : 'rgba(255,255,255,0.1)' }}>
+                <Zap size={15} fill="currentColor" />
+                {isDone ? 'Refaire le QCM' : (node.hasQuiz ? 'Passer le QCM' : 'Pas de QCM')}
+              </button>
+            </>
           ) : (
-            <button onClick={() => node.navigateTo()}
+            <button onClick={() => node.navigateToQuiz()}
               className="flex-1 flex items-center justify-center gap-2 py-4 rounded-xl font-black text-sm text-white transition-all active:scale-95 shadow-lg"
               style={{ background: chapter.color }}>
               <Zap size={15} fill="currentColor" />
-              {isDone ? 'Refaire le défi' : 'Passer le QCM'}
+              {isDone ? 'Refaire le récap' : 'Boss récap'}
             </button>
           )}
         </div>
@@ -334,29 +343,23 @@ export default function Parcours() {
       const catQuizIds = new Set(catFiches.map(f => f.id));
       const catQuizzes = quizzes.filter(q => catQuizIds.has(q.fiche_id));
 
-      // Construire les nœuds (fiches + quiz + boss récap)
-      const rawNodes = [];
-      catFiches.forEach(f => {
-        // 1. Ajouter la Leçon (Fiche)
-        rawNodes.push({
-          id: f.id,
+      // Un seul nœud par fiche, mais on attache les deux navigations
+      const rawNodes = catFiches.map(f => {
+        const quiz = catQuizzes.find(q => q.fiche_id === f.id);
+        return {
+          // L'ID utilisé pour le suivi de progression = ID du quiz si existant, sinon ID de la fiche
+          id: quiz ? quiz.id : f.id,
+          fiche_id: f.id,
+          quiz_id: quiz?.id || null,
           title: f.title,
           type: 'lesson',
           difficulty: f.difficulty,
-          navigateTo: () => navigate(`/fiche/${f.id}`),
-        });
-
-        // 2. Ajouter le Quiz (si un quiz est relié)
-        const quiz = catQuizzes.find(q => q.fiche_id === f.id);
-        if (quiz) {
-          rawNodes.push({
-            id: quiz.id,
-            fiche_id: f.id,
-            title: 'Quiz : ' + f.title,
-            type: 'quiz',
-            navigateTo: () => navigate(`/quiz/${quiz.id}`),
-          });
-        }
+          hasQuiz: !!quiz,
+          navigateToFiche: () => navigate(`/fiche/${f.id}`),
+          navigateToQuiz: quiz
+            ? () => navigate(`/quiz/${quiz.id}`)
+            : () => alert("Aucun QCM disponible pour cette fiche."),
+        };
       });
 
       // Boss récap à la fin de chaque chapitre s'il y a au moins 2 fiches
@@ -365,7 +368,9 @@ export default function Parcours() {
           id: `boss-${cat.id}`,
           title: `Récap ${cat.name}`,
           type: 'boss',
-          navigateTo: () => navigate(`/quiz/${catQuizzes[0]?.id || 'q1'}`),
+          navigateToFiche: () => navigate(`/quiz/${catQuizzes[0]?.id || 'q1'}`),
+          navigateToQuiz: () => navigate(`/quiz/${catQuizzes[0]?.id || 'q1'}`),
+          hasQuiz: true,
         });
       }
 
