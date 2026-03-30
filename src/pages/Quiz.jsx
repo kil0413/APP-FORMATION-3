@@ -18,6 +18,9 @@ export default function Quiz() {
     return quizzes.find(q => q.id === id) || quizzes.find(q => q.fiche_id === id);
   }, [quizzes, id]);
 
+  // Trouver la fiche associée au quiz
+  const currentFiche = fiches.find(f => f.id === quiz?.fiche_id || f.id === id);
+
   const [currentStep, setCurrentStep] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState(null);
   const [isConfirmed, setIsConfirmed] = useState(false);
