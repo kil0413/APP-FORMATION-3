@@ -1,6 +1,6 @@
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuthStore } from '../../store/useAuthStore';
-import { LayoutDashboard, FileText, Users, Settings, ChevronRight, LogOut } from 'lucide-react';
+import { LayoutDashboard, FileText, Users, Settings, ChevronRight, LogOut, Brain } from 'lucide-react';
 
 export default function AdminSidebar({ onLogout }) {
   const navigate = useNavigate();
@@ -10,6 +10,7 @@ export default function AdminSidebar({ onLogout }) {
   const menuItems = [
     { id: 'dashboard', label: 'Tableau de bord', icon: LayoutDashboard, path: '/admin' },
     { id: 'fiches', label: 'Gestion des Fiches', icon: FileText, path: '/admin/fiches' },
+    { id: 'quizzes', label: 'QCM & Évaluations', icon: Brain, path: '/admin/quizzes' },
     { id: 'users', label: 'Utilisateurs', icon: Users, path: '/admin/users' },
     { id: 'settings', label: 'Paramètres', icon: Settings, path: '/admin/settings' },
   ];

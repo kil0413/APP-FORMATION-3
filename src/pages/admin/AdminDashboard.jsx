@@ -5,6 +5,7 @@ import AdminSidebar from './AdminSidebar';
 import AdminHeader from './AdminHeader';
 import DashboardTab from './tabs/DashboardTab';
 import FichesTab from './tabs/FichesTab';
+import QuizzesTab from './tabs/QuizzesTab';
 import UsersTab from './tabs/UsersTab';
 import SettingsTab from './tabs/SettingsTab';
 import { useFicheStore } from '../../store/useFicheStore';
@@ -142,6 +143,7 @@ export default function AdminDashboard() {
           <Routes>
             <Route path="/" element={<DashboardTab />} />
             <Route path="/fiches" element={<FichesTab />} />
+            <Route path="/quizzes" element={<QuizzesTab />} />
             <Route path="/users" element={<UsersTab />} />
             <Route path="/settings" element={<SettingsTab />} />
             <Route path="*" element={<Navigate to="/admin" replace />} />

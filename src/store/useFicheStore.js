@@ -247,5 +247,21 @@ export const useFicheStore = create((set, get) => ({
     } catch (err) {
       set((state) => ({ quizzes: state.quizzes.map(q => q.id === id ? { ...q, ...updatedQuiz } : q) }));
     }
+  },
+
+  deleteQuiz: async (id) => {
+    const isRealSupabase = supabase.supabaseUrl && !supabase.supabaseUrl.includes('placeholder');
+    try {
+      if (typeof id === 'string' && (id.startsWith('tmp') || id.startsWith('q')) || !isRealSupabase) {
+        set((state) => ({ quizzes: state.quizzes.filter(q => q.id !== id) }));
+        return;
+      }
+      const { error } = await supabase.from('quizzes').delete().eq('id', id);
+      if (error) throw error;
+      set((state) => ({ quizzes: state.quizzes.filter(q => q.id !== id) }));
+    } catch (err) {
+      console.error('Erreur deleteQuiz:', err.message);
+      set((state) => ({ quizzes: state.quizzes.filter(q => q.id !== id) }));
+    }
   }
 }));
