@@ -12,8 +12,10 @@ export default function Quiz() {
   const { addXp, loseLife, user } = useAuthStore();
   const { fiches, quizzes } = useFicheStore();
 
-  const currentFiche = fiches.find(f => f.id === id);
-  const quiz = useMemo(() => quizzes.find(q => q.fiche_id === id), [quizzes, id]);
+  // Chercher par ID direct du quiz (depuis le parcours), ou fallback par fiche_id (ancienne logique)
+  const quiz = useMemo(() => {
+    return quizzes.find(q => q.id === id) || quizzes.find(q => q.fiche_id === id);
+  }, [quizzes, id]);
 
   const [currentStep, setCurrentStep] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState(null);
