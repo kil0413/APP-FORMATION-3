@@ -5,6 +5,7 @@ import { useAuthStore } from '../store/useAuthStore';
 import { useFicheStore } from '../store/useFicheStore';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '../lib/utils';
+import { Badge } from '../components/ui/Badge';
 
 export default function Quiz() {
   const { id } = useParams();
