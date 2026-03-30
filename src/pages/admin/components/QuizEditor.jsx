@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { X, Save, Plus, Trash2, HelpCircle } from 'lucide-react';
+import { X, Save, Plus, Trash2, HelpCircle, Sparkles, Loader2 } from 'lucide-react';
 import { useFicheStore } from '../../../store/useFicheStore';
 
 export default function QuizEditor({ quiz, onClose }) {
@@ -13,6 +13,7 @@ export default function QuizEditor({ quiz, onClose }) {
   });
 
   const [isSaving, setIsSaving] = useState(false);
+  const [isGenerating, setIsGenerating] = useState(false);
 
   useEffect(() => {
     if (quiz) {
@@ -66,6 +67,57 @@ export default function QuizEditor({ quiz, onClose }) {
        newQuestions.splice(index, 1);
        setFormData(prev => ({ ...prev, questions: newQuestions }));
     }
+  };
+
+  const handleAIGeneration = async () => {
+    if (!formData.fiche_id) {
+       alert("Veuillez d'abord sélectionner une Fiche Liée pour générer les questions.");
+       return;
+    }
+    
+    setIsGenerating(true);
+    
+    // Simulation d'un appel réseau vers une API IA type OpenAI
+    await new Promise(resolve => setTimeout(resolve, 2000));
+    
+    const fiche = fiches.find(f => f.id === formData.fiche_id);
+    const title = fiche?.title?.toLowerCase() || '';
+    
+    let generatedQuestions = [];
+
+    if (title.includes('ventilation')) {
+      generatedQuestions = [
+        { q: 'Quel est l\'objectif principal de la ventilation opérationnelle ?', answers: ['Abaisser la température et évacuer les fumées', 'Créer un courant d\'air agréable', 'Alimenter le feu en oxygène', 'Refroidir les murs uniquement'], correct: 0, explanation: 'La VO sert à chasser les gaz chauds pour faciliter l\'engagement et la survie.' },
+        { q: 'Que signifie VPP ?', answers: ['Ventilation par Pression Positive', 'Volume Partiel Propulsé', 'Vapeur Pressurisée Progressive', 'Ventilation Proportionnelle Puissante'], correct: 0, explanation: 'VPP = Ventilation par Pression Positive.' },
+        { q: 'Où doit-on placer le ventilateur principal en VPP ?', answers: ['Dans la zone enfumée', 'Au niveau de l\'exutoire', 'A l\'extérieur, devant le volume d\'entrée', 'Sur le toit'], correct: 2, explanation: 'Le ventilateur se place à l\'extérieur du volume d\'entrée (environ 2 à 3m) pour couvrir l\'ouvrant.' }
+      ];
+    } else if (title.includes('gaz')) {
+      generatedQuestions = [
+        { q: 'Quelle est la densité du Gaz Naturel (Méthane) par rapport à l\'air ?', answers: ['Plus lourd (> 1)', 'Plus léger (< 1)', 'Identique (= 1)', 'Variable'], correct: 1, explanation: 'Le Gaz de Ville (Méthane) a une densité de ~0.55, il monte dans les volumes.' },
+        { q: 'Comment s\'appelle la zone comprise entre la LIE et la LSE ?', answers: ['Zone tampon', 'Plage d\'explosivité', 'Limite saturée', 'Cône d\'inflammabilité'], correct: 1, explanation: 'C\'est la plage d\'explosivité, là où le mélange air/gaz peut s\'enflammer.' },
+        { q: 'Que doit-on éviter absolument en cas de fuite de gaz dans un bâtiment ?', answers: ['Ouvrir les fenêtres', 'Frapper aux portes pour évacuer', 'Actionner des interrupteurs électriques', 'Utiliser un explosimètre'], correct: 2, explanation: 'Toute étincelle (interrupteur, sonnette) peut déclencher une explosion.' }
+      ];
+    } else if (title.includes('monoxyde') || title.includes('co')) {
+      generatedQuestions = [
+        { q: 'Quelles sont les propriétés physiques du Monoxyde de Carbone (CO) ?', answers: ['Odeur d\'amande amère et coloré', 'Incolore, inodore et insipide', 'Grisâtre et irritant', 'Lourd et visqueux'], correct: 1, explanation: 'C\'est le "tueur silencieux" car il est indétectable par l\'homme sans appareil.' },
+        { q: 'D\'où provient majoritairement le CO lors d\'un incident ?', answers: ['Combustion incomplète d\'une matière organique', 'Fuite de canalisation extérieure', 'Mélange de produits chimiques', 'Décomposition de déchets'], correct: 0, explanation: 'Le CO est le résultat d\'une combustion avec un manque d\'oxygène (combustion incomplète).' },
+        { q: 'Pourquoi le CO est-il toxique pour l\'homme ?', answers: ['Il brûle les poumons', 'Il se fixe sur l\'hémoglobine à la place de l\'oxygène', 'Il provoque une crise cardiaque immédiate', 'Il paralyse le système nerveux'], correct: 1, explanation: 'L\'affinité du CO pour l\'hémoglobine est environ 200 fois supérieure à celle de l\'O2.' }
+      ];
+    } else {
+      // Questions génériques si la fiche n'est pas connue
+      generatedQuestions = [
+        { q: 'Quel est l\'objectif clé de ce module ?', answers: ['Comprendre la théorie', 'Intervenir en sécurité', 'Agir rapidement', 'Tout est correct'], correct: 3, explanation: 'L\'objectif est global et regroupe tous ces éléments.' },
+        { q: 'Quelle procédure suivre avant l\'engagement ?', answers: ['Bilan circonstanciel et sécurité', 'Engagement immédiat', 'Appel radio de renfort direct', 'Attente des ordres sans observer'], correct: 0, explanation: 'La sécurité est primordiale avant toute action.' },
+        { q: 'Comment garantir l\'efficacité des actions ?', answers: ['Par la précipitation', 'Le travail en solitaire', 'Le respect des procédures établies', 'L\'improvisation'], correct: 2, explanation: 'Seul le respect des procédures garantit la sécurité.' }
+      ];
+    }
+
+    setFormData(prev => ({
+      ...prev,
+      questions: [...prev.questions, ...generatedQuestions]
+    }));
+    
+    setIsGenerating(false);
   };
 
   const handleSubmit = async (e) => {
@@ -165,13 +217,24 @@ export default function QuizEditor({ quiz, onClose }) {
             <div className="space-y-6">
               <div className="flex items-center justify-between">
                  <h3 className="text-sm font-black text-[#1A1A2E] uppercase tracking-widest">Questions ({formData.questions.length})</h3>
-                 <button 
-                   type="button" 
-                   onClick={addQuestion}
-                   className="text-blue-500 bg-blue-50 hover:bg-blue-100 p-2 rounded-lg font-bold text-xs flex items-center gap-2 transition-colors uppercase tracking-widest"
-                 >
-                   <Plus size={16} /> Ajouter
-                 </button>
+                 <div className="flex items-center gap-3">
+                   <button 
+                     type="button" 
+                     onClick={handleAIGeneration}
+                     disabled={isGenerating}
+                     className="text-purple-600 bg-purple-50 hover:bg-purple-100 p-2 rounded-lg font-bold text-xs flex items-center gap-2 transition-colors uppercase tracking-widest disabled:opacity-50 border border-purple-200"
+                   >
+                     {isGenerating ? <Loader2 size={16} className="animate-spin" /> : <Sparkles size={16} />}
+                     {isGenerating ? 'Génération...' : 'Générer avec l\'IA'}
+                   </button>
+                   <button 
+                     type="button" 
+                     onClick={addQuestion}
+                     className="text-blue-500 bg-blue-50 hover:bg-blue-100 p-2 rounded-lg font-bold text-xs flex items-center gap-2 transition-colors uppercase tracking-widest"
+                   >
+                     <Plus size={16} /> Ajouter
+                   </button>
+                 </div>
               </div>
 
               {formData.questions.map((q, qIndex) => (
