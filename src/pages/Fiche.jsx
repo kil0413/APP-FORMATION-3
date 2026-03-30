@@ -35,8 +35,11 @@ export default function Fiche() {
   useEffect(() => {
     if (completedEntry) {
       setCompleted(true);
+    } else if (currentFiche && user) {
+       // Auto-valider la fiche dès qu'on l'ouvre (en tant que "Lue")
+       completeFiche(id);
     }
-  }, [completedEntry]);
+  }, [completedEntry, currentFiche, user, id, completeFiche]);
 
   if (!currentFiche || isStoreLoading || isAuthLoading || !user) {
     return (

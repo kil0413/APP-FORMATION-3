@@ -87,7 +87,9 @@ export default function Quiz() {
     // Validation si score >= 70%
     const successRate = finalScore / quiz.questions.length;
     if (successRate >= 0.70) {
-      useAuthStore.getState().completeFiche(quiz.fiche_id);
+      const auth = useAuthStore.getState();
+      auth.completeFiche(quiz.id); // Pour marquer ce nœud QCM comme "Terminé" dans le parcours
+      if (quiz.fiche_id) auth.completeFiche(quiz.fiche_id); // Pour s'assurer que la fiche parente est aussi validée
     }
     
     setIsFinished(true);

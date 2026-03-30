@@ -218,25 +218,18 @@ function NodeSheet({ node, chapter, onClose, onStart }) {
             </button>
           )}
           {node.type === 'lesson' ? (
-            <>
-              <button onClick={() => node.navigateToFiche()}
-                className="flex-1 flex items-center justify-center gap-2 py-4 rounded-xl font-bold border border-white/10 bg-white/5 text-white hover:bg-white/10 transition-all font-bold text-sm">
-                <FileText size={15} />
-                Lire la Fiche
-              </button>
-              <button onClick={() => node.navigateToQuiz()}
-                className="flex-1 flex items-center justify-center gap-2 py-4 rounded-xl font-black text-sm text-white transition-all active:scale-95 shadow-lg"
-                style={{ background: chapter.color }}>
-                <Zap size={15} fill="currentColor" />
-                Passer le QCM
-              </button>
-            </>
-          ) : (
-            <button onClick={() => onStart(node, false)}
+            <button onClick={() => node.navigateTo()}
               className="flex-1 flex items-center justify-center gap-2 py-4 rounded-xl font-black text-sm text-white transition-all active:scale-95 shadow-lg"
               style={{ background: chapter.color }}>
-              <Play size={15} fill="currentColor" />
-              {isDone ? 'Mise en situation' : 'Commencer'}
+              <FileText size={15} />
+              Ouvrir la Fiche
+            </button>
+          ) : (
+            <button onClick={() => node.navigateTo()}
+              className="flex-1 flex items-center justify-center gap-2 py-4 rounded-xl font-black text-sm text-white transition-all active:scale-95 shadow-lg"
+              style={{ background: chapter.color }}>
+              <Zap size={15} fill="currentColor" />
+              {isDone ? 'Refaire le défi' : 'Passer le QCM'}
             </button>
           )}
         </div>
@@ -341,27 +334,40 @@ export default function Parcours() {
       const catQuizIds = new Set(catFiches.map(f => f.id));
       const catQuizzes = quizzes.filter(q => catQuizIds.has(q.fiche_id));
 
-      // Construire les nœuds (fiches + boss récap)
-      const rawNodes = [
-        ...catFiches.map(f => {
-          const quiz = catQuizzes.find(q => q.fiche_id === f.id);
-          return {
-            id: f.id,
-            title: f.title,
-            type: 'lesson',
-            difficulty: f.difficulty,
-            navigateToFiche: () => navigate(`/fiche/${f.id}`),
-            navigateToQuiz: quiz ? () => navigate(`/quiz/${quiz.id}`) : () => alert("Ce module n'a pas encore de QCM"),
-          };
-        }),
-        // Boss récap à la fin de chaque chapitre s'il y a au moins 2 fiches
-        ...(catFiches.length >= 2 ? [{
+      // Construire les nœuds (fiches + quiz + boss récap)
+      const rawNodes = [];
+      catFiches.forEach(f => {
+        // 1. Ajouter la Leçon (Fiche)
+        rawNodes.push({
+          id: f.id,
+          title: f.title,
+          type: 'lesson',
+          difficulty: f.difficulty,
+          navigateTo: () => navigate(`/fiche/${f.id}`),
+        });
+
+        // 2. Ajouter le Quiz (si un quiz est relié)
+        const quiz = catQuizzes.find(q => q.fiche_id === f.id);
+        if (quiz) {
+          rawNodes.push({
+            id: quiz.id,
+            fiche_id: f.id,
+            title: 'Quiz : ' + f.title,
+            type: 'quiz',
+            navigateTo: () => navigate(`/quiz/${quiz.id}`),
+          });
+        }
+      });
+
+      // Boss récap à la fin de chaque chapitre s'il y a au moins 2 fiches
+      if (catFiches.length >= 2) {
+        rawNodes.push({
           id: `boss-${cat.id}`,
           title: `Récap ${cat.name}`,
           type: 'boss',
           navigateTo: () => navigate(`/quiz/${catQuizzes[0]?.id || 'q1'}`),
-        }] : []),
-      ];
+        });
+      }
 
       if (rawNodes.length === 0) return null;
 
