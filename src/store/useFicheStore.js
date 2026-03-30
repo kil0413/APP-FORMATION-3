@@ -61,6 +61,13 @@ export const useFicheStore = create((set, get) => ({
         }
       });
 
+      const finalQuizzes = [...(quizzesData || [])];
+      fallbackQuizzes.forEach(fallback => {
+        if (!finalQuizzes.find(q => q.id === fallback.id)) {
+          finalQuizzes.push(fallback);
+        }
+      });
+
       // Trier les fiches : les plus récentes en premier (id tmp ou created_at)
       finalFiches.sort((a, b) => {
         const dateA = new Date(a.created_at || 0);
@@ -71,7 +78,7 @@ export const useFicheStore = create((set, get) => ({
       set({ 
         categories: finalCategories,
         fiches: finalFiches,
-        quizzes: quizzesData,
+        quizzes: finalQuizzes,
         isLoading: false,
         realFichesCount: (fichesData || []).length,
         realQuizzesCount: (quizzesData || []).length,
@@ -227,6 +234,10 @@ export const useFicheStore = create((set, get) => ({
         set((state) => ({ quizzes: [...state.quizzes, data[0]] }));
       }
     } catch (err) {
+      console.error('Erreur addQuiz:', err.message);
+      if (isRealSupabase) {
+        alert('Attention : Erreur de sauvegarde réseau pour le QCM (' + err.message + '). Le QCM sera visible localement mais disparaîtra au rafraîchissement.');
+      }
       const tempQ = { ...newQuiz, id: `tmp-q-${Date.now()}` };
       set((state) => ({ quizzes: [...state.quizzes, tempQ] }));
     }

@@ -14,6 +14,7 @@ export default function QuizEditor({ quiz, onClose }) {
 
   const [isSaving, setIsSaving] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [aiCount, setAiCount] = useState(10);
 
   useEffect(() => {
     if (quiz) {
@@ -112,9 +113,17 @@ export default function QuizEditor({ quiz, onClose }) {
       ];
     }
 
+    // On répète ou sélectionne le nombre de questions demandé (aiCount)
+    let finalGenList = [];
+    for (let i = 0; i < aiCount; i++) {
+        // Copie profonde pour éviter d'avoir les mêmes références
+        const sourceQ = generatedQuestions[i % generatedQuestions.length];
+        finalGenList.push(JSON.parse(JSON.stringify(sourceQ)));
+    }
+
     setFormData(prev => ({
       ...prev,
-      questions: [...prev.questions, ...generatedQuestions]
+      questions: [...prev.questions, ...finalGenList]
     }));
     
     setIsGenerating(false);
@@ -218,6 +227,15 @@ export default function QuizEditor({ quiz, onClose }) {
               <div className="flex items-center justify-between">
                  <h3 className="text-sm font-black text-[#1A1A2E] uppercase tracking-widest">Questions ({formData.questions.length})</h3>
                  <div className="flex items-center gap-3">
+                   <select 
+                     value={aiCount} 
+                     onChange={e => setAiCount(Number(e.target.value))}
+                     className="bg-white border border-gray-200 rounded-lg outline-none font-bold text-xs p-2 uppercase tracking-widest text-[#1A1A2E]"
+                   >
+                     <option value={10}>10</option>
+                     <option value={20}>20</option>
+                     <option value={40}>40</option>
+                   </select>
                    <button 
                      type="button" 
                      onClick={handleAIGeneration}
