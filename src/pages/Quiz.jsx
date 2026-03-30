@@ -77,9 +77,19 @@ export default function Quiz() {
   };
 
   const finishQuiz = () => {
-    const finalScore = selectedAnswer === currentQuestion.correct ? score + 1 : score;
+    const isLastCorrect = selectedAnswer === currentQuestion.correct;
+    const finalScore = isLastCorrect ? score + 1 : score;
+    setScore(finalScore);
+    
     const xpGained = finalScore * 5; // 5 XP par bonne réponse
     addXp(xpGained);
+    
+    // Validation si score >= 70%
+    const successRate = finalScore / quiz.questions.length;
+    if (successRate >= 0.70) {
+      useAuthStore.getState().completeFiche(quiz.fiche_id);
+    }
+    
     setIsFinished(true);
   };
 

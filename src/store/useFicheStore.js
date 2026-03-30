@@ -110,8 +110,25 @@ export const useFicheStore = create((set, get) => ({
 
       if (error) throw error;
 
-      if (data) {
-        set((state) => ({ fiches: [data[0], ...state.fiches] }));
+      if (data && data.length > 0) {
+        const newDoc = data[0];
+        set((state) => ({ fiches: [newDoc, ...state.fiches] }));
+        
+        // Auto-génération d'un QCM
+        const quizPayload = {
+          title: 'Quiz : ' + newDoc.title,
+          fiche_id: newDoc.id,
+          is_published: true,
+          questions: [
+            {
+              q: 'Question d\'exemple pour ' + newDoc.title,
+              answers: ['Réponse A', 'Réponse B', 'Réponse C', 'Réponse D'],
+              correct: 0,
+              explanation: 'Explication de la réponse A.'
+            }
+          ]
+        };
+        get().addQuiz(quizPayload);
       }
     } catch (err) {
       console.error('Erreur addFiche:', err.message);
@@ -131,6 +148,15 @@ export const useFicheStore = create((set, get) => ({
       set((state) => ({ 
         fiches: [tempFiche, ...state.fiches] 
       }));
+      
+      // Auto-génération locale QCM
+      const tempQuiz = {
+        title: 'Quiz : ' + tempFiche.title,
+        fiche_id: tempFiche.id,
+        is_published: true,
+        questions: [{ q: 'Question test ?', answers: ['Oui', 'Non'], correct: 0, explanation: 'Test' }]
+      };
+      get().addQuiz(tempQuiz);
     }
   },
 
@@ -188,6 +214,38 @@ export const useFicheStore = create((set, get) => ({
       }
       // Toujours filtrer localement
       set((state) => ({ fiches: state.fiches.filter((f) => f.id !== id) }));
+    }
+  },
+
+  addQuiz: async (newQuiz) => {
+    const isRealSupabase = supabase.supabaseUrl && !supabase.supabaseUrl.includes('placeholder');
+    try {
+      if (!isRealSupabase) throw new Error('Mock');
+      const { data, error } = await supabase.from('quizzes').insert([newQuiz]).select();
+      if (error) throw error;
+      if (data && data.length > 0) {
+        set((state) => ({ quizzes: [...state.quizzes, data[0]] }));
+      }
+    } catch (err) {
+      const tempQ = { ...newQuiz, id: `tmp-q-${Date.now()}` };
+      set((state) => ({ quizzes: [...state.quizzes, tempQ] }));
+    }
+  },
+  
+  updateQuiz: async (id, updatedQuiz) => {
+    const isRealSupabase = supabase.supabaseUrl && !supabase.supabaseUrl.includes('placeholder');
+    try {
+      if (typeof id === 'string' && id.startsWith('tmp') || !isRealSupabase) {
+        set((state) => ({ quizzes: state.quizzes.map(q => q.id === id ? { ...q, ...updatedQuiz } : q) }));
+        return;
+      }
+      const { data, error } = await supabase.from('quizzes').update(updatedQuiz).eq('id', id).select();
+      if (error) throw error;
+      if (data) {
+        set((state) => ({ quizzes: state.quizzes.map(q => q.id === id ? data[0] : q) }));
+      }
+    } catch (err) {
+      set((state) => ({ quizzes: state.quizzes.map(q => q.id === id ? { ...q, ...updatedQuiz } : q) }));
     }
   }
 }));

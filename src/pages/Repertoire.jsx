@@ -18,18 +18,38 @@ export default function Repertoire() {
   const { fiches, categories, isLoading: isFichesLoading } = useFicheStore();
   const { user, isLoading: isAuthLoading } = useAuthStore();
 
-  const tabs = ['Tous', 'PDF', 'Images', 'Favoris'];
+  const tabs = ['Tous', 'QCM', 'PDF', 'Images', 'Favoris'];
 
-  const filteredFiches = useMemo(() => {
-    return (fiches || []).filter(fiche => {
-      const matchesSearch = fiche.title.toLowerCase().includes(searchQuery.toLowerCase());
-      const matchesCategory = activeCategory === 'all' || fiche.category_id === activeCategory;
-      const matchesTab = activeTab === 'Tous' || 
-                        (activeTab === 'PDF' && fiche.file_type === 'pdf') ||
-                        (activeTab === 'Images' && fiche.file_type === 'image') ||
-                        (activeTab === 'Favoris' && user.favorites?.includes(fiche.id));
-      return matchesSearch && matchesCategory && matchesTab;
-    });
+  const filteredItems = useMemo(() => {
+    let items = [];
+
+    // Fiches
+    if (activeTab !== 'QCM') {
+      const fItem = (fiches || []).filter(fiche => {
+        const matchesSearch = fiche.title.toLowerCase().includes(searchQuery.toLowerCase());
+        const matchesCategory = activeCategory === 'all' || fiche.category_id === activeCategory;
+        const matchesTab = activeTab === 'Tous' || 
+                          (activeTab === 'PDF' && fiche.file_type === 'pdf') ||
+                          (activeTab === 'Images' && fiche.file_type === 'image') ||
+                          (activeTab === 'Favoris' && user.favorites?.includes(fiche.id));
+        return matchesSearch && matchesCategory && matchesTab;
+      }).map(f => ({ ...f, itemType: 'fiche' }));
+      items = [...items, ...fItem];
+    }
+
+    // Quizzes
+    if (activeTab === 'Tous' || activeTab === 'QCM') {
+      const { quizzes } = useFicheStore.getState();
+      const qItem = (quizzes || []).filter(quiz => {
+        const matchesSearch = quiz.title.toLowerCase().includes(searchQuery.toLowerCase());
+        const ficheCategory = fiches.find(f => f.id === quiz.fiche_id)?.category_id;
+        const matchesCategory = activeCategory === 'all' || ficheCategory === activeCategory;
+        return matchesSearch && matchesCategory;
+      }).map(q => ({ ...q, itemType: 'quiz' }));
+      items = [...items, ...qItem];
+    }
+
+    return items;
   }, [fiches, searchQuery, activeCategory, activeTab, user]);
 
   if (isAuthLoading || isFichesLoading || !user) {
@@ -130,7 +150,7 @@ export default function Repertoire() {
         <section className="flex flex-col gap-10 mb-20">
            <div className="flex items-center justify-between px-2">
              <h2 className="text-2xl md:text-3xl font-black text-white tracking-tighter uppercase italic">
-                Résultats <span className="text-red-500">({filteredFiches.length})</span>
+                Résultats <span className="text-red-500">({filteredItems.length})</span>
              </h2>
              <div className="flex items-center gap-2 text-white/30">
                 <Filter size={14} />
@@ -139,64 +159,65 @@ export default function Repertoire() {
            </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-10">
-            {filteredFiches.length > 0 ? filteredFiches.map(fiche => {
-              const category = categories.find(c => c.id === fiche.category_id);
-              const isCompleted = user.completed_fiches?.includes(fiche.id);
+            {filteredItems.length > 0 ? filteredItems.map(item => {
+              const categoryId = item.itemType === 'quiz' ? fiches.find(f => f.id === item.fiche_id)?.category_id : item.category_id;
+              const category = categories.find(c => c.id === categoryId);
+              const isCompleted = user.completed_fiches?.some(f => f.startsWith(item.itemType === 'quiz' ? item.fiche_id : item.id));
               
               return (
                  <Card 
-                   key={fiche.id} 
+                   key={`${item.itemType}-${item.id}`} 
                    className="group cursor-pointer border-white/5 shadow-2xl hover:-translate-y-2 transition-all duration-500 rounded-[3rem] bg-[#1E293B]/20 overflow-hidden p-0" 
-                   onClick={() => navigate(`/fiche/${fiche.id}`)}
-                >
-                  <CardContent className="p-8 flex flex-col gap-8">
-                    <div className="flex items-start justify-between">
-                      <div className="relative">
-                        <div 
-                           className="h-20 w-20 md:h-24 md:w-24 shrink-0 items-center justify-center rounded-[2rem] text-white shadow-2xl rotate-3 group-hover:rotate-0 transition-transform duration-500 flex"
-                           style={{ backgroundColor: category?.theme_header || '#CC1A1A' }}
-                        >
-                          {fiche.file_type === 'pdf' ? <FileText size={40} /> : <ImageIcon size={40} />}
-                        </div>
-                        {isCompleted && (
-                          <div className="absolute -bottom-2 -right-2 h-10 w-10 rounded-full bg-green-500 shadow-xl border border-white/10 flex items-center justify-center text-white active:scale-95 transition-transform shadow-[0_0_15px_rgba(34,197,94,0.4)]">
-                             <CheckCircle2 size={24} />
-                          </div>
-                        )}
-                      </div>
+                   onClick={() => navigate(`/${item.itemType === 'quiz' ? 'quiz' : 'fiche'}/${item.id}`)}
+                 >
+                   <CardContent className="p-8 flex flex-col gap-8">
+                     <div className="flex items-start justify-between">
+                       <div className="relative">
+                         <div 
+                            className="h-20 w-20 md:h-24 md:w-24 shrink-0 items-center justify-center rounded-[2rem] text-white shadow-2xl rotate-3 group-hover:rotate-0 transition-transform duration-500 flex"
+                            style={{ backgroundColor: category?.theme_header || '#CC1A1A' }}
+                         >
+                           {item.itemType === 'quiz' ? <Brain size={40} /> : item.file_type === 'pdf' ? <FileText size={40} /> : <ImageIcon size={40} />}
+                         </div>
+                         {isCompleted && (
+                           <div className="absolute -bottom-2 -right-2 h-10 w-10 rounded-full bg-green-500 shadow-xl border border-white/10 flex items-center justify-center text-white active:scale-95 transition-transform shadow-[0_0_15px_rgba(34,197,94,0.4)]">
+                              <CheckCircle2 size={24} />
+                           </div>
+                         )}
+                       </div>
                        <Badge className="bg-white/5 text-white/40 border-none font-black uppercase text-[10px] tracking-widest px-4 py-2">
-                          {fiche.difficulty}
+                          {item.itemType === 'quiz' ? 'QCM' : (item.difficulty || 'Fiche')}
                        </Badge>
-                    </div>
-                    
-                    <div className="flex flex-col gap-4">
-                        <h3 className="font-black text-white text-2xl md:text-3xl tracking-tighter italic uppercase leading-tight line-clamp-2">
-                           {fiche.title}
-                        </h3>
-                       <div className="flex flex-wrap gap-2">
-                           <span className="text-[10px] font-black uppercase tracking-widest text-red-400 px-3 py-1 bg-red-500/10 rounded-lg">{category?.name}</span>
-                           <span className="text-[10px] font-black uppercase tracking-widest text-white/40 px-3 py-1 bg-white/5 rounded-lg flex items-center gap-1">
-                              <Clock size={12} />
-                              10 min
-                          </span>
-                       </div>
-                    </div>
+                     </div>
+                     
+                     <div className="flex flex-col gap-4">
+                         <h3 className="font-black text-white text-2xl md:text-3xl tracking-tighter italic uppercase leading-tight line-clamp-2">
+                            {item.title}
+                         </h3>
+                        <div className="flex flex-wrap gap-2">
+                            <span className="text-[10px] font-black uppercase tracking-widest text-red-400 px-3 py-1 bg-red-500/10 rounded-lg">{category?.name || 'Général'}</span>
+                            <span className="text-[10px] font-black uppercase tracking-widest text-white/40 px-3 py-1 bg-white/5 rounded-lg flex items-center gap-1">
+                               <Clock size={12} />
+                               {item.itemType === 'quiz' ? '5 min' : '10 min'}
+                           </span>
+                        </div>
+                     </div>
 
-                    <div className="mt-2 pt-6 border-t border-gray-100 flex items-center justify-between group-hover:border-red-100 transition-colors">
-                       <div className="flex items-center -space-x-3">
-                          {[1, 2, 3].map(i => (
-                            <div key={i} className="h-8 w-8 rounded-full border-2 border-white bg-gray-100 overflow-hidden shadow-sm">
-                               <img src={`https://api.dicebear.com/7.x/avataaars/svg?seed=user${i}`} alt="" />
-                            </div>
-                          ))}
-                          <span className="pl-6 text-[10px] font-black text-gray-400 uppercase tracking-widest">+12 révisés</span>
-                       </div>
-                       <div className="h-10 w-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-300 group-hover:bg-[#CC1A1A] group-hover:text-white transition-all shadow-lg group-hover:shadow-red-500/30">
-                          <ArrowUpRight size={20} />
-                       </div>
-                    </div>
-                  </CardContent>
-                </Card>
+                     <div className="mt-2 pt-6 border-t border-gray-100 flex items-center justify-between group-hover:border-red-100 transition-colors">
+                        <div className="flex items-center -space-x-3">
+                           {[1, 2, 3].map(i => (
+                             <div key={i} className="h-8 w-8 rounded-full border-2 border-[#1E293B] bg-white/10 overflow-hidden shadow-sm">
+                                <img src={`https://api.dicebear.com/7.x/avataaars/svg?seed=user${i}`} alt="" />
+                             </div>
+                           ))}
+                           <span className="pl-6 text-[10px] font-black text-white/30 uppercase tracking-widest">+12 révisés</span>
+                        </div>
+                        <div className="h-10 w-10 rounded-full bg-white/5 flex items-center justify-center text-white/40 group-hover:bg-[#CC1A1A] group-hover:text-white transition-all shadow-lg group-hover:shadow-red-500/30">
+                           <ArrowUpRight size={20} />
+                        </div>
+                     </div>
+                   </CardContent>
+                 </Card>
               );
             }) : (
               <div className="col-span-full py-40 flex flex-col items-center gap-8 animate-in fade-in zoom-in duration-700">

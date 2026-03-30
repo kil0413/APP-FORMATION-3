@@ -8,6 +8,37 @@ export const categories = [
 ];
 
 export const fiches = [
+  { id: 'f1', title: 'Bilans secouristes (SUAP)', category_id: 'c1', difficulty: 'Débutant',
+    type: 'classic',
+    sections: [
+      { type: 'definition', title: 'Définition', content: 'Le bilan secouriste est la pierre angulaire de la prise en charge préhospitalière...' },
+      { type: 'keypoints', title: 'Les 4 Bilans', items: ['Circonstanciel', 'Vital', 'Lésionnel', 'Complémentaire'] }
+    ],
+    is_published: true, created_at: new Date().toISOString()
+  },
+  { id: 'f2', title: 'Mise en place de l\'ARI', category_id: 'c2', difficulty: 'Intermédiaire',
+    type: 'classic',
+    sections: [
+      { type: 'definition', title: 'Définition', content: 'Appareil Respiratoire Isolant...' },
+      { type: 'keypoints', title: 'Points clés', items: ['Contrôle pression', 'Test étanchéité', 'Ouverture bouteille max'] }
+    ],
+    is_published: true, created_at: new Date().toISOString()
+  },
+  { id: 'f3', title: 'Lecture au plan', category_id: 'c5', difficulty: 'Débutant',
+    type: 'classic',
+    sections: [
+      { type: 'definition', title: 'Définition', content: 'C\'est l\'action de se repérer sur un plan pour diriger les engins.' }
+    ],
+    is_published: true, created_at: new Date().toISOString()
+  },
+  { id: 'f4', title: 'Phénomènes Thermiques', category_id: 'c2', difficulty: 'Avancé',
+    type: 'classic',
+    sections: [
+      { type: 'definition', title: 'Définition', content: 'Les phénomènes thermiques (EM et FGI) sont liés au développement d\'un feu clos.' },
+      { type: 'keypoints', title: 'Dangers', items: ['Vitesse de propagation', 'Température de 600°C', 'Onde de surpression'] }
+    ],
+    is_published: true, created_at: new Date().toISOString()
+  },
   { id: 'f5', title: 'Conditions de l\'explosion', category_id: 'c3', difficulty: 'Débutant',
     type: 'interactive',
     interactive_id: 'explosion_pentagon',
@@ -51,6 +82,16 @@ export const quizzes = [
     { q: 'Lequel de ces gaz est plus lourd que l\'air ?', answers: ['Gaz Naturel', 'Hydrogène', 'GPL (Butane/Propane)'], correct: 2, explanation: 'Les GPL ont une densité supérieure à 1 et s\'accumulent au sol.' },
     { q: 'Quelle est la vitesse d\'une détonation ?', answers: ['< 340 m/s', 'Entre 2000 et 9000 m/s', '> 15 000 m/s'], correct: 1, explanation: 'Une détonation est une explosion supersonique (2000-9000m/s).' },
     { q: 'Que signifie UVCE ?', answers: ['Unconfined Vapor Cloud Explosion', 'Universal Valve Control Engine', 'Underground Vault Center Exit'], correct: 0, explanation: 'C\'est l\'explosion d\'un nuage de vapeur en milieu non confiné.' }
+  ], is_published: true },
+  { id: 'q3', title: 'Quiz ARI', fiche_id: 'f2', questions: [
+    { q: 'Quel test est primordial avant l\'engagement ?', answers: ['Test d\'étanchéité', 'Test du sifflet de fin', 'Test de la soupape', 'Tous les précédents'], correct: 3, explanation: 'Tous ces tests sont requis pour assurer la sécurité.' },
+    { q: 'Que faire en cas de déclenchement du DAD ?', answers: ['Se signaler et chercher la sortie', 'Ignorer si on voit', 'Lancer la balise'], correct: 0, explanation: 'Le DAD indique un danger potentiellement mortel.' }
+  ], is_published: true },
+  { id: 'q4', title: 'Quiz Lecture au plan', fiche_id: 'f3', questions: [
+    { q: 'Qu\'est-ce que l\'échelle 1/500 ?', answers: ['1cm = 5m', '1cm = 50m', '1cm = 500m'], correct: 0, explanation: '1cm sur le terrain = 5m.' }
+  ], is_published: true },
+  { id: 'q5', title: 'Quiz Explosion', fiche_id: 'f5', questions: [
+    { q: 'Quelles sont les conditions de l\'explosion ?', answers: ['Combustible, Comburant, Energie', 'Confinement, Suspension, Mélange optimal', 'Les 6 éléments du Pentagone'], correct: 2, explanation: 'Une explosion nécessite le pentagone de l\'explosion.' }
   ], is_published: true }
 ];
 
