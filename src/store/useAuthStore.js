@@ -185,23 +185,57 @@ export const useAuthStore = create((set, get) => ({
     const state = get();
     if (!state.user?.id) return;
 
-    const now = new Date().toISOString();
-    const entry = `${ficheId}|${now}`;
+    const now = new Date();
+    const todayStr = now.toISOString().split('T')[0];
+    const entry = `${ficheId}|${now.toISOString()}`;
 
-    // On retire l'ancienne entrée de cette fiche si elle existe pour éviter les doublons 
-    // et on la replace à la fin pour qu'elle remonte dans "Dernières activités"
-    const oldFiches = (state.user.completed_fiches || []).filter(e => {
+    // Check if the fiche was already completed
+    const oldFiches = (state.user.completed_fiches || []);
+    const isFirstTime = !oldFiches.some(e => {
+       const id = e.includes('|') ? e.split('|')[0] : e;
+       return id === ficheId;
+    });
+
+    const filteredFiches = oldFiches.filter(e => {
        const id = e.includes('|') ? e.split('|')[0] : e;
        return id !== ficheId;
     });
 
-    const newFiches = [...oldFiches, entry];
-    const newXpTotal = (state.user.xp_total || 0) + 10;
+    const newFiches = [...filteredFiches, entry];
     
-    set({ user: { ...state.user, completed_fiches: newFiches, xp_total: newXpTotal } });
+    // XP only if first time
+    const xpGained = isFirstTime ? 10 : 0;
+    const newXpTotal = (state.user.xp_total || 0) + xpGained;
+
+    // Streak logic
+    let newStreak = state.user.streak_days || 0;
+    const lsKey = `lastActiveDate_${state.user.id}`;
+    const lastActive = localStorage.getItem(lsKey);
+    
+    if (lastActive !== todayStr) {
+       if (lastActive) {
+          const lastDate = new Date(lastActive);
+          lastDate.setHours(0,0,0,0);
+          const todayDate = new Date(todayStr);
+          todayDate.setHours(0,0,0,0);
+          const diffDays = Math.round((todayDate - lastDate) / (1000 * 60 * 60 * 24));
+          
+          if (diffDays === 1) {
+             newStreak += 1;
+          } else if (diffDays > 1) {
+             newStreak = 1;
+          }
+       } else {
+          newStreak = 1;
+       }
+       localStorage.setItem(lsKey, todayStr);
+    }
+    
+    set({ user: { ...state.user, completed_fiches: newFiches, xp_total: newXpTotal, streak_days: newStreak } });
     await supabase.from('profiles').update({ 
       completed_fiches: newFiches,
-      xp_total: newXpTotal
+      xp_total: newXpTotal,
+      streak_days: newStreak
     }).eq('id', state.user.id);
   },
 

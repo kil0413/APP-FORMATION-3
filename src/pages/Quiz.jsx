@@ -28,6 +28,7 @@ export default function Quiz() {
   const [isFinished, setIsFinished] = useState(false);
   const [showExplanation, setShowExplanation] = useState(false);
   const [direction, setDirection] = useState(1);
+  const [xpGainedThisTime, setXpGainedThisTime] = useState(0);
 
   if (!quiz) {
     return (
@@ -87,8 +88,18 @@ export default function Quiz() {
     const finalScore = isLastCorrect ? score + 1 : score;
     setScore(finalScore);
     
-    const xpGained = finalScore * 5; // 5 XP par bonne réponse
-    addXp(xpGained);
+    // XP given only if it's the first time completing the quiz
+    const isFirstTime = !user?.completed_fiches?.some(e => {
+       const entryId = e.includes('|') ? e.split('|')[0] : e;
+       return entryId === quiz.id;
+    });
+
+    const xpGained = isFirstTime ? finalScore * 5 : 0;
+    setXpGainedThisTime(xpGained);
+    
+    if (xpGained > 0) {
+      addXp(xpGained);
+    }
     
     // Validation si score >= 70%
     const successRate = finalScore / quiz.questions.length;
@@ -146,7 +157,7 @@ export default function Quiz() {
                 <div className="text-[10px] uppercase font-black text-white/30 tracking-widest leading-none">Précision</div>
              </div>
              <div className="flex-1 bg-white/[0.03] backdrop-blur-md p-8 rounded-[2.5rem] border border-white/5 shadow-2xl">
-                <div className="text-4xl font-black text-[#CC1A1A] mb-1 leading-none">+{score * 5}</div>
+                <div className="text-4xl font-black text-[#CC1A1A] mb-1 leading-none">+{xpGainedThisTime}</div>
                 <div className="text-[10px] uppercase font-black text-white/30 tracking-widest leading-none">Points XP</div>
              </div>
           </div>

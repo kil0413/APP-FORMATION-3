@@ -35,6 +35,17 @@ export default function Home() {
   const risqueGazFiche = fiches?.find(f => f.title.toUpperCase().includes('RISQUE GAZ'));
   const risqueGazId = risqueGazFiche?.id || 'f4'; // Fallback au cas où
 
+  const getLevelInfo = (xp) => {
+    if (xp >= 300) return { level: 3, max: 300 };
+    if (xp >= 150) return { level: 2, max: 300 };
+    if (xp >= 50) return { level: 1, max: 150 };
+    return { level: 0, max: 50 };
+  };
+
+  const xpTotal = user.xp_total || 0;
+  const levelInfo = getLevelInfo(xpTotal);
+  const xpProgressDisplay = xpTotal >= 300 ? 1 : Math.min(xpTotal / levelInfo.max, 1);
+
   return (
     <PageWrapper>
       <HeroEmbers />
@@ -116,7 +127,7 @@ export default function Home() {
             font-family: 'Rajdhani', sans-serif;
             font-size: 0.6rem;
             letter-spacing: 0.3em;
-            text-indent: 0.3em; /* Parfait équilibre sans affecter la box CSS */
+            text-indent: 0.3em;
             color: rgba(255,255,255,0.15);
             text-transform: uppercase;
           }
@@ -160,7 +171,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* DASHBOARD EXISTANT (Apparaît sous l'écran d'accueil) */}
+      {/* DASHBOARD EXISTANT */}
       <main className="flex flex-col lg:grid lg:grid-cols-12 gap-10 px-4 pt-16 pb-32 md:px-12 md:py-16 relative z-10 max-w-full">
         
         {/* Main Content Area (8 cols) */}
@@ -171,12 +182,12 @@ export default function Home() {
               <div className="flex items-center gap-3">
                 <span className="px-3 py-1 bg-red-600/10 text-red-500 text-[10px] font-black rounded-full uppercase tracking-widest border border-red-600/20 flex items-center gap-2">
                    <Sparkles size={12} className="fill-current" />
-                   Niveau {Math.floor(user.xp_total / 1000) + 1}
+                   Niveau {levelInfo.level}
                 </span>
               </div>
               <div className="flex flex-col gap-2">
                 <h1 className="text-4xl md:text-5xl font-black text-white tracking-tighter uppercase italic leading-none">Bonjour <span className="text-red-500">{user.display_name}</span></h1>
-                <p className="text-white/40 font-bold uppercase tracking-[0.2em] text-[11px]">Prêt pour tes {user.daily_goal - user.daily_xp > 0 ? user.daily_goal - user.daily_xp : 0} XP du jour ?</p>
+                <p className="text-white/40 font-bold uppercase tracking-[0.2em] text-[11px]">{xpTotal >= 300 ? "Objectif Maximal Atteint !" : `Plus que ${levelInfo.max - xpTotal > 0 ? levelInfo.max - xpTotal : 0} XP pour le prochain niveau !`}</p>
               </div>
             </div>
 
@@ -184,7 +195,7 @@ export default function Home() {
             <div className="md:hidden flex items-center gap-4 bg-orange-500/10 p-4 rounded-[2rem] border border-orange-500/20 self-start">
                <Flame size={24} className="fill-orange-500 text-orange-500 animate-pulse" />
                <div className="flex flex-col">
-                  <span className="text-xl font-black text-white leading-none">{user.streak_days}</span>
+                  <span className="text-xl font-black text-white leading-none">{user.streak_days || 0}</span>
                   <span className="text-[9px] font-black uppercase text-orange-500 tracking-widest">Série</span>
                </div>
             </div>
@@ -321,7 +332,7 @@ export default function Home() {
                    <h2 className="text-xs font-black text-white uppercase tracking-[0.3em]">Tableau de Bord</h2>
                    <div className="flex items-center gap-2 bg-orange-500/10 px-4 py-2 rounded-full border border-orange-500/20">
                       <Flame size={18} className="fill-orange-500 text-orange-500" />
-                      <span className="font-black text-orange-500 text-sm">{user.streak_days}</span>
+                      <span className="font-bold text-orange-500 text-sm">{user.streak_days || 0}</span>
                    </div>
                 </div>
 
@@ -329,11 +340,11 @@ export default function Home() {
                    <div className="relative h-44 w-44">
                       <svg className="h-full w-full -rotate-90">
                         <circle cx="88" cy="88" r="80" stroke="currentColor" strokeWidth="12" fill="transparent" className="text-white/5" />
-                        <circle cx="88" cy="88" r="80" stroke="currentColor" strokeWidth="12" fill="transparent" strokeDasharray={502} strokeDashoffset={502 - (502 * user.daily_xp / user.daily_goal)} className="text-red-500 transition-all duration-1000 stroke-round" />
+                        <circle cx="88" cy="88" r="80" stroke="currentColor" strokeWidth="12" fill="transparent" strokeDasharray={502} strokeDashoffset={502 - (502 * xpProgressDisplay)} className="text-red-500 transition-all duration-1000 stroke-round" />
                       </svg>
                       <div className="absolute inset-0 flex flex-col items-center justify-center">
-                         <span className="text-4xl font-black text-white italic">{user.daily_xp}</span>
-                         <span className="text-[9px] font-black text-white/30 uppercase tracking-widest">/ {user.daily_goal} XP</span>
+                         <span className="text-4xl font-black text-white italic">{xpTotal}</span>
+                         <span className="text-[9px] font-black text-white/30 uppercase tracking-widest">/ {xpTotal >= 300 ? 'MAX' : levelInfo.max} XP</span>
                       </div>
                    </div>
                 </div>
@@ -341,25 +352,18 @@ export default function Home() {
                 <div className="grid grid-cols-2 gap-4">
                    <div className="bg-white/5 p-6 rounded-3xl border border-white/5 text-center">
                       <p className="text-[8px] font-black text-white/20 uppercase tracking-widest mb-1">XP TOTAL</p>
-                      <p className="text-lg font-black text-white italic">{user.xp_total.toLocaleString()}</p>
+                      <p className="text-lg font-black text-white italic">{xpTotal.toLocaleString()}</p>
                    </div>
                    <div className="bg-white/5 p-6 rounded-3xl border border-white/5 text-center">
                       <p className="text-[8px] font-black text-white/20 uppercase tracking-widest mb-1">MODULES</p>
-                      <p className="text-lg font-black text-white italic">14/25</p>
+                      <p className="text-lg font-black text-white italic">{user?.completed_fiches?.length || 0}</p>
                    </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
-                   <div className="bg-white/5 p-4 rounded-3xl border border-white/5 flex flex-col items-center gap-2">
-                      <Heart size={20} className="fill-red-500 text-red-500" />
-                      <span className="text-lg font-black text-white">{user.lives}</span>
-                      <span className="text-[8px] font-black text-white/20 uppercase tracking-widest">Énergies</span>
-                   </div>
-                   <div className="bg-white/5 p-4 rounded-3xl border border-white/5 flex flex-col items-center gap-2">
-                      <Trophy size={20} className="fill-yellow-500 text-yellow-500" />
-                      <span className="text-lg font-black text-white">{Math.floor(user.xp_total / 100)}</span>
-                      <span className="text-[8px] font-black text-white/20 uppercase tracking-widest">Rank</span>
-                   </div>
+                <div className="bg-white/5 p-4 rounded-3xl border border-white/5 flex flex-col items-center gap-2 text-center w-full mt-2">
+                   <Trophy size={32} className="text-yellow-500 mb-2" />
+                   <span className="text-2xl font-black text-white">Niveau {levelInfo.level}</span>
+                   <span className="text-[9px] font-black text-white/40 uppercase tracking-[0.2em]">{xpTotal >= 300 ? 'Vous avez atteint le rang maximum' : 'Continuez pour augmenter votre rang'}</span>
                 </div>
              </div>
           </Card>
