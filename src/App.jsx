@@ -35,7 +35,7 @@ function App() {
   // Écran de chargement rapide
   if (isLoading) {
     return (
-      <div className="flex flex-col gap-6 h-screen items-center justify-center bg-[#0F0A0A] overflow-hidden relative">
+      <div className="fixed inset-0 flex flex-col gap-6 items-center justify-center bg-[#0F0A0A] overflow-hidden z-[9999]">
          <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle, #EF4444 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-red-600/10 blur-[120px] rounded-full animate-pulse" />
          
