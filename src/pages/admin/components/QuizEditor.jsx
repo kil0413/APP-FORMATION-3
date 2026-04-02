@@ -244,14 +244,15 @@ export default function QuizEditor({ quiz, onClose }) {
                     </div>
 
                     {/* Le rendu réel de la fiche */}
-                    <div className="bg-white text-gray-900 rounded-[30px] p-12 shadow-inner min-h-[600px] prose prose-invert max-w-none fiche-rich-content">
+                    <div className="bg-white text-black rounded-[30px] p-12 shadow-inner min-h-[600px] max-w-none fiche-rich-content relative overflow-auto">
                        <style>{`
-                         .fiche-rich-content h1 { font-weight: 900; font-style: italic; text-transform: uppercase; margin-bottom: 2rem; color: #1a237e; border-left: 8px solid #1a237e; padding-left: 1.5rem; }
-                         .fiche-rich-content h2 { font-weight: 800; text-transform: uppercase; margin-top: 2rem; color: #d32f2f; }
-                         .fiche-rich-content p { font-size: 1.1rem; line-height: 1.8; margin-bottom: 1.5rem; }
-                         .fiche-rich-content ul { list-style: none; padding: 0; }
-                         .fiche-rich-content li { padding: 1rem; background: #f5f5f5; margin-bottom: 0.5rem; border-radius: 12px; border-left: 4px solid #1a237e; font-weight: 700; color: #333; }
-                         .fiche-rich-content b, .fiche-rich-content strong { color: #d32f2f; }
+                         .fiche-rich-content { color: #000 !important; }
+                         .fiche-rich-content h1 { font-family: sans-serif; font-weight: 900; font-style: italic; text-transform: uppercase; margin-bottom: 2rem; color: #1a237e; border-left: 8px solid #1a237e; padding-left: 1.5rem; font-size: 2.5rem; }
+                         .fiche-rich-content h2 { font-family: sans-serif; font-weight: 800; text-transform: uppercase; margin-top: 2rem; color: #d32f2f; font-size: 1.8rem; }
+                         .fiche-rich-content p { font-family: sans-serif; font-size: 1.1rem; line-height: 1.8; margin-bottom: 1.5rem; color: #333; }
+                         .fiche-rich-content ul { list-style: none; padding: 0; margin-bottom: 2rem; }
+                         .fiche-rich-content li { font-family: sans-serif; padding: 1rem; background: #f5f5f5; margin-bottom: 0.5rem; border-radius: 12px; border-left: 4px solid #1a237e; font-weight: 700; color: #333; }
+                         .fiche-rich-content b, .fiche-rich-content strong { color: #d32f2f; font-weight: 900; }
                        `}</style>
                        <div dangerouslySetInnerHTML={{ __html: ficheHtml }} />
                     </div>
