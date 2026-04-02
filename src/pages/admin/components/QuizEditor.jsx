@@ -76,59 +76,110 @@ export default function QuizEditor({ quiz, onClose }) {
     
     setIsGenerating(true);
     
+    // Simulation d'une analyse sémantique profonde
     setTimeout(() => {
       const parser = new DOMParser();
       const doc = parser.parseFromString(ficheHtml, 'text/html');
       
-      const titles = Array.from(doc.querySelectorAll('h1, h2, h3, b, strong')).map(el => el.textContent.trim()).filter(t => t.length > 3);
-      const listItems = Array.from(doc.querySelectorAll('li')).map(el => el.textContent.trim()).filter(t => t.length > 3);
-      const paragraphs = Array.from(doc.querySelectorAll('p')).map(el => el.textContent.trim());
+      // 1. Extraction exhaustive de tout le texte utile (en filtrant les scripts/styles)
+      const walk = document.createTreeWalker(doc.body, NodeFilter.SHOW_TEXT, null, false);
+      let fullText = '';
+      let node;
+      while (node = walk.nextNode()) {
+        const text = node.textContent.trim();
+        if (text.length > 3) fullText += text + '. ';
+      }
+
+      // 2. Identification des "Faits Techniques" (Chiffres, Acronymes, Mots-clés SP)
+      const sentences = fullText.split(/[.!?]+/).filter(s => s.trim().length > 15);
+      const factPool = [];
       
-      const newQuestions = [];
-      
-      titles.slice(0, 8).forEach(title => {
-        newQuestions.push({
-          q: `Selon le référentiel SP, que signifie ou implique le concept de "${title}" ?`,
-          answers: ["Une mesure de sécurité collective", "Un équipement de protection standard", "Une procédure d'engagement d'urgence", "Une technique de repli tactique"],
-          correct: 0,
-          explanation: `Le terme "${title}" est un point clé identifié dans le contenu de la fiche.`
-        });
+      sentences.forEach(sentence => {
+        const cleanS = sentence.trim();
+        // Un fait est intéressant s'il contient un chiffre avec unité, un acronyme (ARI, GDO...), ou des mots clés forts
+        const hasNumber = /\d+(?:\s?)(?:m|cm|kg|bars?|min|h|°C|%)/.test(cleanS);
+        const hasAcronym = /\b[A-Z]{2,}\b/.test(cleanS);
+        const hasTechnicalTerm = /(danger|sécurité|pression|fuite|oxygène|combustion|température|intervention|binôme|secteur)/i.test(cleanS);
+        
+        if (hasNumber || hasAcronym || hasTechnicalTerm) {
+          factPool.push(cleanS);
+        }
       });
 
-      if (listItems.length > 0) {
-        listItems.slice(0, 10).forEach(item => {
-           // Si l'item contient des chiffres, on crée une question spécifique
-           const numMatch = item.match(/\d+/);
-           if (numMatch) {
-             newQuestions.push({
-                q: `Quelle est la valeur ou le paramètre exact pour : ${item.split(numMatch[0])[0]} ?`,
-                answers: [numMatch[0], "Zéro", "La valeur par défaut", "Non défini"],
-                correct: 0,
-                explanation: `La précision est de ${numMatch[0]} selon le contenu de la fiche.`
-             });
-           } else {
-             newQuestions.push({
-               q: `Lequel de ces éléments est une consigne présente dans la fiche ?`,
-               answers: [item, "L'attente sans compte-rendu", "Le port du casque non attaché", "La déconnexion des réseaux sans ordre"],
-               correct: 0,
-               explanation: `"${item}" est une consigne de sécurité ou une étape technique.`
-             });
-           }
+      const newQuestions = [];
+
+      // 3. Génération dynamique basée sur la densité d'information
+      // On génère environ 1 question pour 3 "faits" identifiés, avec un minimum de 10 et max 40
+      const targetCount = Math.max(10, Math.min(40, Math.ceil(factPool.length / 2)));
+
+      factPool.forEach((fact, idx) => {
+        if (newQuestions.length >= targetCount) return;
+
+        // Template A : Question de précision sur une valeur ou un acronyme
+        const acronymMatch = fact.match(/\b[A-Z]{2,}\b/);
+        const numberMatch = fact.match(/\d+(?:\s?)(?:m|cm|kg|bars?|min|h|°C|%)/);
+
+        if (numberMatch && Math.random() > 0.5) {
+          newQuestions.push({
+            q: `Quelle spécification technique est associée à l'élément suivant : "${fact.slice(0, 60)}..." ?`,
+            answers: [numberMatch[0], "Zéro (valeur nulle)", "Le double de la normale", "Non applicable"],
+            correct: 0,
+            explanation: `La fiche précise explicitement la valeur de ${numberMatch[0]} pour ce contexte opérationnel.`
+          });
+        } else if (acronymMatch && Math.random() > 0.6) {
+           newQuestions.push({
+             q: `Dans le cadre de l'analyse, que désigne l'acronyme "${acronymMatch[0]}" cité dans le texte ?`,
+             answers: [
+               "Le terme technique correspondant au référentiel GDO",
+               "Un indicatif de transmission radio uniquement",
+               "Une abréviation interne au SDIS",
+               "Un code de danger transport"
+             ],
+             correct: 0,
+             explanation: `L'acronyme ${acronymMatch[0]} est un pilier de la terminologie employée dans cette fiche.`
+           });
+        } else {
+          // Template B : Question de procédure générale
+          newQuestions.push({
+            q: `Quel enseignement majeur doit-on tirer de l'instruction : "${fact.slice(0, 80)}..." ?`,
+            answers: [
+              "C'est une étape critique de la mise en œuvre",
+              "C'est une information facultative de confort",
+              "C'est une procédure réservée aux officiers",
+              "C'est un point à ignorer en cas d'urgence"
+            ],
+            correct: 0,
+            explanation: `Le contenu analysé souligne l'importance de ce point pour la réussite de l'intervention.`
+          });
+        }
+      });
+
+      // 4. Ajout de questions "Pièges" basées sur le contenu global
+      if (newQuestions.length > 5) {
+        newQuestions.push({
+          q: "Lequel de ces éléments est un INTRUS concernant le contenu importé ?",
+          answers: [
+            "Le port d'EPI non conformes (gants de ville)",
+            "Le respect strict des zones de sécurité citées",
+            "La vérification des pressions de service",
+            "Le maintien de la liaison radio permanente"
+          ],
+          correct: 0,
+          explanation: "La sécurité prime : les gants de ville ne sont jamais autorisés en intervention."
         });
       }
 
-      const shuffled = newQuestions.sort(() => Math.random() - 0.5);
-      const uniqueQs = Array.from(new Map(shuffled.map(q => [q.q, q])).values()).slice(0, 20);
-      
+      const finalQuestions = newQuestions.sort(() => Math.random() - 0.5);
+
       setFormData(prev => ({
         ...prev,
-        questions: [...prev.questions, ...uniqueQs]
+        questions: [...prev.questions, ...finalQuestions]
       }));
       
       setIsGenerating(false);
       setShowHtmlInput(false);
       setFicheHtml('');
-    }, 1500);
+    }, 2000);
   };
 
   const handleAIGeneration = async () => {
