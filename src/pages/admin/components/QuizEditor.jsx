@@ -78,52 +78,88 @@ export default function QuizEditor({ quiz, onClose }) {
     
     setIsGenerating(true);
     
-    // Simulation d'un appel réseau vers une API IA type OpenAI
-    await new Promise(resolve => setTimeout(resolve, 2000));
+    // Simulation d'un délai de calcul IA
+    await new Promise(resolve => setTimeout(resolve, 1500));
     
     const fiche = fiches.find(f => f.id === formData.fiche_id);
-    const title = fiche?.title?.toLowerCase() || '';
+    if (!fiche) {
+      setIsGenerating(false);
+      return;
+    }
+
+    const sections = fiche.sections || [];
+    const keywords = [];
+    sections.forEach(s => {
+      if (s.title) keywords.push(s.title);
+      if (typeof s.content === 'string') {
+        const words = s.content.split(' ').filter(w => w.length > 5);
+        keywords.push(...words.slice(0, 10));
+      }
+      if (Array.isArray(s.items)) {
+        keywords.push(...s.items);
+      }
+    });
+
+    const ficheTitle = fiche.title;
     
-    let generatedQuestions = [];
+    // On va générer des questions plus robustes en utilisant le contenu de la fiche
+    const questionPool = [
+      { 
+        q: `Selon la fiche "${ficheTitle}", quelle est la définition principale ?`, 
+        answers: [
+          sections.find(s => s.type === 'definition')?.content?.slice(0, 80) + '...' || "La procédure standard d'opération.",
+          "Une technique de repli rapide.",
+          "Un protocole de communication radio.",
+          "Une mesure de protection individuelle."
+        ], 
+        correct: 0, 
+        explanation: `La définition correcte selon le cours est : ${sections.find(s => s.type === 'definition')?.content?.slice(0, 100) || 'Définit par le SDIS'}` 
+      }
+    ];
 
-    if (title.includes('ventilation')) {
-      generatedQuestions = [
-        { q: 'Quel est l\'objectif principal de la ventilation opérationnelle ?', answers: ['Abaisser la température et évacuer les fumées', 'Créer un courant d\'air agréable', 'Alimenter le feu en oxygène', 'Refroidir les murs uniquement'], correct: 0, explanation: 'La VO sert à chasser les gaz chauds pour faciliter l\'engagement et la survie.' },
-        { q: 'Que signifie VPP ?', answers: ['Ventilation par Pression Positive', 'Volume Partiel Propulsé', 'Vapeur Pressurisée Progressive', 'Ventilation Proportionnelle Puissante'], correct: 0, explanation: 'VPP = Ventilation par Pression Positive.' },
-        { q: 'Où doit-on placer le ventilateur principal en VPP ?', answers: ['Dans la zone enfumée', 'Au niveau de l\'exutoire', 'A l\'extérieur, devant le volume d\'entrée', 'Sur le toit'], correct: 2, explanation: 'Le ventilateur se place à l\'extérieur du volume d\'entrée (environ 2 à 3m) pour couvrir l\'ouvrant.' }
-      ];
-    } else if (title.includes('gaz')) {
-      generatedQuestions = [
-        { q: 'Quelle est la densité du Gaz Naturel (Méthane) par rapport à l\'air ?', answers: ['Plus lourd (> 1)', 'Plus léger (< 1)', 'Identique (= 1)', 'Variable'], correct: 1, explanation: 'Le Gaz de Ville (Méthane) a une densité de ~0.55, il monte dans les volumes.' },
-        { q: 'Comment s\'appelle la zone comprise entre la LIE et la LSE ?', answers: ['Zone tampon', 'Plage d\'explosivité', 'Limite saturée', 'Cône d\'inflammabilité'], correct: 1, explanation: 'C\'est la plage d\'explosivité, là où le mélange air/gaz peut s\'enflammer.' },
-        { q: 'Que doit-on éviter absolument en cas de fuite de gaz dans un bâtiment ?', answers: ['Ouvrir les fenêtres', 'Frapper aux portes pour évacuer', 'Actionner des interrupteurs électriques', 'Utiliser un explosimètre'], correct: 2, explanation: 'Toute étincelle (interrupteur, sonnette) peut déclencher une explosion.' }
-      ];
-    } else if (title.includes('monoxyde') || title.includes('co')) {
-      generatedQuestions = [
-        { q: 'Quelles sont les propriétés physiques du Monoxyde de Carbone (CO) ?', answers: ['Odeur d\'amande amère et coloré', 'Incolore, inodore et insipide', 'Grisâtre et irritant', 'Lourd et visqueux'], correct: 1, explanation: 'C\'est le "tueur silencieux" car il est indétectable par l\'homme sans appareil.' },
-        { q: 'D\'où provient majoritairement le CO lors d\'un incident ?', answers: ['Combustion incomplète d\'une matière organique', 'Fuite de canalisation extérieure', 'Mélange de produits chimiques', 'Décomposition de déchets'], correct: 0, explanation: 'Le CO est le résultat d\'une combustion avec un manque d\'oxygène (combustion incomplète).' },
-        { q: 'Pourquoi le CO est-il toxique pour l\'homme ?', answers: ['Il brûle les poumons', 'Il se fixe sur l\'hémoglobine à la place de l\'oxygène', 'Il provoque une crise cardiaque immédiate', 'Il paralyse le système nerveux'], correct: 1, explanation: 'L\'affinité du CO pour l\'hémoglobine est environ 200 fois supérieure à celle de l\'O2.' }
-      ];
-    } else {
-      // Questions génériques si la fiche n'est pas connue
-      generatedQuestions = [
-        { q: 'Quel est l\'objectif clé de ce module ?', answers: ['Comprendre la théorie', 'Intervenir en sécurité', 'Agir rapidement', 'Tout est correct'], correct: 3, explanation: 'L\'objectif est global et regroupe tous ces éléments.' },
-        { q: 'Quelle procédure suivre avant l\'engagement ?', answers: ['Bilan circonstanciel et sécurité', 'Engagement immédiat', 'Appel radio de renfort direct', 'Attente des ordres sans observer'], correct: 0, explanation: 'La sécurité est primordiale avant toute action.' },
-        { q: 'Comment garantir l\'efficacité des actions ?', answers: ['Par la précipitation', 'Le travail en solitaire', 'Le respect des procédures établies', 'L\'improvisation'], correct: 2, explanation: 'Seul le respect des procédures garantit la sécurité.' }
-      ];
+    // Générer dynamiquement des questions à partir des items/points clés
+    const keypoints = sections.find(s => s.type === 'keypoints' || s.type === 'checklist')?.items || [];
+    if (keypoints.length > 0) {
+      keypoints.forEach((point, idx) => {
+        questionPool.push({
+          q: `Lequel de ces éléments est un point clé de "${ficheTitle}" ?`,
+          answers: [
+            point,
+            "L'attente des renforts systématique",
+            "La coupure immédiate du réseau",
+            "Le retrait tactique sans ordre"
+          ],
+          correct: 0,
+          explanation: `${point} est spécifiquement cité dans les points de vigilance de la fiche.`
+        });
+      });
     }
 
-    // On répète ou sélectionne le nombre de questions demandé (aiCount)
-    let finalGenList = [];
-    for (let i = 0; i < aiCount; i++) {
-        // Copie profonde pour éviter d'avoir les mêmes références
-        const sourceQ = generatedQuestions[i % generatedQuestions.length];
-        finalGenList.push(JSON.parse(JSON.stringify(sourceQ)));
+    // Ajouter des questions thématiques prédéfinies basées sur le titre
+    const lowTitle = ficheTitle.toLowerCase();
+    if (lowTitle.includes('gaz')) {
+      questionPool.push(
+        { q: 'Quelle est la densité du Méthane par rapport à l\'air ?', answers: ['Plus léger (< 1)', 'Plus lourd (> 1)', 'Identique', 'Inconnue'], correct: 0, explanation: 'Le méthane est plus léger et s\'accumule en partie haute.' },
+        { q: 'Que signifie LIE ?', answers: ['Limite Inférieure d\'Explosivité', 'Largeur Interne Élastique', 'Ligne d\'Intervention Élite'], correct: 0, explanation: 'C\'est la concentration minimale de gaz dans l\'air pour une explosion.' }
+      );
+    } else if (lowTitle.includes('incendie') || lowTitle.includes('feu')) {
+      questionPool.push(
+        { q: 'Où se situe la zone de fumées la plus chaude ?', answers: ['Au plafond (partie haute)', 'Au sol', 'Au milieu de la pièce'], correct: 0, explanation: 'Les gaz chauds montent par convection (stratification).' },
+        { q: 'Quel est l\'agent extincteur principal pour un feu de solide (Classe A) ?', answers: ['L\'eau', 'Le CO2', 'La poudre'], correct: 0, explanation: 'L\'eau agit par refroidissement sur les braises.' }
+      );
     }
+
+    // Mélanger le pool et s'assurer de l'unicité
+    const shuffle = (array) => array.sort(() => Math.random() - 0.5);
+    const uniquePool = Array.from(new Set(questionPool.map(q => JSON.stringify(q)))).map(s => JSON.parse(s));
+    const shuffled = shuffle(uniquePool);
+
+    // Sélectionner le nombre demandé
+    const selected = shuffled.slice(0, aiCount);
 
     setFormData(prev => ({
       ...prev,
-      questions: [...prev.questions, ...finalGenList]
+      questions: [...prev.questions, ...selected]
     }));
     
     setIsGenerating(false);
