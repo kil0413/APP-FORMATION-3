@@ -88,74 +88,115 @@ export default function QuizEditor({ quiz, onClose }) {
     }
 
     const sections = fiche.sections || [];
-    const keywords = [];
-    sections.forEach(s => {
-      if (s.title) keywords.push(s.title);
-      if (typeof s.content === 'string') {
-        const words = s.content.split(' ').filter(w => w.length > 5);
-        keywords.push(...words.slice(0, 10));
-      }
-      if (Array.isArray(s.items)) {
-        keywords.push(...s.items);
-      }
-    });
-
     const ficheTitle = fiche.title;
-    
-    // On va générer des questions plus robustes en utilisant le contenu de la fiche
-    const questionPool = [
-      { 
-        q: `Selon la fiche "${ficheTitle}", quelle est la définition principale ?`, 
-        answers: [
-          sections.find(s => s.type === 'definition')?.content?.slice(0, 80) + '...' || "La procédure standard d'opération.",
-          "Une technique de repli rapide.",
-          "Un protocole de communication radio.",
-          "Une mesure de protection individuelle."
-        ], 
-        correct: 0, 
-        explanation: `La définition correcte selon le cours est : ${sections.find(s => s.type === 'definition')?.content?.slice(0, 100) || 'Définit par le SDIS'}` 
-      }
-    ];
+    const questionPool = [];
 
-    // Générer dynamiquement des questions à partir des items/points clés
-    const keypoints = sections.find(s => s.type === 'keypoints' || s.type === 'checklist')?.items || [];
-    if (keypoints.length > 0) {
-      keypoints.forEach((point, idx) => {
+    // --- LOGIQUE GÉNÉRATION TYPE CONCOURS ---
+
+    // 1. Question sur la Définition exacte (Terminologie SP)
+    const defSection = sections.find(s => s.type === 'definition');
+    if (defSection?.content) {
+      questionPool.push({
+        q: `Selon le GDO/GTS, quelle est la définition exacte rattachée à "${ficheTitle}" ?`,
+        answers: [
+          defSection.content.length > 100 ? defSection.content.slice(0, 100) + "..." : defSection.content,
+          "Une action de reconnaissance immédiate sans binôme.",
+          "Une procédure de sauvegarde des biens uniquement.",
+          "Une technique d'extinction par étouffement total."
+        ],
+        correct: 0,
+        explanation: "La terminologie opérationnelle est stricte : il s'agit de la définition officielle du référentiel SP."
+      });
+    }
+
+    // 2. Questions sur les points clés / Checklist (Technique)
+    const technicalItems = sections.find(s => s.type === 'keypoints' || s.type === 'checklist')?.items || [];
+    if (technicalItems.length > 0) {
+      technicalItems.forEach((item) => {
+        // Template : Quel élément est préconisé ?
         questionPool.push({
-          q: `Lequel de ces éléments est un point clé de "${ficheTitle}" ?`,
+          q: `Dans le cadre de "${ficheTitle}", quelle prescription technique est impérative ?`,
           answers: [
-            point,
-            "L'attente des renforts systématique",
-            "La coupure immédiate du réseau",
-            "Le retrait tactique sans ordre"
+            item,
+            "Le port du lot de sauvetage en systématique",
+            "L'établissement d'une LDV 1000 en protection",
+            "La coupure du courant au DIS"
           ],
           correct: 0,
-          explanation: `${point} est spécifiquement cité dans les points de vigilance de la fiche.`
+          explanation: `${item} est une mesure de sécurité ou une étape technique cruciale citée dans la fiche.`
+        });
+
+        // Template : Quel est l'intrus ?
+        if (technicalItems.length >= 2) {
+           questionPool.push({
+             q: `Lequel de ces éléments NE FAIT PAS partie des points de vigilance pour "${ficheTitle}" ?`,
+             answers: [
+               "Le port des gants de ménage standard",
+               technicalItems[0],
+               technicalItems[Math.floor(technicalItems.length/2)],
+               "Le respect de la zone de sécurité"
+             ],
+             correct: 0,
+             explanation: "Les gants de ménage ne sont pas des EPI conformes. Les autres points sont bien listés dans le référentiel."
+           });
+        }
+      });
+    }
+
+    // 3. Génération basée sur les chiffres / Valeurs numériques (Type Concours)
+    const contentText = sections.map(s => s.content).join(' ');
+    const numbers = contentText.match(/\d+(?:\s?)(?:m|cm|kg|bars?|min|h|°C|%)/g) || [];
+    if (numbers.length > 0) {
+      numbers.forEach(num => {
+        questionPool.push({
+          q: `Quelle valeur numérique est associée à la mise en œuvre de "${ficheTitle}" dans ce contexte ?`,
+          answers: [
+            num,
+            "La valeur par défaut du CODIS",
+            "Le double de la valeur nominale",
+            "Zéro"
+          ],
+          correct: 0,
+          explanation: `La précision chiffrée (${num}) est essentielle pour la réussite du concours et la sécurité en intervention.`
         });
       });
     }
 
-    // Ajouter des questions thématiques prédéfinies basées sur le titre
+    // 4. Questions thématiques expertes (GNR/GDO)
     const lowTitle = ficheTitle.toLowerCase();
     if (lowTitle.includes('gaz')) {
       questionPool.push(
-        { q: 'Quelle est la densité du Méthane par rapport à l\'air ?', answers: ['Plus léger (< 1)', 'Plus lourd (> 1)', 'Identique', 'Inconnue'], correct: 0, explanation: 'Le méthane est plus léger et s\'accumule en partie haute.' },
-        { q: 'Que signifie LIE ?', answers: ['Limite Inférieure d\'Explosivité', 'Largeur Interne Élastique', 'Ligne d\'Intervention Élite'], correct: 0, explanation: 'C\'est la concentration minimale de gaz dans l\'air pour une explosion.' }
+        { q: 'Quelle est la Zone de Danger Immédiat (ZDI) lors d\'une Fuite de Gaz Enflammée (FGE) ?', answers: ['Périmètre de 50 mètres', 'Périmètre de 100 mètres', 'Zone d\'exclusion totale'], correct: 0, explanation: 'En FGE, on établit une ZDI de 50m minimum en attendant le barrage.' },
+        { q: 'Que signifie le code danger 23 sur une plaque d\'immatriculation de transport de matières dangereuses ?', answers: ['Gaz inflammable', 'Gaz toxique', 'Solide inflammable'], correct: 0, explanation: '2 = Gaz, 3 = Inflammable.' }
       );
-    } else if (lowTitle.includes('incendie') || lowTitle.includes('feu')) {
+    } else if (lowTitle.includes('incendie') || lowTitle.includes('combustion')) {
       questionPool.push(
-        { q: 'Où se situe la zone de fumées la plus chaude ?', answers: ['Au plafond (partie haute)', 'Au sol', 'Au milieu de la pièce'], correct: 0, explanation: 'Les gaz chauds montent par convection (stratification).' },
-        { q: 'Quel est l\'agent extincteur principal pour un feu de solide (Classe A) ?', answers: ['L\'eau', 'Le CO2', 'La poudre'], correct: 0, explanation: 'L\'eau agit par refroidissement sur les braises.' }
+        { q: 'Quel phénomène survient lors de l\'inflammation brutale des gaz de pyrolyse accumulés sous le plafond ?', answers: ['Le Flashover', 'Le Backdraft', 'Le Roll-over'], correct: 0, explanation: 'Le Flashover est le passage d\'un feu localisé à un embrasement généralisé.' },
+        { q: 'Quelle est la concentration d\'O2 minimale pour entretenir une combustion vive ?', answers: ['15%', '21%', '5%', '10%'], correct: 0, explanation: 'En dessous de 15% d\'O2, la combustion s\'atténue ou s\'arrête.' }
+      );
+    } else if (lowTitle.includes('ari')) {
+      questionPool.push(
+        { q: 'À quelle pression retentit le sifflet de fin de charge sur un ARI standard ?', answers: ['55 bars (+/- 5 bars)', '30 bars', '100 bars'], correct: 0, explanation: 'Le sifflet prévient l\'utilisateur qu\'il doit quitter la zone immédiatement.' }
       );
     }
 
-    // Mélanger le pool et s'assurer de l'unicité
+    // --- FIN LOGIQUE CONCOURS ---
+
+    // Mélanger le pool et s'assurer de l'unicité des questions par intitulé
     const shuffle = (array) => array.sort(() => Math.random() - 0.5);
-    const uniquePool = Array.from(new Set(questionPool.map(q => JSON.stringify(q)))).map(s => JSON.parse(s));
-    const shuffled = shuffle(uniquePool);
+    
+    // Filtrage pour éviter les doublons de question même avec des réponses différentes
+    const uniqueQuestionsMap = new Map();
+    questionPool.forEach(item => {
+      if (!uniqueQuestionsMap.has(item.q)) {
+        uniqueQuestionsMap.set(item.q, item);
+      }
+    });
+
+    const finalPool = shuffle(Array.from(uniqueQuestionsMap.values()));
 
     // Sélectionner le nombre demandé
-    const selected = shuffled.slice(0, aiCount);
+    const selected = finalPool.slice(0, aiCount);
 
     setFormData(prev => ({
       ...prev,
