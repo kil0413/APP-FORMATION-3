@@ -83,6 +83,14 @@ export default function Profil() {
     }
   ];
 
+  const grades = [
+    "Sapeur", "Caporal", "Caporal-chef",
+    "Sergent", "Sergent-chef", "Adjudant", "Adjudant-chef",
+    "Lieutenant", "Capitaine", "Commandant", "Lieutenant-colonel", "Colonel", "Contrôleur général"
+  ];
+
+  const { updateGrade } = useAuthStore();
+
   return (
     <PageWrapper title="Profil" hideHeader>
       <main className="flex flex-col gap-10 px-5 py-8 md:px-12 md:py-16 max-w-5xl mx-auto w-full">
@@ -208,12 +216,22 @@ export default function Profil() {
             )}
 
              <div className="bg-[#1E293B]/20 p-8 rounded-[2.5rem] shadow-2xl border border-white/5">
-                <h3 className="text-sm font-black text-white/40 uppercase tracking-[0.2em] mb-6">Paramètres Compte</h3>
+                <h3 className="text-sm font-black text-white/40 uppercase tracking-[0.2em] mb-6 font-bold">Grade & Paramètres</h3>
                 <div className="space-y-4">
+                   <div className="p-4 bg-white/5 rounded-2xl">
+                      <p className="text-[9px] font-black text-white/30 uppercase tracking-widest mb-3">Sélection de Grade</p>
+                      <select 
+                        value={user?.grade || 'Sapeur'} 
+                        onChange={(e) => updateGrade(e.target.value)}
+                        className="w-full bg-[#1A1A2E] text-white py-3 px-4 rounded-xl border border-white/10 text-xs font-black uppercase tracking-widest outline-none focus:border-red-500 transition-colors cursor-pointer appearance-none"
+                      >
+                        {grades.map(g => <option key={g} value={g}>{g}</option>)}
+                      </select>
+                   </div>
                    <button className="w-full flex items-center justify-between p-4 bg-white/5 hover:bg-white/10 rounded-2xl transition-colors text-left group">
                      <div className="flex items-center gap-3">
                         <Settings size={20} className="text-white/40 group-hover:text-red-500 transition-colors" />
-                        <span className="font-bold text-sm text-white">Préférences</span>
+                        <span className="font-bold text-sm text-white uppercase tracking-tighter font-black">Préférences</span>
                      </div>
                      <ChevronRight size={18} className="text-white/10" />
                    </button>

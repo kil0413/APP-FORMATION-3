@@ -281,5 +281,27 @@ export const useAuthStore = create((set, get) => ({
     } catch (err) {
       console.error("Erreur updateProfile:", err.message);
     }
+  },
+
+  updateGrade: async (grade) => {
+    const state = get();
+    if (!state.user?.id) return;
+    
+    set({ user: { ...state.user, grade } });
+    await supabase.from('profiles').update({ grade }).eq('id', state.user.id);
+  },
+
+  getLevelInfo: (xp) => {
+    if (xp >= 300) return { level: 3, max: 300 };
+    if (xp >= 150) return { level: 2, max: 300 };
+    if (xp >= 50) return { level: 1, max: 150 };
+    return { level: 0, max: 50 };
   }
 }));
+
+export const getLevelInfo = (xp) => {
+  if (xp >= 300) return { level: 3, max: 300, next: 300 };
+  if (xp >= 150) return { level: 2, max: 300, next: 300 };
+  if (xp >= 50) return { level: 1, max: 150, next: 150 };
+  return { level: 0, max: 50, next: 50 };
+};

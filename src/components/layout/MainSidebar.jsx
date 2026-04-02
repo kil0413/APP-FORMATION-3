@@ -1,12 +1,16 @@
 import { Home, BookOpen, FolderOpen, User, LogOut, ShieldCheck, Zap, Sparkles, TrendingUp } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useAuthStore } from '../../store/useAuthStore';
+import { useAuthStore, getLevelInfo } from '../../store/useAuthStore';
 import { cn } from '../../lib/utils';
 
 export function MainSidebar() {
   const location = useLocation();
   const navigate = useNavigate();
   const { user, logout } = useAuthStore();
+
+  const xpTotal = user?.xp_total || 0;
+  const levelInfo = getLevelInfo(xpTotal);
+  const xpProgressDisplay = xpTotal >= 300 ? 1 : Math.min(xpTotal / levelInfo.max, 1);
 
   const menuItems = [
     { name: 'Accueil', path: '/', icon: Home },
@@ -106,15 +110,15 @@ export function MainSidebar() {
          </div>
          <div className="flex items-end justify-between mb-3">
             <div className="flex flex-col">
-              <span className="text-2xl font-black text-white italic leading-none">{user?.xp_total.toLocaleString()}</span>
+              <span className="text-2xl font-black text-white italic leading-none">{xpTotal.toLocaleString()}</span>
               <span className="text-[8px] font-black text-white/20 uppercase tracking-[0.1em] mt-1">XP ACQUIS</span>
             </div>
             <div className="h-10 w-10 rounded-xl bg-red-600/10 flex items-center justify-center border border-red-600/20">
-               <span className="text-xs font-black text-red-500">{Math.floor(user?.xp_total / 1000) + 1}</span>
+               <span className="text-xs font-black text-red-500">{levelInfo.level}</span>
             </div>
          </div>
          <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden p-[1px]">
-            <div className="h-full bg-gradient-to-r from-red-600 to-red-400 rounded-full shadow-[0_0_10px_rgba(239,68,68,0.3)] transition-all duration-1000" style={{ width: `${(user?.xp_total % 1000) / 10}%` }} />
+            <div className="h-full bg-gradient-to-r from-red-600 to-red-400 rounded-full shadow-[0_0_10px_rgba(239,68,68,0.3)] transition-all duration-1000" style={{ width: `${xpProgressDisplay * 100}%` }} />
          </div>
       </div>
 

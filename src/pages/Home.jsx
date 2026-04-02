@@ -5,7 +5,7 @@ import { PageWrapper } from '../components/layout/PageWrapper';
 import HeroEmbers from '../components/layout/HeroEmbers';
 import { Card, CardContent } from '../components/ui/Card';
 import { Badge } from '../components/ui/Badge';
-import { useAuthStore } from '../store/useAuthStore';
+import { useAuthStore, getLevelInfo } from '../store/useAuthStore';
 import { useFicheStore } from '../store/useFicheStore';
 import { cn } from '../lib/utils';
 
@@ -16,15 +16,25 @@ export default function Home() {
 
   if (isAuthLoading || isFichesLoading || !user) {
     return (
-      <div className="flex bg-[#0A0A12] h-screen items-center justify-center">
-        <div className="flex flex-col items-center gap-6">
-           <div className="h-20 w-20 bg-red-600 rounded-[2rem] flex items-center justify-center animate-bounce shadow-2xl shadow-red-500/40">
-              <span className="text-white font-black italic text-2xl">SP</span>
-           </div>
-           <div className="text-white/40 font-black uppercase text-xs tracking-[0.3em] animate-pulse">
-              Initialisation du centre d'entraînement...
-           </div>
-        </div>
+      <div className="flex flex-col gap-6 h-screen items-center justify-center bg-[#0F0A0A] overflow-hidden relative">
+         <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle, #EF4444 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
+         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-red-600/10 blur-[120px] rounded-full animate-pulse" />
+         
+         <div className="relative z-10 flex flex-col items-center">
+            <div className="h-28 w-28 relative group">
+               <div className="absolute inset-0 bg-red-600 blur-2xl opacity-20 animate-pulse" />
+               <img src="/logo.png" alt="Logo" className="w-[120%] h-[120%] object-contain absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 drop-shadow-[0_0_30px_rgba(239,68,68,0.3)]" />
+            </div>
+            
+            <div className="mt-12 flex flex-col items-center gap-3">
+               <div className="flex gap-1.5">
+                  {[0, 1, 2].map((i) => (
+                    <div key={i} className="h-1.5 w-1.5 rounded-full bg-red-600 animate-bounce" style={{ animationDelay: `${i * 0.15}s` }} />
+                  ))}
+               </div>
+               <p className="text-white/40 font-black uppercase text-[9px] tracking-[0.5em] mt-2">Accès au centre d'entraînement...</p>
+            </div>
+         </div>
       </div>
     );
   }
@@ -35,16 +45,16 @@ export default function Home() {
   const risqueGazFiche = fiches?.find(f => f.title.toUpperCase().includes('RISQUE GAZ'));
   const risqueGazId = risqueGazFiche?.id || 'f4'; // Fallback au cas où
 
-  const getLevelInfo = (xp) => {
-    if (xp >= 300) return { level: 3, max: 300 };
-    if (xp >= 150) return { level: 2, max: 300 };
-    if (xp >= 50) return { level: 1, max: 150 };
-    return { level: 0, max: 50 };
-  };
-
   const xpTotal = user.xp_total || 0;
   const levelInfo = getLevelInfo(xpTotal);
   const xpProgressDisplay = xpTotal >= 300 ? 1 : Math.min(xpTotal / levelInfo.max, 1);
+
+  // Modules count logic
+  const totalModules = fiches?.length || 0;
+  const completedModulesCount = (user?.completed_fiches || []).filter(fc => {
+     const ficheId = fc.includes('|') ? fc.split('|')[0] : fc;
+     return fiches?.some(f => f.id === ficheId);
+  }).length;
 
   return (
     <PageWrapper>
@@ -356,7 +366,7 @@ export default function Home() {
                    </div>
                    <div className="bg-white/5 p-6 rounded-3xl border border-white/5 text-center">
                       <p className="text-[8px] font-black text-white/20 uppercase tracking-widest mb-1">MODULES</p>
-                      <p className="text-lg font-black text-white italic">{user?.completed_fiches?.length || 0}</p>
+                      <p className="text-lg font-black text-white italic">{completedModulesCount}/{totalModules}</p>
                    </div>
                 </div>
 
