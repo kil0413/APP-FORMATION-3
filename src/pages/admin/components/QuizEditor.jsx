@@ -16,7 +16,8 @@ export default function QuizEditor({ quiz, onClose }) {
   const [isGenerating, setIsGenerating] = useState(false);
   const [aiCount, setAiCount] = useState(10);
   const [ficheHtml, setFicheHtml] = useState('');
-  const [showHtmlInput, setShowHtmlInput] = useState(false);
+  const [step, setStep] = useState(1);
+  const [cleanedText, setCleanedText] = useState('');
 
   useEffect(() => {
     if (quiz) {
@@ -71,305 +72,244 @@ export default function QuizEditor({ quiz, onClose }) {
     }
   };
 
-  const handleHtmlImport = () => {
+  // --- ÉTAPE 1 -> 2 : HTML VERS TEXTE ---
+  const handleTransformHtmlToText = () => {
     if (!ficheHtml.trim()) return;
     
     setIsGenerating(true);
-    
-    // Simulation d'une analyse sémantique profonde
     setTimeout(() => {
       const parser = new DOMParser();
       const doc = parser.parseFromString(ficheHtml, 'text/html');
-      
-      // 1. Extraction exhaustive de tout le texte utile (en filtrant les scripts/styles)
       const walk = document.createTreeWalker(doc.body, NodeFilter.SHOW_TEXT, null, false);
-      let fullText = '';
+      let text = '';
       let node;
       while (node = walk.nextNode()) {
-        const text = node.textContent.trim();
-        if (text.length > 3) fullText += text + '. ';
+        const t = node.textContent.trim();
+        if (t.length > 3) text += t + '. ';
       }
+      setCleanedText(text);
+      setStep(2);
+      setIsGenerating(false);
+    }, 1000);
+  };
 
-      // 2. Identification des "Faits Techniques" (Chiffres, Acronymes, Mots-clés SP)
-      const sentences = fullText.split(/[.!?]+/).filter(s => s.trim().length > 15);
+  // --- ÉTAPE 2 -> 3 : TEXTE VERS QCM ---
+  const handleAnalyzeTextToQuiz = () => {
+    if (!cleanedText.trim()) return;
+    
+    setIsGenerating(true);
+    setTimeout(() => {
+      const sentences = cleanedText.split(/[.!?]+/).filter(s => s.trim().length > 15);
       const factPool = [];
       
       sentences.forEach(sentence => {
         const cleanS = sentence.trim();
-        // Un fait est intéressant s'il contient un chiffre avec unité, un acronyme (ARI, GDO...), ou des mots clés forts
         const hasNumber = /\d+(?:\s?)(?:m|cm|kg|bars?|min|h|°C|%)/.test(cleanS);
         const hasAcronym = /\b[A-Z]{2,}\b/.test(cleanS);
         const hasTechnicalTerm = /(danger|sécurité|pression|fuite|oxygène|combustion|température|intervention|binôme|secteur)/i.test(cleanS);
-        
-        if (hasNumber || hasAcronym || hasTechnicalTerm) {
-          factPool.push(cleanS);
-        }
+        if (hasNumber || hasAcronym || hasTechnicalTerm) factPool.push(cleanS);
       });
 
       const newQuestions = [];
+      const targetCount = Math.max(10, Math.min(40, Math.ceil(factPool.length / 1.5)));
 
-      // 3. Génération dynamique basée sur la densité d'information
-      // On génère environ 1 question pour 3 "faits" identifiés, avec un minimum de 10 et max 40
-      const targetCount = Math.max(10, Math.min(40, Math.ceil(factPool.length / 2)));
-
-      factPool.forEach((fact, idx) => {
+      factPool.forEach((fact) => {
         if (newQuestions.length >= targetCount) return;
-
-        // Template A : Question de précision sur une valeur ou un acronyme
         const acronymMatch = fact.match(/\b[A-Z]{2,}\b/);
         const numberMatch = fact.match(/\d+(?:\s?)(?:m|cm|kg|bars?|min|h|°C|%)/);
 
-        if (numberMatch && Math.random() > 0.5) {
+        if (numberMatch) {
           newQuestions.push({
-            q: `Quelle spécification technique est associée à l'élément suivant : "${fact.slice(0, 60)}..." ?`,
-            answers: [numberMatch[0], "Zéro (valeur nulle)", "Le double de la normale", "Non applicable"],
+            q: `Quelle est la valeur prescrite pour l'instruction suivante : "${fact.slice(0, 70)}..." ?`,
+            answers: [numberMatch[0], "Zéro", "La valeur nominale x2", "ZED (Zone d'Évitement Danger)"],
             correct: 0,
-            explanation: `La fiche précise explicitement la valeur de ${numberMatch[0]} pour ce contexte opérationnel.`
+            explanation: `Le référentiel indique précisément la valeur de ${numberMatch[0]}.`
           });
-        } else if (acronymMatch && Math.random() > 0.6) {
+        } else if (acronymMatch) {
            newQuestions.push({
-             q: `Dans le cadre de l'analyse, que désigne l'acronyme "${acronymMatch[0]}" cité dans le texte ?`,
-             answers: [
-               "Le terme technique correspondant au référentiel GDO",
-               "Un indicatif de transmission radio uniquement",
-               "Une abréviation interne au SDIS",
-               "Un code de danger transport"
-             ],
+             q: `Que signifie "${acronymMatch[0]}" dans le contexte opérationnel suivant : "${fact.slice(0, 70)}..." ?`,
+             answers: ["Terme technique GDO", "Identité de bord", "Pression de service", "Code de rappel"],
              correct: 0,
-             explanation: `L'acronyme ${acronymMatch[0]} est un pilier de la terminologie employée dans cette fiche.`
+             explanation: `L'acronyme ${acronymMatch[0]} est central dans cette procédure.`
            });
         } else {
-          // Template B : Question de procédure générale
           newQuestions.push({
-            q: `Quel enseignement majeur doit-on tirer de l'instruction : "${fact.slice(0, 80)}..." ?`,
-            answers: [
-              "C'est une étape critique de la mise en œuvre",
-              "C'est une information facultative de confort",
-              "C'est une procédure réservée aux officiers",
-              "C'est un point à ignorer en cas d'urgence"
-            ],
+            q: `Quelle est la consigne clé concernant : "${fact.slice(0, 80)}..." ?`,
+            answers: ["Priorité sécurité et procédure", "Information de confort", "Étape à ignorer en urgence", "Action facultative"],
             correct: 0,
-            explanation: `Le contenu analysé souligne l'importance de ce point pour la réussite de l'intervention.`
+            explanation: "Toute consigne technique est indispensable pour la validation de l'échelon."
           });
         }
       });
 
-      // 4. Ajout de questions "Pièges" basées sur le contenu global
-      if (newQuestions.length > 5) {
-        newQuestions.push({
-          q: "Lequel de ces éléments est un INTRUS concernant le contenu importé ?",
-          answers: [
-            "Le port d'EPI non conformes (gants de ville)",
-            "Le respect strict des zones de sécurité citées",
-            "La vérification des pressions de service",
-            "Le maintien de la liaison radio permanente"
-          ],
-          correct: 0,
-          explanation: "La sécurité prime : les gants de ville ne sont jamais autorisés en intervention."
-        });
-      }
-
-      const finalQuestions = newQuestions.sort(() => Math.random() - 0.5);
-
-      setFormData(prev => ({
-        ...prev,
-        questions: [...prev.questions, ...finalQuestions]
-      }));
-      
+      setFormData(prev => ({ ...prev, questions: [...prev.questions, ...newQuestions] }));
+      setStep(3);
       setIsGenerating(false);
-      setShowHtmlInput(false);
-      setFicheHtml('');
     }, 2000);
-  };
-
-  const handleAIGeneration = async () => {
-    if (!formData.fiche_id) {
-       alert("Sélectionnez d'abord une Fiche Liée.");
-       return;
-    }
-    setIsGenerating(true);
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    
-    const fiche = fiches.find(f => f.id === formData.fiche_id);
-    if (!fiche) {
-      setIsGenerating(false);
-      return;
-    }
-
-    const sections = fiche.sections || [];
-    const questionPool = [];
-
-    const defSection = sections.find(s => s.type === 'definition');
-    if (defSection?.content) {
-      questionPool.push({
-        q: `Définition officielle : Quelle est la définition exacte de "${fiche.title}" ?`,
-        answers: [defSection.content.length > 100 ? defSection.content.slice(0, 100) + "..." : defSection.content, "Procédure de repli", "Bilan circonstanciel", "Action de déblai"],
-        correct: 0,
-        explanation: "Il s'agit de la définition issue du référentiel SP."
-      });
-    }
-
-    const techItems = sections.find(s => s.type === 'keypoints' || s.type === 'checklist')?.items || [];
-    techItems.forEach(item => {
-      questionPool.push({
-        q: `Dans le cadre de "${fiche.title}", quelle règle technique est impérative ?`,
-        answers: [item, "Attente des renforts", "Appel radio immédiat", "Mise en sécurité"],
-        correct: 0,
-        explanation: `${item} est un point clé du module.`
-      });
-    });
-
-    const finalPool = questionPool.sort(() => Math.random() - 0.5).slice(0, aiCount);
-    setFormData(prev => ({ ...prev, questions: [...prev.questions, ...finalPool] }));
-    setIsGenerating(false);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!formData.fiche_id) return alert('Lieu lié requis');
+    if (!formData.fiche_id) return alert('Source requise');
     setIsSaving(true);
     try {
       if (quiz) await updateQuiz(quiz.id, formData);
       else await addQuiz(formData);
       onClose();
-    } catch (err) {
-      alert("Erreur: " + err.message);
-    } finally {
-      setIsSaving(false);
-    }
+    } catch (err) { alert("Erreur: " + err.message); }
+    finally { setIsSaving(false); }
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-end overflow-hidden">
-      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity" onClick={onClose} />
-      <div className="relative w-full max-w-2xl bg-white h-full shadow-2xl flex flex-col animate-in slide-in-from-right duration-500">
-        
-        {/* Header */}
-        <div className="px-8 py-6 border-b border-gray-100 flex items-center justify-between bg-gray-50">
-          <div>
-            <h2 className="text-2xl font-black text-[#1A1A2E] tracking-tighter uppercase italic">{quiz ? 'Modifier le QCM' : 'Nouveau QCM'}</h2>
-            <p className="text-gray-500 font-bold uppercase tracking-widest text-[10px]">Configurateur d'évaluations</p>
+    <div className="fixed inset-0 z-50 bg-[#0A0A12] text-white flex flex-col animate-in fade-in duration-500">
+      
+      {/* Header Area */}
+      <div className="px-12 py-8 bg-black/40 border-b border-white/5 flex items-center justify-between">
+        <div className="flex items-center gap-6">
+          <div className="h-12 w-12 bg-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/20">
+            <Sparkles size={24} />
           </div>
-          <button onClick={onClose} className="h-10 w-10 bg-white rounded-full flex items-center justify-center text-gray-400 hover:text-red-500 shadow-sm border border-gray-100 transition-colors">
-            <X size={20} />
-          </button>
-        </div>
-
-        {/* Scrollable Content */}
-        <div className="flex-1 overflow-y-auto p-8 custom-scrollbar">
-          <form id="quiz-form" onSubmit={handleSubmit} className="space-y-8">
-            
-            {/* General Info & HTML Import */}
-            <div className="space-y-4 bg-gray-50 p-6 rounded-3xl border border-gray-100">
-              <div className="flex items-center justify-between border-b border-gray-200 pb-3 mb-4">
-                <h3 className="text-sm font-black text-[#1A1A2E] uppercase tracking-widest">Informations</h3>
-                <button 
-                  type="button" 
-                  onClick={() => setShowHtmlInput(!showHtmlInput)}
-                  className="flex items-center gap-2 text-[10px] font-black uppercase text-blue-600 bg-blue-50 px-3 py-1.5 rounded-full border border-blue-100 hover:bg-blue-100 transition-colors"
-                >
-                  <FileCode size={14} />
-                  {showHtmlInput ? 'Cacher Import' : 'Importer HTML'}
-                </button>
-              </div>
-
-              {showHtmlInput && (
-                <div className="space-y-3 bg-blue-50/50 p-4 rounded-2xl border border-blue-100 animate-in fade-in slide-in-from-top duration-300">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-blue-500">Coller le code HTML de la fiche</label>
-                  <textarea 
-                    value={ficheHtml}
-                    onChange={(e) => setFicheHtml(e.target.value)}
-                    placeholder="<div class='fiche'>...</div>"
-                    className="w-full h-32 bg-white border border-blue-200 rounded-xl p-4 font-mono text-[11px] outline-none focus:border-blue-500 shadow-inner resize-none"
-                  />
-                  <button
-                    type="button"
-                    onClick={handleHtmlImport}
-                    disabled={isGenerating || !ficheHtml.trim()}
-                    className="w-full py-3 bg-blue-600 text-white rounded-xl font-black uppercase tracking-widest text-[11px] shadow-lg shadow-blue-500/20 active:scale-95 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
-                  >
-                    {isGenerating ? <Loader2 size={16} className="animate-spin" /> : <Sparkles size={16} />}
-                    Générer Questions via HTML
-                  </button>
-                </div>
-              )}
-
-              <div className="space-y-2">
-                <label className="text-[10px] font-black uppercase tracking-widest text-gray-400">Titre du QCM</label>
-                <input required type="text" name="title" value={formData.title} onChange={handleChange} placeholder="Titre..." className="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 font-bold text-[#1A1A2E] outline-none focus:border-blue-500" />
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-[10px] font-black uppercase tracking-widest text-gray-400">Fiche Liée</label>
-                <select required name="fiche_id" value={formData.fiche_id} onChange={handleChange} className="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 font-bold text-[#1A1A2E] outline-none focus:border-blue-500">
-                  <option value="" disabled>Sélectionnez une Fiche</option>
-                  {fiches.map(f => <option key={f.id} value={f.id}>{f.title}</option>)}
-                </select>
-              </div>
-
-              <div className="flex items-center gap-3 pt-2">
-                <input type="checkbox" name="is_published" id="pub" checked={formData.is_published} onChange={handleChange} className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-600" />
-                <label htmlFor="pub" className="text-xs font-bold uppercase tracking-widest text-[#1A1A2E] cursor-pointer">Publier le QCM</label>
-              </div>
-            </div>
-
-            {/* Questions List */}
-            <div className="space-y-6">
-               <div className="flex items-center justify-between">
-                  <h3 className="text-sm font-black text-[#1A1A2E] uppercase tracking-widest">Questions ({formData.questions.length})</h3>
-                  <div className="flex items-center gap-2">
-                    <select value={aiCount} onChange={e => setAiCount(Number(e.target.value))} className="bg-white border p-2 rounded-lg text-xs font-black outline-none">
-                      {[10, 20, 30, 40].map(n => <option key={n} value={n}>{n}</option>)}
-                    </select>
-                    <button type="button" onClick={handleAIGeneration} disabled={isGenerating} className="p-2 bg-purple-50 text-purple-600 border border-purple-100 rounded-lg font-black text-[10px] uppercase tracking-widest flex items-center gap-1 hover:bg-purple-100 transition-colors disabled:opacity-50">
-                      {isGenerating ? <Loader2 size={14} className="animate-spin" /> : <Sparkles size={14} />}
-                      IA (Store)
-                    </button>
-                    <button type="button" onClick={addQuestion} className="p-2 bg-blue-50 text-blue-600 border border-blue-100 rounded-lg font-black text-[10px] uppercase tracking-widest flex items-center gap-1 hover:bg-blue-100 transition-colors">
-                      <Plus size={14} /> Question
-                    </button>
-                  </div>
-               </div>
-
-               {formData.questions.map((q, qIndex) => (
-                 <div key={qIndex} className="bg-white border-2 border-gray-100 rounded-3xl p-6 relative group hover:border-blue-100 transition-colors">
-                    <button type="button" onClick={() => removeQuestion(qIndex)} className="absolute top-4 right-4 text-gray-300 hover:text-red-500 transition-colors"><Trash2 size={18} /></button>
-                    <div className="flex items-start gap-4 mb-4">
-                      <div className="h-8 w-8 bg-blue-100 text-blue-600 flex items-center justify-center rounded-full font-black text-sm shrink-0">{qIndex + 1}</div>
-                      <input required type="text" value={q.q} onChange={(e) => handleQuestionChange(qIndex, 'q', e.target.value)} placeholder="Intitulé..." className="w-full bg-transparent border-b-2 border-gray-50 focus:border-blue-500 outline-none font-bold text-[#1A1A2E] py-1 transition-colors" />
-                    </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pl-12">
-                      {q.answers.map((ans, aIndex) => (
-                        <div key={aIndex} className="flex items-center gap-2 bg-gray-50 p-2 rounded-xl border border-gray-100 focus-within:border-blue-200 transition-all">
-                          <input type="radio" name={`ans-${qIndex}`} checked={q.correct === aIndex} onChange={() => handleQuestionChange(qIndex, 'correct', aIndex)} className="w-4 h-4 text-green-500" />
-                          <input required type="text" value={ans} onChange={(e) => handleAnswerChange(qIndex, aIndex, e.target.value)} placeholder={`Option ${aIndex + 1}`} className="w-full bg-transparent text-xs font-bold outline-none" />
-                        </div>
-                      ))}
-                    </div>
-                    <div className="mt-4 pl-12">
-                       <div className="flex bg-orange-50/50 p-3 rounded-xl border border-orange-100 gap-2">
-                          <HelpCircle size={14} className="text-orange-400 shrink-0 mt-0.5" />
-                          <input required type="text" value={q.explanation} onChange={(e) => handleQuestionChange(qIndex, 'explanation', e.target.value)} placeholder="Explication..." className="flex-1 bg-transparent text-[11px] text-orange-900 outline-none" />
-                       </div>
-                    </div>
+          <div>
+            <h2 className="text-2xl font-black uppercase italic tracking-tighter">Configurateur Expert QCM</h2>
+            <div className="flex gap-4 mt-2">
+               {[1, 2, 3].map(s => (
+                 <div key={s} className="flex items-center gap-2">
+                    <div className={`h-1.5 w-12 rounded-full ${step >= s ? 'bg-blue-500' : 'bg-white/10'}`} />
+                    <span className={`text-[9px] font-black uppercase tracking-widest ${step >= s ? 'text-blue-400' : 'text-white/20'}`}>
+                      {s === 1 ? 'Import' : s === 2 ? 'Analyse' : 'Revision'}
+                    </span>
                  </div>
                ))}
             </div>
-          </form>
-        </div>
-
-        {/* Footer */}
-        <div className="p-6 border-t bg-white">
-          <div className="flex gap-4">
-            <button type="button" onClick={onClose} className="flex-1 py-4 bg-gray-100 rounded-2xl font-black uppercase tracking-widest text-[10px] hover:bg-gray-200">Annuler</button>
-            <button type="submit" form="quiz-form" disabled={isSaving} className="flex-[2] py-4 bg-blue-600 text-white rounded-2xl font-black uppercase tracking-widest text-[10px] shadow-lg shadow-blue-500/20 active:scale-95 disabled:opacity-50">
-              {isSaving ? 'Enregistrement...' : 'Enregistrer le QCM'}
-            </button>
           </div>
         </div>
-
+        <button onClick={onClose} className="h-10 w-10 bg-white/5 hover:bg-red-500/20 rounded-full flex items-center justify-center border border-white/10 transition-colors">
+          <X size={20} />
+        </button>
       </div>
+
+      {/* Main Flow Area */}
+      <div className="flex-1 overflow-y-auto px-12 py-12 custom-scrollbar">
+        <div className="max-w-4xl mx-auto">
+          
+          {step === 1 && (
+            <div className="space-y-8 animate-in slide-in-from-bottom-4 duration-500">
+               <div className="grid grid-cols-2 gap-6 bg-white/5 p-8 rounded-3xl border border-white/10">
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black uppercase text-gray-500">Nom du QCM</label>
+                    <input type="text" name="title" value={formData.title} onChange={handleChange} placeholder="Titre..." className="w-full bg-black/40 border border-white/10 rounded-xl px-5 py-4 font-bold outline-none focus:border-blue-500" />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black uppercase text-gray-500">Fiche Cible</label>
+                    <select name="fiche_id" value={formData.fiche_id} onChange={handleChange} className="w-full bg-black/40 border border-white/10 rounded-xl px-5 py-4 font-bold outline-none focus:border-blue-500">
+                      <option value="">Sélectionner...</option>
+                      {fiches.map(f => <option key={f.id} value={f.id} className="bg-[#0A0A12]">{f.title}</option>)}
+                    </select>
+                  </div>
+               </div>
+
+               <div className="space-y-4 bg-white/5 p-8 rounded-3xl border border-white/10">
+                  <div className="flex items-center justify-between">
+                    <h3 className="font-black uppercase text-xs tracking-widest text-blue-400">Code Source HTML</h3>
+                    <span className="text-[10px] text-gray-500 italic">Veuillez coller le code HTML complet de la fiche</span>
+                  </div>
+                  <textarea 
+                    value={ficheHtml}
+                    onChange={(e) => setFicheHtml(e.target.value)}
+                    className="w-full h-80 bg-black/40 border border-white/5 rounded-2xl p-6 font-mono text-xs outline-none focus:border-blue-500/50 resize-none shadow-inner"
+                    placeholder="<div class='fiche'>...</div>"
+                  />
+                  <button onClick={handleTransformHtmlToText} disabled={isGenerating || !ficheHtml || !formData.fiche_id} className="w-full py-5 bg-blue-600 rounded-2xl font-black uppercase tracking-widest text-xs shadow-xl shadow-blue-500/20 active:scale-95 disabled:opacity-50 flex items-center justify-center gap-3 transition-all">
+                    {isGenerating ? <Loader2 className="animate-spin" /> : <FileCode size={18} />}
+                    Transformer en Texte de Référence
+                  </button>
+               </div>
+            </div>
+          )}
+
+          {step === 2 && (
+            <div className="space-y-8 animate-in slide-in-from-right-4 duration-500">
+               <div className="bg-white/5 p-10 rounded-3xl border border-white/10">
+                  <div className="flex items-center justify-between mb-6">
+                    <h3 className="font-black uppercase text-sm tracking-widest text-blue-400">Vérification de l'Analyse</h3>
+                    <button onClick={() => setStep(1)} className="text-[10px] uppercase font-black text-white/30 hover:text-white transition-colors">Modifier Source</button>
+                  </div>
+                  <textarea 
+                    value={cleanedText}
+                    onChange={(e) => setCleanedText(e.target.value)}
+                    className="w-full h-96 bg-black/40 border border-white/5 rounded-2xl p-8 font-bold text-lg leading-relaxed outline-none focus:border-blue-500/50 resize-none"
+                  />
+                  <div className="grid grid-cols-1 mt-8">
+                    <button onClick={handleAnalyzeTextToQuiz} disabled={isGenerating} className="py-5 bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl font-black uppercase tracking-widest text-xs shadow-xl active:scale-95 disabled:opacity-50 transition-all flex items-center justify-center gap-3">
+                       {isGenerating ? <Loader2 className="animate-spin" /> : <Sparkles size={18} />}
+                       Lancer la Génération IA du QCM
+                    </button>
+                  </div>
+               </div>
+            </div>
+          )}
+
+          {step === 3 && (
+            <div className="space-y-10 animate-in slide-in-from-right-4 duration-500 pb-20">
+               <div className="flex items-center justify-between">
+                  <h3 className="text-xl font-black uppercase tracking-tighter italic">Validation des Questions ({formData.questions.length})</h3>
+                  <button onClick={addQuestion} className="px-5 py-3 bg-white/5 rounded-xl text-[10px] font-black uppercase border border-white/10 hover:bg-blue-600 transition-all">Ajouter manuellement</button>
+               </div>
+
+               <div className="space-y-8">
+                  {formData.questions.map((q, idx) => (
+                    <div key={idx} className="bg-white/5 border border-white/10 rounded-3xl p-8 relative hover:bg-white/10 transition-colors group">
+                       <button onClick={() => removeQuestion(idx)} className="absolute top-6 right-6 text-white/20 hover:text-red-500 p-2 bg-black rounded-full transition-colors opacity-0 group-hover:opacity-100"><Trash2 size={16} /></button>
+                       <div className="flex items-start gap-5 mb-6">
+                          <span className="h-8 w-8 bg-blue-600 rounded-lg flex items-center justify-center font-black text-sm shrink-0 italic">{idx + 1}</span>
+                          <input type="text" value={q.q} onChange={(e) => handleQuestionChange(idx, 'q', e.target.value)} className="w-full bg-transparent border-b border-white/5 focus:border-blue-500 outline-none font-bold text-xl py-1 transition-all" />
+                       </div>
+                       <div className="grid grid-cols-2 gap-4 pl-12">
+                          {q.answers.map((ans, aIdx) => (
+                            <div key={aIdx} className={`flex items-center gap-3 p-3 rounded-xl border ${q.correct === aIdx ? 'bg-green-500/10 border-green-500/30' : 'bg-black/20 border-white/5 shadow-inner'}`}>
+                               <input type="radio" checked={q.correct === aIdx} onChange={() => handleQuestionChange(idx, 'correct', aIdx)} className="w-4 h-4 text-green-500" />
+                               <input type="text" value={ans} onChange={(e) => handleAnswerChange(idx, aIdx, e.target.value)} className="w-full bg-transparent text-xs font-bold outline-none" />
+                            </div>
+                          ))}
+                       </div>
+                       <div className="mt-6 pl-12">
+                          <div className="flex bg-orange-500/5 p-3 rounded-xl border border-orange-500/10 gap-3">
+                             <HelpCircle size={16} className="text-orange-400 shrink-0 mt-0.5" />
+                             <input type="text" value={q.explanation} onChange={(e) => handleQuestionChange(idx, 'explanation', e.target.value)} className="flex-1 bg-transparent text-[10px] text-orange-200 outline-none" placeholder="Explication..." />
+                          </div>
+                       </div>
+                    </div>
+                  ))}
+               </div>
+            </div>
+          )}
+
+        </div>
+      </div>
+
+      {/* Footer Area */}
+      <div className="px-12 py-8 bg-black border-t border-white/5 flex items-center justify-between">
+         <div className="flex items-center gap-3">
+            <input type="checkbox" id="p" name="is_published" checked={formData.is_published} onChange={handleChange} className="w-5 h-5 rounded border-white/10 bg-white/5" />
+            <label htmlFor="p" className="text-[10px] font-black uppercase text-gray-500 cursor-pointer hover:text-white transition-colors">Rendre ce QCM immédiatement disponible en ligne</label>
+         </div>
+         <div className="flex gap-4">
+            <button onClick={onClose} className="px-8 py-4 bg-white/5 rounded-xl text-[10px] font-black uppercase border border-white/10 hover:bg-white/10 transition-colors">Fermer</button>
+            {step === 3 && (
+              <button 
+                onClick={handleSubmit} 
+                disabled={isSaving} 
+                className="px-10 py-4 bg-blue-600 rounded-xl text-[10px] font-black uppercase shadow-xl shadow-blue-500/20 active:scale-95 disabled:opacity-50 transition-all flex items-center gap-2"
+              >
+                {isSaving ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
+                Déployer Evaluation
+              </button>
+            )}
+         </div>
+      </div>
+
     </div>
   );
 }
+
 
