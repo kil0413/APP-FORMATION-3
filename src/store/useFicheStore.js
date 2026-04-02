@@ -47,24 +47,32 @@ export const useFicheStore = create((set, get) => ({
 
       // Fusionner avec les données de secours (pour s'assurer qu'il y a toujours du contenu)
       // On utilise les données DB en priorité si ID identiques
-      const finalCategories = [...(categoriesData || [])];
-      fallbackCategories.forEach(fallback => {
-        if (!finalCategories.find(c => c.id === fallback.id)) {
-          finalCategories.push(fallback);
-        }
-      });
+      const demoIds = ['f1', 'f2', 'f3', 'f4', 'q1', 'q2', 'q3', 'q4'];
 
-      const finalFiches = [...(fichesData || [])];
+      const finalFiches = [...(fichesData || [])]
+        .filter(f => !demoIds.includes(f.id))
+        .filter(f => !['Bilans secouristes', 'Mise en place de l\'ARI', 'Lecture au plan', 'Phénomènes Thermiques'].some(title => f.title?.includes(title)));
+      
       fallbackFiches.forEach(fallback => {
-        if (!finalFiches.find(f => f.id === fallback.id)) {
+        if (!finalFiches.find(f => f.id === fallback.id) && !demoIds.includes(fallback.id)) {
           finalFiches.push(fallback);
         }
       });
 
-      const finalQuizzes = [...(quizzesData || [])];
+      const finalQuizzes = [...(quizzesData || [])]
+        .filter(q => !demoIds.includes(q.id))
+        .filter(q => !demoIds.includes(q.fiche_id));
+      
       fallbackQuizzes.forEach(fallback => {
-        if (!finalQuizzes.find(q => q.id === fallback.id)) {
+        if (!finalQuizzes.find(q => q.id === fallback.id) && !demoIds.includes(fallback.id)) {
           finalQuizzes.push(fallback);
+        }
+      });
+
+      const finalCategories = [...(categoriesData || [])];
+      fallbackCategories.forEach(fallback => {
+        if (!finalCategories.find(c => c.id === fallback.id)) {
+          finalCategories.push(fallback);
         }
       });
 

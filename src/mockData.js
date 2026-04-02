@@ -8,14 +8,6 @@ export const categories = [
 ];
 
 export const fiches = [
-  { id: 'f4', title: 'Phénomènes Thermiques', category_id: 'c2', difficulty: 'Avancé',
-    type: 'classic',
-    sections: [
-      { type: 'definition', title: 'Définition', content: 'Les phénomènes thermiques (EM et FGI) sont liés au développement d\'un feu clos.' },
-      { type: 'keypoints', title: 'Dangers', items: ['Vitesse de propagation', 'Température de 600°C', 'Onde de surpression'] }
-    ],
-    is_published: true, created_at: new Date().toISOString()
-  },
   { id: 'f5', title: 'Conditions de l\'explosion', category_id: 'c3', difficulty: 'Débutant',
     type: 'interactive',
     interactive_id: 'explosion_pentagon',
@@ -50,12 +42,6 @@ export const documents = [
 ];
 
 export const quizzes = [
-  { id: 'q2', title: 'Quiz Risque Gaz', fiche_id: 'f4', questions: [
-    { q: 'Que signifie BLEVE ?', answers: ['Boiling Liquid Expanding Vapor Explosion', 'Blast Level Emergency Valve Exit', 'Basic Line Essential Venture Engine'], correct: 0, explanation: 'Il s\'agit de la vaporisation violente d\'un gaz liquéfié sous pression.' },
-    { q: 'Lequel de ces gaz est plus lourd que l\'air ?', answers: ['Gaz Naturel', 'Hydrogène', 'GPL (Butane/Propane)'], correct: 2, explanation: 'Les GPL ont une densité supérieure à 1 et s\'accumulent au sol.' },
-    { q: 'Quelle est la vitesse d\'une détonation ?', answers: ['< 340 m/s', 'Entre 2000 et 9000 m/s', '> 15 000 m/s'], correct: 1, explanation: 'Une détonation est une explosion supersonique (2000-9000m/s).' },
-    { q: 'Que signifie UVCE ?', answers: ['Unconfined Vapor Cloud Explosion', 'Universal Valve Control Engine', 'Underground Vault Center Exit'], correct: 0, explanation: 'C\'est l\'explosion d\'un nuage de vapeur en milieu non confiné.' }
-  ], is_published: true },
   { id: 'q5', title: 'Quiz Explosion', fiche_id: 'f5', questions: [
     { q: 'Quelles sont les conditions de l\'explosion ?', answers: ['Combustible, Comburant, Energie', 'Confinement, Suspension, Mélange optimal', 'Les 6 éléments du Pentagone'], correct: 2, explanation: 'Une explosion nécessite le pentagone de l\'explosion.' }
   ], is_published: true }
