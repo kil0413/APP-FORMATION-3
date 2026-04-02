@@ -1,4 +1,4 @@
-import { Settings, Award, Clock, BookOpen, ChevronRight, LogOut, Download, Smartphone, Flame, Star, Trophy, ShieldStar } from 'lucide-react';
+import { Settings, Award, Clock, BookOpen, ChevronRight, LogOut, Download, Smartphone, Flame, Star, Trophy, ShieldCheck } from 'lucide-react';
 import { useAuthStore } from '../store/useAuthStore';
 import { useFicheStore } from '../store/useFicheStore';
 import { useNavigate } from 'react-router-dom';
@@ -57,7 +57,7 @@ export default function Profil() {
     {
        id: 'perseverance',
        name: 'Badge de persévérance',
-       icon: ShieldStar,
+       icon: ShieldCheck,
        color: 'text-purple-500',
        bg: 'bg-purple-500',
        unlocked: streak >= 10,
