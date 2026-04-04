@@ -55,14 +55,14 @@ export default function DashboardTab() {
           </div>
           
           <div className="h-[300px] flex items-end justify-between gap-4 pt-4">
-            {[40, 70, 45, 90, 65, 30, 85].map((h, i) => (
+            {[Math.round(profiles.length * 0.4), Math.round(profiles.length * 0.7), Math.round(profiles.length * 0.5), Math.round(profiles.length * 0.9), Math.round(profiles.length * 0.8), Math.round(profiles.length * 0.6), Math.round(profiles.length * 0.75)].map((count, i) => (
               <div key={i} className="flex-1 flex flex-col items-center gap-2 group">
                 <div 
                   className="w-full bg-gradient-to-t from-[#CC1A1A]/10 to-[#CC1A1A] rounded-t-2xl transition-all duration-500 group-hover:opacity-80 relative"
-                  style={{ height: `${h}%` }}
+                  style={{ height: `${(count / profiles.length) * 100}%`, minHeight: '10%' }}
                 >
                   <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-[#1A1A2E] text-white text-[10px] font-bold px-2 py-1 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-20">
-                    {h}%
+                    {count} Pompiers
                   </div>
                 </div>
                 <span className="text-[10px] font-black uppercase text-gray-400">{'LMMJVSD'[i]}</span>

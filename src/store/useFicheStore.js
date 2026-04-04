@@ -119,31 +119,39 @@ export const useFicheStore = create((set, get) => ({
         .from('fiches')
         .insert([{
           ...newFiche,
-          is_published: true
+          is_published: true,
+          created_at: new Date().toISOString()
         }])
         .select();
 
-      if (error) throw error;
+      if (error) {
+        console.error("Supabase Insert Error:", error);
+        throw error;
+      }
 
       if (data && data.length > 0) {
         const newDoc = data[0];
         set((state) => ({ fiches: [newDoc, ...state.fiches] }));
         
-        // Auto-génération d'un QCM
-        const quizPayload = {
-          title: 'Quiz : ' + newDoc.title,
-          fiche_id: newDoc.id,
-          is_published: true,
-          questions: [
-            {
-              q: 'Question d\'exemple pour ' + newDoc.title,
-              answers: ['Réponse A', 'Réponse B', 'Réponse C', 'Réponse D'],
-              correct: 0,
-              explanation: 'Explication de la réponse A.'
-            }
-          ]
-        };
-        get().addQuiz(quizPayload);
+        // Auto-génération d'un QCM (non-bloquant)
+        try {
+          const quizPayload = {
+            title: 'Quiz : ' + newDoc.title,
+            fiche_id: newDoc.id,
+            is_published: true,
+            questions: [
+              {
+                q: 'Question d\'exemple pour ' + newDoc.title,
+                answers: ['Réponse A', 'Réponse B', 'Réponse C', 'Réponse D'],
+                correct: 0,
+                explanation: 'Explication de la réponse A.'
+              }
+            ]
+          };
+          get().addQuiz(quizPayload);
+        } catch (qErr) {
+          console.error("Quiz auto-gen failed but fiche saved:", qErr);
+        }
       }
     } catch (err) {
       console.error('Erreur addFiche:', err.message);

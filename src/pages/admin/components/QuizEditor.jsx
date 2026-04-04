@@ -17,6 +17,7 @@ export default function QuizEditor({ quiz, onClose }) {
   const [aiCount, setAiCount] = useState(10);
   const [ficheHtml, setFicheHtml] = useState('');
   const [step, setStep] = useState(1);
+  const [importMode, setImportMode] = useState('generate'); // 'generate', 'direct', 'text'
   const [cleanedText, setCleanedText] = useState('');
 
   useEffect(() => {
@@ -85,61 +86,122 @@ export default function QuizEditor({ quiz, onClose }) {
       const parser = new DOMParser();
       const doc = parser.parseFromString(ficheHtml, 'text/html');
       
-      // Extraction sémantique exhaustive du DOM rendu
-      const walk = document.createTreeWalker(doc.body, NodeFilter.SHOW_TEXT, null, false);
-      let fullText = '';
-      let node;
-      while (node = walk.nextNode()) {
-        const t = node.textContent.trim();
-        if (t.length > 3) fullText += t + '. ';
-      }
-      
-      const sentences = fullText.split(/[.!?]+/).filter(s => s.trim().length > 15);
-      const factPool = [];
-      sentences.forEach(sentence => {
-        const cleanS = sentence.trim();
-        const hasNumber = /\d+(?:\s?)(?:m|cm|kg|bars?|min|h|°C|%)/.test(cleanS);
-        const hasAcronym = /\b[A-Z]{2,}\b/.test(cleanS);
-        const hasTechnicalTerm = /(danger|sécurité|pression|fuite|oxygène|combustion|température|intervention|binôme|secteur)/i.test(cleanS);
-        if (hasNumber || hasAcronym || hasTechnicalTerm) factPool.push(cleanS);
-      });
+      let newQuestions = [];
 
-      const newQuestions = [];
-      const targetCount = Math.max(12, Math.min(45, Math.ceil(factPool.length / 1.2)));
-
-      factPool.forEach((fact) => {
-        if (newQuestions.length >= targetCount) return;
-        const acronymMatch = fact.match(/\b[A-Z]{2,}\b/);
-        const numberMatch = fact.match(/\d+(?:\s?)(?:m|cm|kg|bars?|min|h|°C|%)/);
-
-        if (numberMatch) {
-          newQuestions.push({
-            q: `Quelle est la valeur technique exacte citée pour : "${fact.slice(0, 70)}..." ?`,
-            answers: [numberMatch[0], "Zéro", "La valeur nominale x2", "Indéterminé en opération"],
-            correct: 0,
-            explanation: `Le référentiel précise la valeur de ${numberMatch[0]} pour cette application.`
-          });
-        } else if (acronymMatch) {
-           newQuestions.push({
-             q: `Que signifie l'abréviation "${acronymMatch[0]}" rencontrée dans le module : "${fact.slice(0, 70)}..." ?`,
-             answers: ["Terme opérationnel GDO/GTS", "Indicatif radio spécifique", "Pression résiduelle moyenne", "Code de rappel binôme"],
-             correct: 0,
-             explanation: `L'acronyme ${acronymMatch[0]} est un point clé de la fiche de révision.`
-           });
-        } else {
-          newQuestions.push({
-            q: `Quelle instruction majeure est soulignée ici : "${fact.slice(0, 80)}..." ?`,
-            answers: ["Une consigne de sécurité impérative", "Une option de confort facultative", "Une action réservée aux renforts", "Une étape à omettre si possible"],
-            correct: 0,
-            explanation: "Toute consigne extraite de la fiche est considérée comme un élément critique de l'évaluation."
-          });
+      if (importMode === 'direct') {
+        // --- MODE IMPORT DIRECT : Analyse de structure QCM ---
+        const containers = doc.querySelectorAll('div, section, article, li');
+        const foundQuestions = [];
+        const allElements = doc.querySelectorAll('p, h1, h2, h3, h4, h5, b, strong, li');
+        
+        let currentQuestion = null;
+        allElements.forEach(el => {
+          const text = el.textContent.trim();
+          if (!text) return;
+          const isQuestion = text.includes('?') || /^\d+[\.\)]/.test(text);
+          if (isQuestion && text.length > 10) {
+            if (currentQuestion && currentQuestion.answers.length > 0) foundQuestions.push(currentQuestion);
+            currentQuestion = { q: text.replace(/^\d+[\.\)]\s*/, ''), answers: [], correct: 0, explanation: '' };
+          } else if (currentQuestion && text.length > 1 && currentQuestion.answers.length < 4) {
+            const isCorrect = el.classList.contains('correct') || el.querySelector('input[checked]') || el.closest('.correct');
+            currentQuestion.answers.push(text);
+            if (isCorrect) currentQuestion.correct = currentQuestion.answers.length - 1;
+          }
+        });
+        if (currentQuestion && currentQuestion.answers.length > 0) foundQuestions.push(currentQuestion);
+        newQuestions = foundQuestions;
+      } else if (importMode === 'text') {
+        // --- MODE IMPORT TEXTE : Parseur lignes ---
+        const lines = ficheHtml.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+        let currentQ = null;
+        
+        lines.forEach(line => {
+          // Détection question : finit par ? ou commence par un chiffre
+          if (line.endsWith('?') || /^\d+[\.\)]/.test(line)) {
+            if (currentQ && currentQ.answers.length > 0) newQuestions.push(currentQ);
+            currentQ = { q: line.replace(/^\d+[\.\)]\s*/, ''), answers: [], correct: 0, explanation: '' };
+          } else if (currentQ && currentQ.answers.length < 4) {
+            // Détection réponse : ligne qui suit la question
+            // Si la ligne commence par *, c'est la bonne réponse
+            if (line.startsWith('*')) {
+              currentQ.answers.push(line.substring(1).trim());
+              currentQ.correct = currentQ.answers.length - 1;
+            } else if (/^[A-D][\.\)]/.test(line)) {
+              currentQ.answers.push(line.replace(/^[A-D][\.\)]\s*/, ''));
+            } else {
+              currentQ.answers.push(line);
+            }
+          } else if (currentQ && (line.toLowerCase().startsWith('réponse') || line.toLowerCase().startsWith('reponse'))) {
+            // Détection de l'explication ou de la correction explicite
+            const match = line.match(/[A-D]/i);
+            if (match) {
+               const charCode = match[0].toUpperCase().charCodeAt(0);
+               currentQ.correct = charCode - 65; // A=0, B=1...
+            }
+          }
+        });
+        if (currentQ && currentQ.answers.length > 0) newQuestions.push(currentQ);
+      } else {
+        // --- MODE GÉNÉRation AUTO ---
+        // Extraction sémantique exhaustive du DOM rendu
+        const walk = document.createTreeWalker(doc.body, NodeFilter.SHOW_TEXT, null, false);
+        let fullText = '';
+        let node;
+        while (node = walk.nextNode()) {
+          const t = node.textContent.trim();
+          if (t.length > 3) fullText += t + '. ';
         }
-      });
+        
+        const sentences = fullText.split(/[.!?]+/).filter(s => s.trim().length > 15);
+        const factPool = [];
+        sentences.forEach(sentence => {
+          const cleanS = sentence.trim();
+          const hasNumber = /\d+(?:\s?)(?:m|cm|kg|bars?|min|h|°C|%)/.test(cleanS);
+          const hasAcronym = /\b[A-Z]{2,}\b/.test(cleanS);
+          const hasTechnicalTerm = /(danger|sécurité|pression|fuite|oxygène|combustion|température|intervention|binôme|secteur)/i.test(cleanS);
+          if (hasNumber || hasAcronym || hasTechnicalTerm) factPool.push(cleanS);
+        });
 
-      setFormData(prev => ({ ...prev, questions: [...prev.questions, ...newQuestions] }));
+        const targetCount = Math.max(12, Math.min(45, Math.ceil(factPool.length / 1.2)));
+
+        factPool.forEach((fact) => {
+          if (newQuestions.length >= targetCount) return;
+          const acronymMatch = fact.match(/\b[A-Z]{2,}\b/);
+          const numberMatch = fact.match(/\d+(?:\s?)(?:m|cm|kg|bars?|min|h|°C|%)/);
+
+          if (numberMatch) {
+            newQuestions.push({
+              q: `Quelle est la valeur technique exacte citée pour : "${fact.slice(0, 70)}..." ?`,
+              answers: [numberMatch[0], "Zéro", "La valeur nominale x2", "Indéterminé en opération"],
+              correct: 0,
+              explanation: `Le référentiel précise la valeur de ${numberMatch[0]} pour cette application.`
+            });
+          } else if (acronymMatch) {
+            newQuestions.push({
+              q: `Que signifie l'abréviation "${acronymMatch[0]}" rencontrée dans le module : "${fact.slice(0, 70)}..." ?`,
+              answers: ["Terme opérationnel GDO/GTS", "Indicatif radio spécifique", "Pression résiduelle moyenne", "Code de rappel binôme"],
+              correct: 0,
+              explanation: `L'acronyme ${acronymMatch[0]} est un point clé de la fiche de révision.`
+            });
+          } else {
+            newQuestions.push({
+              q: `Quelle instruction majeure est soulignée ici : "${fact.slice(0, 80)}..." ?`,
+              answers: ["Une consigne de sécurité impérative", "Une option de confort facultative", "Une action réservée aux renforts", "Une étape à omettre si possible"],
+              correct: 0,
+              explanation: "Toute consigne extraite de la fiche est considérée comme un élément critique de l'évaluation."
+            });
+          }
+        });
+      }
+
+      if (importMode === 'direct') {
+        setFormData(prev => ({ ...prev, questions: newQuestions }));
+      } else {
+        setFormData(prev => ({ ...prev, questions: [...prev.questions, ...newQuestions] }));
+      }
       setStep(3);
       setIsGenerating(false);
-    }, 2500);
+    }, 2000);
   };
 
   const handleSubmit = async (e) => {
@@ -209,23 +271,64 @@ export default function QuizEditor({ quiz, onClose }) {
 
                  <div className="space-y-6 bg-white/5 p-10 rounded-[40px] border border-white/10 shadow-2xl">
                     <div className="flex items-center justify-between px-2">
-                       <h3 className="font-black uppercase text-sm tracking-widest text-blue-400">Ingestion Code Source HTML</h3>
-                       <span className="text-[10px] font-bold text-gray-500 bg-white/5 px-4 py-1.5 rounded-full border border-white/5 uppercase">Provider Intake</span>
+                       <h3 className="font-black uppercase text-sm tracking-widest text-blue-400">Source HTML de l'évaluation</h3>
+                       <div className="flex bg-black/40 p-1 rounded-xl border border-white/5">
+                          <button 
+                            onClick={() => setImportMode('generate')} 
+                            className={`px-4 py-2 rounded-lg text-[10px] font-black uppercase transition-all ${importMode === 'generate' ? 'bg-blue-600 text-white' : 'text-gray-500 hover:text-white'}`}
+                          >
+                            Extraction (Cours)
+                          </button>
+                          <button 
+                            onClick={() => setImportMode('direct')} 
+                            className={`px-4 py-2 rounded-lg text-[10px] font-black uppercase transition-all ${importMode === 'direct' ? 'bg-blue-600 text-white' : 'text-gray-500 hover:text-white'}`}
+                          >
+                            HTML QCM
+                          </button>
+                          <button 
+                            onClick={() => setImportMode('text')} 
+                            className={`px-4 py-2 rounded-lg text-[10px] font-black uppercase transition-all ${importMode === 'text' ? 'bg-blue-600 text-white' : 'text-gray-500 hover:text-white'}`}
+                          >
+                            Format Texte
+                          </button>
+                       </div>
                     </div>
-                    <textarea 
-                      value={ficheHtml}
-                      onChange={(e) => setFicheHtml(e.target.value)}
-                      className="w-full h-[450px] bg-black/60 border border-white/5 rounded-3xl p-10 font-mono text-sm leading-relaxed outline-none focus:border-blue-500/40 resize-none shadow-inner"
-                      placeholder="<!-- Collez votre structure HTML ici -->"
-                    />
-                    <button 
-                      onClick={handleShowPreview} 
-                      disabled={!ficheHtml || !formData.fiche_id} 
-                      className="w-full py-7 bg-gradient-to-r from-blue-600 to-blue-400 text-white rounded-[24px] font-black uppercase tracking-widest text-sm shadow-2xl shadow-blue-500/30 active:scale-95 disabled:grayscale transition-all flex items-center justify-center gap-4 group"
-                    >
-                      <FileCode size={24} className="group-hover:scale-110 transition-transform" />
-                      Visualiser la Fiche de Révision
-                    </button>
+                    
+                    <div className="relative group">
+                      <textarea 
+                        value={ficheHtml}
+                        onChange={(e) => setFicheHtml(e.target.value)}
+                        className="w-full h-[450px] bg-black/60 border border-white/5 rounded-3xl p-10 font-mono text-sm leading-relaxed outline-none focus:border-blue-500/40 resize-none shadow-inner"
+                        placeholder={importMode === 'direct' 
+                          ? "<!-- Collez HTML structuré ici -->" 
+                          : importMode === 'text'
+                          ? "Collez votre texte ici.\nFormat:\nQuestion ?\nRéponse A\nRéponse B\n*Réponse Correcte\nRéponse D"
+                          : "<!-- Collez contenu HTML du cours ici -->"
+                        }
+                      />
+                      {ficheHtml && (
+                        <button onClick={() => setFicheHtml('')} className="absolute top-6 right-6 p-2 bg-white/5 hover:bg-red-500/20 rounded-full transition-colors backdrop-blur-md">
+                          <Trash2 size={16} className="text-gray-500 hover:text-red-500" />
+                        </button>
+                      )}
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-6">
+                      <button 
+                        onClick={handleShowPreview} 
+                        disabled={!ficheHtml || !formData.fiche_id} 
+                        className="py-7 bg-gradient-to-r from-blue-600 to-blue-400 text-white rounded-[24px] font-black uppercase tracking-widest text-sm shadow-2xl shadow-blue-500/30 active:scale-95 disabled:grayscale transition-all flex items-center justify-center gap-4 group"
+                      >
+                        <FileCode size={24} className="group-hover:scale-110 transition-transform" />
+                        Visualiser et Importer
+                      </button>
+                      <button 
+                        onClick={() => setStep(3)} 
+                        className="py-7 bg-white/5 text-gray-400 rounded-[24px] font-black uppercase tracking-widest text-sm hover:text-white hover:bg-white/10 transition-all border border-white/5"
+                      >
+                        Commencer à Vide
+                      </button>
+                    </div>
                  </div>
               </div>
             )}
@@ -261,10 +364,13 @@ export default function QuizEditor({ quiz, onClose }) {
                       <button 
                         onClick={handleAnalyzePreviewToQuiz} 
                         disabled={isGenerating} 
-                        className="py-7 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-[24px] font-black uppercase tracking-widest text-sm shadow-2xl shadow-purple-500/20 active:scale-95 disabled:grayscale transition-all flex items-center justify-center gap-4"
+                        className={`py-7 text-white rounded-[24px] font-black uppercase tracking-widest text-sm shadow-2xl active:scale-95 disabled:grayscale transition-all flex items-center justify-center gap-4 ${importMode === 'direct' ? 'bg-gradient-to-r from-green-600 to-emerald-600 shadow-green-500/20' : 'bg-gradient-to-r from-purple-600 to-blue-600 shadow-purple-500/20'}`}
                       >
                          {isGenerating ? <Loader2 className="animate-spin" size={24} /> : <Sparkles size={24} />}
-                         {isGenerating ? 'Interprétation sémantique en cours...' : 'Extraire les Informations & Générer Quiz'}
+                         {isGenerating 
+                           ? (importMode === 'direct' ? 'Importation en cours...' : 'Extraction sémantique...') 
+                           : (importMode === 'direct' ? 'Finaliser l\'importation du QCM' : 'Extraire les Informations & Générer Quiz')
+                         }
                       </button>
                     </div>
                  </div>
@@ -278,9 +384,14 @@ export default function QuizEditor({ quiz, onClose }) {
                        <h3 className="text-3xl font-black uppercase tracking-tighter italic">Contingent Questions</h3>
                        <span className="px-5 py-2 bg-blue-600 rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-xl shadow-blue-500/20">{formData.questions.length} Générées</span>
                     </div>
-                    <button onClick={addQuestion} className="px-8 py-4 bg-white/5 rounded-2xl text-[10px] font-black uppercase border border-white/10 hover:bg-blue-600 transition-all flex items-center gap-3">
-                       <Plus size={16} /> Ajouter manuellement
-                    </button>
+                     <div className="flex items-center gap-4">
+                        <button onClick={() => { if(window.confirm('Tout effacer ?')) setFormData(prev => ({ ...prev, questions: [] })) }} className="px-6 py-4 bg-red-500/10 text-red-500 rounded-2xl text-[10px] font-black uppercase border border-red-500/10 hover:bg-red-500/20 transition-all flex items-center gap-3">
+                           <Trash2 size={16} /> Vider la liste
+                        </button>
+                        <button onClick={addQuestion} className="px-8 py-4 bg-white/5 rounded-2xl text-[10px] font-black uppercase border border-white/10 hover:bg-blue-600 transition-all flex items-center gap-3">
+                           <Plus size={16} /> Ajouter manuellement
+                        </button>
+                     </div>
                  </div>
 
                  <div className="grid grid-cols-1 gap-10">
