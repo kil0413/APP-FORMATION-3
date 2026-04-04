@@ -9,14 +9,16 @@ export default defineConfig({
     tailwindcss(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'pwa-192x192.png', 'pwa-512x512.png'],
+      includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'pwa-192x192.png', 'pwa-512x512.png', 'logo-icon.png'],
       manifest: {
-        name: "Fire Academie",
-        short_name: "Fire Acad",
-        description: "Application de formation d'élite pour Sapeurs-Pompiers",
-        theme_color: "#CC1A1A",
-        background_color: "#F2F2F7",
+        name: "Fire Académie Elite",
+        short_name: "Fire Académie",
+        description: "Formation d'élite pour les héros du quotidien",
+        theme_color: "#0b0a0d",
+        background_color: "#0b0a0d",
         display: "standalone",
+        orientation: "portrait",
+        categories: ["education", "training"],
         icons: [
           {
             src: 'pwa-192x192.png',
@@ -28,6 +30,11 @@ export default defineConfig({
             sizes: '512x512',
             type: 'image/png',
             purpose: 'any maskable'
+          },
+          {
+            src: 'apple-touch-icon.png',
+            sizes: '180x180',
+            type: 'image/png'
           }
         ]
       },
