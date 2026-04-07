@@ -5,6 +5,7 @@ export const categories = [
   { id: 'c4', name: 'Communication', icon: 'Radio', color: 'bg-blue-100 text-blue-600', description: 'Procédures radios et gestion d\'appels.', theme_header: '#fae78f', theme_bg: '#FBFAEF' },
   { id: 'c5', name: 'Commandement', icon: 'Shield', color: 'bg-purple-100 text-purple-600', description: 'Gestion de crise et commandement.', theme_header: '#fae78f', theme_bg: '#FBFAEF' },
   { id: 'c6', name: 'Sécurité Civile', icon: 'Siren', color: 'bg-yellow-100 text-yellow-600', description: 'Interventions diverses.', theme_header: '#fae78f', theme_bg: '#FBFAEF' },
+  { id: 'c7', name: 'Secours Routier', icon: 'Car', color: 'bg-teal-100 text-teal-600', description: 'Désincarcération et interventions sur véhicules.', theme_header: '#3b82f6', theme_bg: '#eff6ff' },
 ];
 
 export const fiches = [
