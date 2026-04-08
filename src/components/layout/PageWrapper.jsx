@@ -1,9 +1,9 @@
 import { BottomNav } from './BottomNav';
 import { MainSidebar } from './MainSidebar';
 
-export function PageWrapper({ children, showBottomNav = true }) {
+export function PageWrapper({ children, showBottomNav = true, className = "bg-[#0b0a0d]", style = {} }) {
   return (
-    <div className="flex w-full min-h-screen bg-[#0b0a0d] text-white">
+    <div className={`flex w-full min-h-screen text-white transition-colors duration-1000 ${className}`} style={style}>
       {/* Sidebar - Desktop only */}
       <MainSidebar />
 

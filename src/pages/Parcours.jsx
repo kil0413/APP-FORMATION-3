@@ -11,14 +11,14 @@ import { cn } from '../lib/utils';
 const DIFFICULTY_ORDER = { 'Débutant': 0, 'Intermédiaire': 1, 'Avancé': 2 };
 
 const CAT_THEMES = {
-  'c1': { color: '#378ADD', colorBg: 'rgba(55,138,221,0.12)', colorGlow: 'rgba(55,138,221,0.35)', emoji: '🩸' }, // Bleu SUAP
-  'c2': { color: '#E24B4A', colorBg: 'rgba(226,75,74,0.12)', colorGlow: 'rgba(226,75,74,0.35)', emoji: '🔥' }, // Rouge Incendie
-  'c3': { color: '#EF9F27', colorBg: 'rgba(239,159,39,0.12)', colorGlow: 'rgba(239,159,39,0.35)', emoji: '⚡' }, // Jaune Risques Part.
-  'c7': { color: '#6b7280', colorBg: 'rgba(107,114,128,0.12)', colorGlow: 'rgba(107,114,128,0.35)', emoji: '🚗' }, // Gris Routier
+  'c1': { color: '#378ADD', mapBg: '#091524', colorBg: 'rgba(55,138,221,0.12)', colorGlow: 'rgba(55,138,221,0.35)', emoji: '🩸' }, // Bleu SUAP
+  'c2': { color: '#E24B4A', mapBg: '#210c0c', colorBg: 'rgba(226,75,74,0.12)', colorGlow: 'rgba(226,75,74,0.35)', emoji: '🔥' }, // Rouge Incendie
+  'c3': { color: '#EF9F27', mapBg: '#231808', colorBg: 'rgba(239,159,39,0.12)', colorGlow: 'rgba(239,159,39,0.35)', emoji: '⚡' }, // Jaune Risques Part.
+  'c7': { color: '#6b7280', mapBg: '#131417', colorBg: 'rgba(107,114,128,0.12)', colorGlow: 'rgba(107,114,128,0.35)', emoji: '🚗' }, // Gris Routier
   // Fallbacks
-  'c4': { color: '#9B59B6', colorBg: 'rgba(155,89,182,0.12)', colorGlow: 'rgba(155,89,182,0.35)', emoji: '📻' },
-  'c5': { color: '#1D9E75', colorBg: 'rgba(29,158,117,0.12)', colorGlow: 'rgba(29,158,117,0.35)', emoji: '🛡️' },
-  'default': { color: '#F39C12', colorBg: 'rgba(243,156,18,0.12)', colorGlow: 'rgba(243,156,18,0.35)', emoji: '📖' },
+  'c4': { color: '#9B59B6', mapBg: '#180d1d', colorBg: 'rgba(155,89,182,0.12)', colorGlow: 'rgba(155,89,182,0.35)', emoji: '📻' },
+  'c5': { color: '#1D9E75', mapBg: '#081c15', colorBg: 'rgba(29,158,117,0.12)', colorGlow: 'rgba(29,158,117,0.35)', emoji: '🛡️' },
+  'default': { color: '#F39C12', mapBg: '#0b0a0d', colorBg: 'rgba(243,156,18,0.12)', colorGlow: 'rgba(243,156,18,0.35)', emoji: '📖' },
 };
 
 const ZIGZAG = [-1.2, 1.2, -0.8, 1.0, -1.4, 0.6];
@@ -296,11 +296,11 @@ function ChapterSection({ chapter, onNodeClick }) {
       </div>
 
       {/* Nœuds + chemin SVG avec Background Emojis */}
-      <div ref={containerRef} className="relative w-full overflow-hidden">
+      <div ref={containerRef} className="relative w-full overflow-hidden z-10">
         
         {/* Fond Emojis Background */}
-        <div className="absolute inset-0 pointer-events-none opacity-[0.02] flex flex-wrap gap-8 items-start justify-center -z-10 bg-[#0B0A0D]"
-             style={{ maskImage: 'linear-gradient(to bottom, transparent, black 5%, black 95%, transparent)', WebkitMaskImage: 'linear-gradient(to bottom, transparent, black 5%, black 95%, transparent)' }}>
+        <div className="absolute inset-0 pointer-events-none opacity-[0.03] flex flex-wrap gap-8 items-start justify-center -z-10"
+             style={{ maskImage: 'linear-gradient(to bottom, transparent, black 15%, black 85%, transparent)', WebkitMaskImage: 'linear-gradient(to bottom, transparent, black 15%, black 85%, transparent)' }}>
            {Array.from({ length: 40 }).map((_, i) => (
              <span key={i} className="text-7xl mt-10 mx-6 mix-blend-overlay" style={{ transform: `rotate(${Math.random() * 40 - 20}deg) scale(${0.8 + Math.random() * 0.4})` }}>
                 {chapter.emoji}
@@ -430,7 +430,7 @@ export default function Parcours() {
   };
 
   return (
-    <PageWrapper>
+    <PageWrapper className="" style={{ backgroundColor: activeChapter?.mapBg || '#0B0A0D' }}>
       <Header title="Mon Parcours" className="md:hidden" />
 
       <main className="flex flex-col gap-0 pb-32 max-w-lg mx-auto w-full relative">
