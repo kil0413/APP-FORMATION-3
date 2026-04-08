@@ -20,7 +20,6 @@ function App() {
 
   useEffect(() => {
     initAuth();
-    fetchData();
 
     // Capturer l'événement d'installation PWA
     const handleInstallPrompt = (e) => {
@@ -31,7 +30,14 @@ function App() {
     window.addEventListener('beforeinstallprompt', handleInstallPrompt);
     
     return () => window.removeEventListener('beforeinstallprompt', handleInstallPrompt);
-  }, [fetchData, initAuth, setInstallPrompt]);
+  }, [initAuth, setInstallPrompt]);
+
+  // Nouveau : Ne charger les données que LORSQUE l'utilisateur est bien connecté (Empêche le blocage RLS)
+  useEffect(() => {
+    if (isAuthenticated) {
+      fetchData();
+    }
+  }, [isAuthenticated, fetchData]);
 
   // Écran de chargement rapide
   if (isLoading) {

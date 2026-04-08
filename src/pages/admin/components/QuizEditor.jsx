@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { X, Save, Plus, Trash2, HelpCircle, Sparkles, Loader2, FileCode } from 'lucide-react';
 import { useFicheStore } from '../../../store/useFicheStore';
+import DOMPurify from 'dompurify';
 
 export default function QuizEditor({ quiz, onClose }) {
   const { addQuiz, updateQuiz, fiches } = useFicheStore();
@@ -357,7 +358,7 @@ export default function QuizEditor({ quiz, onClose }) {
                          .fiche-rich-content li { font-family: sans-serif; padding: 1rem; background: #f5f5f5; margin-bottom: 0.5rem; border-radius: 12px; border-left: 4px solid #1a237e; font-weight: 700; color: #333; }
                          .fiche-rich-content b, .fiche-rich-content strong { color: #d32f2f; font-weight: 900; }
                        `}</style>
-                       <div dangerouslySetInnerHTML={{ __html: ficheHtml }} />
+                       <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(ficheHtml) }} />
                     </div>
 
                     <div className="grid grid-cols-1 mt-12 pb-6">

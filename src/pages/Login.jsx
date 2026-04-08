@@ -104,7 +104,7 @@ export default function Login() {
               </h1>
               <div className="flex items-center gap-4 justify-center">
                  <span className="h-0.5 w-16 bg-red-600/40 rounded-full" />
-                 <p className="text-white/40 font-black tracking-[0.5em] uppercase text-xs">Centre d'Apprentissage d'Élite</p>
+                 <p className="text-white/40 font-black tracking-[0.5em] uppercase text-xs">Centre d'Apprentissage</p>
                  <span className="h-0.5 w-16 bg-red-600/40 rounded-full" />
               </div>
            </motion.div>
