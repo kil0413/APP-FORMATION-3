@@ -35,7 +35,16 @@ function App() {
   // Nouveau : Ne charger les données que LORSQUE l'utilisateur est bien connecté (Empêche le blocage RLS)
   useEffect(() => {
     if (isAuthenticated) {
-      fetchData();
+      fetchData().then(() => {
+         const nbFiches = useFicheStore.getState().fiches.length;
+         if (nbFiches === 0) {
+            alert("⚠️ Diagnostic Supabase: La Fetch a fonctionné, mais la Base de Données a renvoyé EXACTEMENT ZERO FICHES. (C'est lié au RLS ou la base est physiquement vide).");
+         } else {
+            alert("✅ Diagnostic: " + nbFiches + " Fiches chargées avec succès en mémoire state !");
+         }
+      }).catch(e => {
+         alert("❌ Erreur Critique lors du Fetch : " + e.message);
+      });
     }
   }, [isAuthenticated, fetchData]);
 
