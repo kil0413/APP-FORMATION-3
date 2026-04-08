@@ -146,7 +146,7 @@ export default function FichesTab() {
                   </td>
                   <td className="px-8 py-5">
                     <div className="flex items-center gap-2">
-                       {fiche.file_data ? (
+                       {fiche.type === 'media' ? (
                          <div className="flex items-center gap-1.5 px-2 py-1 bg-blue-50 text-blue-500 rounded-lg text-[10px] font-black uppercase">
                            <Eye size={12} />
                            {fiche.file_type || 'PDF'}

@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Rajdhani:wght@300;400;500;600&display=swap');
 
 @theme {
   --color-primary: #EF4444;
@@ -71,4 +72,106 @@
   .text-glow-red {
     text-shadow: 0 0 15px rgba(239, 68, 68, 0.5);
   }
+}
+
+/* Home Page Hero Styles */
+@layer components {
+  .hero-line-top {
+    width: 60px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(200,90,40,0.6), transparent);
+    margin: 0 auto 2rem;
+    animation: fadeIn 1.5s ease 0.3s both;
+  }
+  
+  .pre-title {
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 300;
+    font-size: clamp(0.65rem, 1.2vw, 0.85rem);
+    color: rgba(200,140,100,0.5);
+    letter-spacing: 0.6em;
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+    animation: fadeIn 1.5s ease 0.5s both;
+  }
+  
+  .hero-title {
+    font-family: 'Playfair Display', serif;
+    font-weight: 700;
+    font-size: clamp(2.8rem, 8vw, 7rem);
+    line-height: 0.95;
+    letter-spacing: 0.06em;
+    color: #f5f0ea;
+    animation: titleReveal 2s cubic-bezier(0.16, 1, 0.3, 1) 0.2s both;
+  }
+  
+  .hero-title .fire {
+    display: block;
+    background: linear-gradient(180deg, #f5f0ea 30%, #c8784a 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  
+  .hero-title .academie {
+    display: block;
+    font-weight: 400;
+    font-size: 0.42em;
+    letter-spacing: 0.45em;
+    color: rgba(200,140,100,0.45);
+    margin-top: 0.3em;
+  }
+  
+  .hero-line-bottom {
+    width: 60px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(200,90,40,0.6), transparent);
+    margin: 2rem auto 0;
+    animation: fadeIn 1.5s ease 0.3s both;
+  }
+  
+  .hero-scroll-hint {
+    position: absolute;
+    bottom: 6rem;
+    left: 0;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    animation: fadeIn 2s ease 2s both;
+    pointer-events: none;
+  }
+  
+  .hero-scroll-hint span {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 0.6rem;
+    letter-spacing: 0.3em;
+    text-indent: 0.3em;
+    color: rgba(255,255,255,0.15);
+    text-transform: uppercase;
+  }
+  
+  .hero-scroll-line {
+    width: 1px;
+    height: 30px;
+    background: linear-gradient(180deg, rgba(200,90,40,0.4), transparent);
+    animation: scrollPulse 2s ease-in-out infinite;
+  }
+}
+
+@keyframes scrollPulse {
+  0%, 100% { opacity: 0.3; transform: scaleY(0.6); }
+  50%      { opacity: 1; transform: scaleY(1); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes titleReveal {
+  from { opacity: 0; transform: translateY(30px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
 }

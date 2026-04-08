@@ -12,6 +12,7 @@ import Login from './pages/Login';
 import { useAuthStore } from './store/useAuthStore';
 import { useFicheStore } from './store/useFicheStore';
 import ErrorBoundary from './components/ErrorBoundary';
+import NotFound from './pages/NotFound';
 
 function App() {
   const { fetchData } = useFicheStore();
@@ -91,7 +92,7 @@ function App() {
                     <Route path="/quiz/:id" element={<Quiz />} />
                     <Route path="/procedure/:id" element={<Procedure />} />
                     <Route path="/quiz-general" element={<Quiz />} />
-                    <Route path="*" element={<Navigate to="/" replace />} />
+                    <Route path="*" element={<NotFound />} />
                   </Routes>
                 </ErrorBoundary>
               </div>

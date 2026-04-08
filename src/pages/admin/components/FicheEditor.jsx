@@ -22,12 +22,31 @@ export default function FicheEditor({ fiche, onClose }) {
   useEffect(() => {
     if (fiche) {
       setFormData(fiche);
+      // Fetch missing file_data dynamically so it isn't lost on save
+      if (fiche.type === 'media' && !fiche.file_data && fiche.id && typeof fiche.id !== 'string' || (typeof fiche.id === 'string' && !fiche.id.startsWith('f') && !fiche.id.startsWith('tmp'))) {
+         const fetchMedia = async () => {
+            try {
+               const { supabase } = await import('../../../lib/supabase');
+               const { data } = await supabase.from('fiches').select('file_data').eq('id', fiche.id).single();
+               if (data && data.file_data) {
+                  setFormData(prev => ({ ...prev, file_data: data.file_data }));
+               }
+            } catch (e) {
+               console.error("Failed to load existing media for editing", e);
+            }
+         };
+         fetchMedia();
+      }
     }
   }, [fiche]);
 
   const handleFileUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
+      if (file.size > 5 * 1024 * 1024) {
+        alert("Fichier trop volumineux ! La taille maximale est de 5 Mo.");
+        return;
+      }
       const isPdf = file.type === 'application/pdf';
       const reader = new FileReader();
       reader.onloadend = () => {

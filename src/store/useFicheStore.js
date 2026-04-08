@@ -12,6 +12,15 @@ export const useFicheStore = create((set, get) => ({
   // Charger les données depuis Supabase
   fetchData: async () => {
     set({ isLoading: true });
+
+    // Sécurité : Si Supabase met plus de 5 secondes à répondre (ex: réveil de l'instance), on débloque l'UI
+    const timeoutId = setTimeout(() => {
+      if (get().isLoading) {
+        console.warn("fetchData timeout : Supabase met trop de temps à répondre. Déverrouillage UI.");
+        set({ isLoading: false });
+      }
+    }, 5000);
+
     try {
       const isRealSupabase = supabase.supabaseUrl && !supabase.supabaseUrl.includes('placeholder');
       
@@ -28,7 +37,8 @@ export const useFicheStore = create((set, get) => ({
         }
 
         try {
-          const resF = await supabase.from('fiches').select('*');
+          // Optimization: fetch everything EXCEPT file_data for fast list loading
+          const resF = await supabase.from('fiches').select('id, title, category_id, difficulty, type, file_type, content_html, sections, is_published, created_at, interactive_id');
           if (resF.error) throw resF.error;
           fichesData = resF.data || [];
         } catch (e) {
@@ -92,6 +102,8 @@ export const useFicheStore = create((set, get) => ({
         realQuizzesCount: (quizzesData || []).length,
         realCategoriesCount: (categoriesData || []).length
       });
+
+      clearTimeout(timeoutId);
     } catch (err) {
       console.error('Erreur Data Fetching:', err);
       set({ 
@@ -103,6 +115,7 @@ export const useFicheStore = create((set, get) => ({
         realQuizzesCount: 0,
         realCategoriesCount: 0
       });
+      clearTimeout(timeoutId);
     }
   },
 

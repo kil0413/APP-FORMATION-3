@@ -10,8 +10,8 @@ import { Badge } from '../components/ui/Badge';
 export default function Quiz() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { addXp, loseLife, user } = useAuthStore();
-  const { fiches, quizzes } = useFicheStore();
+  const { addXp, loseLife, user, isLoading: isAuthLoading } = useAuthStore();
+  const { fiches, quizzes, isLoading: isStoreLoading } = useFicheStore();
 
   // Chercher par ID direct du quiz (depuis le parcours), ou fallback par fiche_id (ancienne logique)
   const quiz = useMemo(() => {
@@ -30,19 +30,32 @@ export default function Quiz() {
   const [direction, setDirection] = useState(1);
   const [xpGainedThisTime, setXpGainedThisTime] = useState(0);
 
+  if (isStoreLoading || isAuthLoading || !user) {
+    return (
+      <div className="flex h-[100dvh] items-center justify-center bg-[#1A1A2E] w-full">
+         <div className="flex flex-col items-center gap-6">
+            <div className="h-16 w-16 bg-[#CC1A1A] rounded-2xl animate-spin shadow-2xl flex items-center justify-center shadow-red-500/30">
+               <Zap size={32} className="text-white" />
+            </div>
+            <div className="text-white/40 font-black uppercase text-xs tracking-[0.4em] animate-pulse italic">Génération de l'évaluation...</div>
+         </div>
+      </div>
+    );
+  }
+
   if (!quiz) {
     return (
       <div className="flex bg-[#1A1A2E] h-[100dvh] w-full items-center justify-center p-8 text-center">
         <div className="flex flex-col items-center gap-8">
-           <div className="h-24 w-24 bg-red-600 rounded-[2rem] flex items-center justify-center shadow-2xl rotate-12">
-              <Zap size={48} className="text-white" />
+           <div className="h-24 w-24 bg-white/5 rounded-[2rem] flex items-center justify-center shadow-2xl">
+              <Zap size={48} className="text-gray-600" />
            </div>
            <div className="flex flex-col gap-2">
-              <h2 className="text-2xl font-black text-white uppercase italic">Quiz en cours de création...</h2>
-              <p className="text-white/40 font-bold uppercase tracking-widest text-xs">Revenez bientôt pour tester vos connaissances !</p>
+              <h2 className="text-2xl font-black text-white uppercase italic">Évaluation indisponible</h2>
+              <p className="text-white/40 font-bold uppercase tracking-widest text-xs max-w-sm">Le questionnaire demandé n'existe pas ou est en cours de création par un instructeur.</p>
            </div>
-           <button onClick={() => navigate(-1)} className="px-10 py-5 bg-white text-[#1A1A2E] rounded-full font-black uppercase text-xs tracking-widest shadow-xl active:scale-95 transition-all">
-              Retour au répertoire
+           <button onClick={() => navigate('/parcours')} className="px-10 py-5 bg-white text-[#1A1A2E] rounded-full font-black uppercase text-[10px] tracking-widest shadow-xl active:scale-95 transition-all">
+              Retour au parcours
            </button>
         </div>
       </div>

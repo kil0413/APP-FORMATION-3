@@ -249,6 +249,25 @@ export const useAuthStore = create((set, get) => ({
     await supabase.from('profiles').update({ lives: newLives }).eq('id', state.user.id);
   },
 
+  // --- LEADERBOARD ---
+  leaderboard: [],
+  isLoadingLeaderboard: false,
+  fetchLeaderboard: async () => {
+    try {
+      set({ isLoadingLeaderboard: true });
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('id, display_name, xp_total, avatar_url')
+        .order('xp_total', { ascending: false })
+        .limit(10);
+      if (error) throw error;
+      set({ leaderboard: data || [], isLoadingLeaderboard: false });
+    } catch (err) {
+      console.error("Erreur fetchLeaderboard:", err.message);
+      set({ isLoadingLeaderboard: false });
+    }
+  },
+
   // --- ACTIONS ADMIN ---
   profiles: [],
   fetchProfiles: async () => {

@@ -21,6 +21,10 @@ export default function Fiche() {
   const [activePage, setActivePage] = useState(1);
   const [completed, setCompleted] = useState(false);
   const [isValidating, setIsValidating] = useState(false);
+  
+  // NOUVEAU: Fetch dynamically image/pdf data if missing
+  const [ficheFileData, setFicheFileData] = useState(currentFiche?.file_data);
+  const [mediaLoadError, setMediaLoadError] = useState(false);
   const scrollContainerRef = useRef(null);
 
   const completedEntry = user?.completed_fiches?.find(entry => {
@@ -38,7 +42,34 @@ export default function Fiche() {
     }
   }, [completedEntry]);
 
-  if (!currentFiche || isStoreLoading || isAuthLoading || !user) {
+  useEffect(() => {
+    if (currentFiche && currentFiche.type === 'media' && !ficheFileData && !mediaLoadError) {
+      const fetchFile = async () => {
+        try {
+          const { supabase } = await import('../lib/supabase.js');
+          const isRealSupabase = supabase.supabaseUrl && !supabase.supabaseUrl.includes('placeholder');
+          if (isRealSupabase) {
+             const { data, error } = await supabase.from('fiches').select('file_data').eq('id', id).single();
+             if (error) throw error;
+             
+             if (data && data.file_data) {
+                setFicheFileData(data.file_data);
+             } else {
+                setMediaLoadError(true);
+             }
+          } else {
+             setMediaLoadError(true);
+          }
+        } catch (e) {
+          console.error("Impossible de charger le média:", e);
+          setMediaLoadError(true);
+        }
+      };
+      fetchFile();
+    }
+  }, [currentFiche, id, ficheFileData, mediaLoadError]);
+
+  if (isStoreLoading || isAuthLoading || !user) {
     return (
       <div className="flex h-screen items-center justify-center bg-[#0F1117]">
          <div className="flex flex-col items-center gap-6">
@@ -46,6 +77,25 @@ export default function Fiche() {
                <Shield size={32} className="text-white" />
             </div>
             <div className="text-white/40 font-black uppercase text-xs tracking-[0.4em] animate-pulse italic">Préparation du module tactique...</div>
+         </div>
+      </div>
+    );
+  }
+
+  if (!currentFiche) {
+    return (
+      <div className="flex h-[100dvh] w-full flex-col items-center justify-center p-8 text-center bg-[#0F1117]">
+        <div className="flex flex-col items-center gap-6">
+            <div className="h-20 w-20 bg-gray-800/50 rounded-full flex items-center justify-center shadow-xl border border-white/5">
+               <AlertTriangle size={40} className="text-gray-500" />
+            </div>
+            <div className="flex flex-col gap-2">
+               <h2 className="text-2xl font-black text-white uppercase italic tracking-tighter">Module introuvable</h2>
+               <p className="text-white/40 font-bold uppercase tracking-widest text-[#10px] max-w-sm">La fiche demandée n'existe pas ou n'est plus disponible.</p>
+            </div>
+            <button onClick={() => navigate('/repertoire')} className="mt-4 px-8 py-4 bg-white text-[#1A1A2E] rounded-[2rem] font-black uppercase text-[10px] tracking-widest shadow-xl active:scale-95 transition-all">
+               Retourner au répertoire
+            </button>
          </div>
       </div>
     );
@@ -180,13 +230,20 @@ export default function Fiche() {
             ) : (
               /* STANDARD TEXT CONTENT */
               <div className="px-6 md:px-12 pb-32 flex flex-col gap-12 mt-10">
-                 {currentFiche.file_data ? (
+                 {currentFiche.type === 'media' ? (
                     <div className="w-full animate-in zoom-in duration-700">
-                       {currentFiche.file_type === 'pdf' ? (
-                          <PDFViewer base64Data={currentFiche.file_data} />
+                       {mediaLoadError ? (
+                         <div className="flex flex-col items-center justify-center p-20 opacity-50 bg-white/5 rounded-[3rem] border border-white/10">
+                            <AlertTriangle size={48} className="mb-4 text-red-500" />
+                            <p className="text-sm font-black uppercase tracking-widest text-[#1A1A2E]">Aucun média attaché</p>
+                         </div>
+                       ) : !ficheFileData ? (
+                         <div className="flex justify-center p-20 opacity-50"><Shield className="animate-spin" size={32} /></div>
+                       ) : currentFiche.file_type === 'pdf' ? (
+                          <PDFViewer base64Data={ficheFileData} />
                        ) : (
                           <img 
-                            src={currentFiche.file_data} 
+                            src={ficheFileData} 
                             alt={currentFiche.title} 
                             className="w-full h-auto object-contain md:rounded-[3rem] shadow-2xl border-4 md:border-8 border-white" 
                           />

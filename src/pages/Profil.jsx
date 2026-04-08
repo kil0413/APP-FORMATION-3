@@ -1,4 +1,4 @@
-import { Settings, Award, Clock, BookOpen, ChevronRight, LogOut, Download, Smartphone, Flame, Star, Trophy, ShieldCheck } from 'lucide-react';
+import { Settings, Award, Clock, BookOpen, ChevronRight, LogOut, Download, Smartphone, Flame, Star, Trophy, ShieldCheck, AlertTriangle } from 'lucide-react';
 import { useAuthStore } from '../store/useAuthStore';
 import { useFicheStore } from '../store/useFicheStore';
 import { useNavigate } from 'react-router-dom';
@@ -234,6 +234,13 @@ export default function Profil() {
                         <span className="font-bold text-sm text-white uppercase tracking-tighter font-black">Préférences</span>
                      </div>
                      <ChevronRight size={18} className="text-white/10" />
+                   </button>
+                   <button onClick={() => window.location.href = 'mailto:support@fireacademie.fr?subject=Signalement%20de%20Bug%2FTicket%20Support'} className="w-full flex items-center justify-between p-4 bg-red-500/10 hover:bg-red-500/20 rounded-2xl transition-colors text-left group mt-2">
+                      <div className="flex items-center gap-3">
+                         <AlertTriangle size={20} className="text-red-400 group-hover:text-red-500 transition-colors" />
+                         <span className="font-bold text-sm text-red-500 uppercase tracking-tighter font-black">Signaler un bug</span>
+                      </div>
+                      <ChevronRight size={18} className="text-red-500/40" />
                    </button>
                    <button onClick={handleLogout} className="md:hidden w-full flex items-center gap-3 p-4 bg-red-500/10 hover:bg-red-500/20 text-red-500 rounded-2xl transition-colors text-left font-black uppercase text-[10px] tracking-widest">
                      <LogOut size={20} />

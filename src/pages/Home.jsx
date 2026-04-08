@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { Heart, Zap, Flame, Play, LayoutGrid, Brain, CheckCircle2, ChevronRight, Trophy, Star, Target, TrendingUp, Sparkles, AlertTriangle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Header } from '../components/layout/Header';
@@ -12,7 +13,13 @@ import { cn } from '../lib/utils';
 export default function Home() {
   const navigate = useNavigate();
   const { fiches, categories, isLoading: isFichesLoading } = useFicheStore();
-  const { user, isLoading: isAuthLoading } = useAuthStore();
+  const { user, isLoading: isAuthLoading, leaderboard, fetchLeaderboard, isLoadingLeaderboard } = useAuthStore();
+
+  useEffect(() => {
+    if (user && fetchLeaderboard) {
+      fetchLeaderboard();
+    }
+  }, [user, fetchLeaderboard]);
 
   if (isAuthLoading || isFichesLoading || !user) {
     return (
@@ -62,109 +69,6 @@ export default function Home() {
       
       {/* NOUVEAU BLOC HERO FOURNI PAR L'UTILISATEUR */}
       <section className="relative w-full h-[100dvh] flex flex-col items-center justify-center z-10 overflow-hidden">
-        <style dangerouslySetInnerHTML={{__html: `
-          @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Rajdhani:wght@300;400;500;600&display=swap');
-          
-          .hero-line-top {
-            width: 60px;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, rgba(200,90,40,0.6), transparent);
-            margin: 0 auto 2rem;
-            animation: fadeIn 1.5s ease 0.3s both;
-          }
-          
-          .pre-title {
-            font-family: 'Rajdhani', sans-serif;
-            font-weight: 300;
-            font-size: clamp(0.65rem, 1.2vw, 0.85rem);
-            color: rgba(200,140,100,0.5);
-            letter-spacing: 0.6em;
-            text-transform: uppercase;
-            margin-bottom: 1rem;
-            animation: fadeIn 1.5s ease 0.5s both;
-          }
-          
-          .hero-title {
-            font-family: 'Playfair Display', serif;
-            font-weight: 700;
-            font-size: clamp(2.8rem, 8vw, 7rem);
-            line-height: 0.95;
-            letter-spacing: 0.06em;
-            color: #f5f0ea;
-            animation: titleReveal 2s cubic-bezier(0.16, 1, 0.3, 1) 0.2s both;
-          }
-          
-          .hero-title .fire {
-            display: block;
-            background: linear-gradient(180deg, #f5f0ea 30%, #c8784a 100%);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-          }
-          
-          .hero-title .academie {
-            display: block;
-            font-weight: 400;
-            font-size: 0.42em;
-            letter-spacing: 0.45em;
-            color: rgba(200,140,100,0.45);
-            margin-top: 0.3em;
-          }
-          
-          .hero-line-bottom {
-            width: 60px;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, rgba(200,90,40,0.6), transparent);
-            margin: 2rem auto 0;
-            animation: fadeIn 1.5s ease 0.3s both;
-          }
-          
-          .hero-scroll-hint {
-            position: absolute;
-            bottom: 6rem;
-            left: 0;
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-            animation: fadeIn 2s ease 2s both;
-            pointer-events: none;
-          }
-          
-          .hero-scroll-hint span {
-            font-family: 'Rajdhani', sans-serif;
-            font-size: 0.6rem;
-            letter-spacing: 0.3em;
-            text-indent: 0.3em;
-            color: rgba(255,255,255,0.15);
-            text-transform: uppercase;
-          }
-          
-          .hero-scroll-line {
-            width: 1px;
-            height: 30px;
-            background: linear-gradient(180deg, rgba(200,90,40,0.4), transparent);
-            animation: scrollPulse 2s ease-in-out infinite;
-          }
-          
-          @keyframes scrollPulse {
-            0%, 100% { opacity: 0.3; transform: scaleY(0.6); }
-            50%      { opacity: 1; transform: scaleY(1); }
-          }
-          
-          @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(8px); }
-            to   { opacity: 1; transform: translateY(0); }
-          }
-          
-          @keyframes titleReveal {
-            from { opacity: 0; transform: translateY(30px) scale(0.97); }
-            to   { opacity: 1; transform: translateY(0) scale(1); }
-          }
-        `}} />
-
         <div className="text-center pointer-events-none relative z-10 w-full px-4 mt-6 md:mt-0">
           <div className="hero-line-top"></div>
           <div className="pre-title">Centre de Formation</div>
@@ -387,20 +291,25 @@ export default function Home() {
                </div>
 
                <div className="space-y-4">
-                  {[
-                    { rank: 1, name: 'Lucas T.', xp: '4,2k', me: false },
-                    { rank: 2, name: 'Jean P.', xp: '1,2k', me: true },
-                    { rank: 3, name: 'Sophie L.', xp: '0,9k', me: false }
-                  ].map((entry) => (
-                    <div key={entry.rank} className={`flex items-center gap-4 p-4 rounded-2xl transition-all ${entry.me ? 'bg-red-600 text-white scale-105 shadow-xl shadow-red-500/20' : 'text-white/40 hover:bg-white/5'}`}>
-                       <span className="text-xs font-black opacity-40">#{entry.rank}</span>
-                       <div className="h-8 w-8 rounded-full bg-white/10 overflow-hidden border border-white/10 shrink-0">
-                          <img src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${entry.name}`} alt="" />
-                       </div>
-                       <span className="flex-1 font-black uppercase text-xs tracking-tighter truncate">{entry.me ? 'Moi' : entry.name}</span>
-                       <span className="text-[10px] font-black opacity-60">{entry.xp} XP</span>
-                    </div>
-                  ))}
+                  {isLoadingLeaderboard ? (
+                    <div className="text-center text-white/40 text-[10px] py-4 uppercase tracking-widest font-bold">Chargement du classement...</div>
+                  ) : leaderboard?.length > 0 ? (
+                    leaderboard.map((entry, idx) => {
+                      const isMe = entry.id === user.id;
+                      return (
+                        <div key={entry.id} className={`flex items-center gap-4 p-4 rounded-2xl transition-all ${isMe ? 'bg-red-600 text-white scale-105 shadow-xl shadow-red-500/20' : 'text-white/40 hover:bg-white/5'}`}>
+                           <span className="text-xs font-black opacity-40">#{idx + 1}</span>
+                           <div className="h-8 w-8 rounded-full bg-white/10 overflow-hidden border border-white/10 shrink-0">
+                              <img src={entry.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${entry.display_name}`} alt="" />
+                           </div>
+                           <span className="flex-1 font-black uppercase text-xs tracking-tighter truncate">{isMe ? 'Moi' : entry.display_name}</span>
+                           <span className="text-[10px] font-black opacity-60">{entry.xp_total} XP</span>
+                        </div>
+                      );
+                    })
+                  ) : (
+                    <div className="text-center text-white/40 text-[10px] py-4 uppercase tracking-widest font-bold">Aucun joueur classé</div>
+                  )}
                </div>
                
                <button className="w-full py-4 text-[10px] font-black uppercase tracking-[0.2em] text-white/40 hover:text-white transition-colors border border-white/10 rounded-2xl">
