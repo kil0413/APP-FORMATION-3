@@ -8,6 +8,7 @@ import { Badge } from '../components/ui/Badge';
 import { useFicheStore } from '../store/useFicheStore';
 import { useAuthStore } from '../store/useAuthStore';
 import { cn } from '../lib/utils';
+import LoadingScreen from '../components/ui/LoadingScreen';
 
 export default function Repertoire() {
   const [activeTab, setActiveTab] = useState('Tous');
@@ -53,13 +54,7 @@ export default function Repertoire() {
   }, [fiches, searchQuery, activeCategory, activeTab, user]);
 
   if (isAuthLoading || isFichesLoading || !user) {
-    return (
-      <div className="flex bg-[#1A1A2E] h-screen items-center justify-center">
-        <div className="text-white font-black uppercase text-xs tracking-[0.3em] animate-pulse">
-          SYNCHRONISATION...
-        </div>
-      </div>
-    );
+    return <LoadingScreen text="SYNCHRONISATION DE LA BIBLIOTHEQUE..." />;
   }
 
   return (

@@ -6,6 +6,7 @@ import { useFicheStore } from '../store/useFicheStore';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '../lib/utils';
 import { Badge } from '../components/ui/Badge';
+import LoadingScreen from '../components/ui/LoadingScreen';
 
 export default function Quiz() {
   const { id } = useParams();
@@ -31,16 +32,7 @@ export default function Quiz() {
   const [xpGainedThisTime, setXpGainedThisTime] = useState(0);
 
   if (isStoreLoading || isAuthLoading || !user) {
-    return (
-      <div className="flex h-[100dvh] items-center justify-center bg-[#1A1A2E] w-full">
-         <div className="flex flex-col items-center gap-6">
-            <div className="h-16 w-16 bg-[#CC1A1A] rounded-2xl animate-spin shadow-2xl flex items-center justify-center shadow-red-500/30">
-               <Zap size={32} className="text-white" />
-            </div>
-            <div className="text-white/40 font-black uppercase text-xs tracking-[0.4em] animate-pulse italic">Génération de l'évaluation...</div>
-         </div>
-      </div>
-    );
+    return <LoadingScreen text="GÉNÉRATION DE L'ÉVALUATION..." />;
   }
 
   if (!quiz) {

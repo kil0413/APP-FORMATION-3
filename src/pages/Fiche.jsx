@@ -6,6 +6,7 @@ import { useFicheStore } from '../store/useFicheStore';
 import { Badge } from '../components/ui/Badge';
 import { ProgressBar } from '../components/ui/ProgressBar';
 import PDFViewer from '../components/ui/PDFViewer';
+import LoadingScreen from '../components/ui/LoadingScreen';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '../lib/utils';
 import ExplosionPentagon from '../components/ExplosionPentagon';
@@ -70,16 +71,7 @@ export default function Fiche() {
   }, [currentFiche, id, ficheFileData, mediaLoadError]);
 
   if (isStoreLoading || isAuthLoading || !user) {
-    return (
-      <div className="flex h-screen items-center justify-center bg-[#0F1117]">
-         <div className="flex flex-col items-center gap-6">
-            <div className="h-16 w-16 bg-red-600 rounded-2xl animate-spin shadow-2xl flex items-center justify-center shadow-red-500/30">
-               <Shield size={32} className="text-white" />
-            </div>
-            <div className="text-white/40 font-black uppercase text-xs tracking-[0.4em] animate-pulse italic">Préparation du module tactique...</div>
-         </div>
-      </div>
-    );
+    return <LoadingScreen text="PRÉPARATION DU MODULE TACTIQUE..." />;
   }
 
   if (!currentFiche) {

@@ -10,6 +10,7 @@ import UsersTab from './tabs/UsersTab';
 import SettingsTab from './tabs/SettingsTab';
 import { useFicheStore } from '../../store/useFicheStore';
 import { useAuthStore } from '../../store/useAuthStore';
+import LoadingScreen from '../../components/ui/LoadingScreen';
 
 export default function AdminDashboard() {
   const navigate = useNavigate();
@@ -51,7 +52,7 @@ export default function AdminDashboard() {
 
   // En attente du chargement initial
   if (authLoading) {
-    return <div className="h-screen w-full bg-[#0F0F1A] flex items-center justify-center text-white">Initialisation...</div>;
+    return <LoadingScreen text="INITIALISATION ADMIN..." />;
   }
 
   // Écran de login si non authentifié ou pas admin
