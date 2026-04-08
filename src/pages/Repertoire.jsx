@@ -21,6 +21,13 @@ export default function Repertoire() {
 
   const tabs = ['Tous', 'QCM', 'PDF', 'Images', 'Favoris'];
 
+  const THEME_EMOJIS = {
+    'c1': '🩸', // SUAP
+    'c2': '🔥', // Incendie
+    'c3': '⚡', // Risques Particuliers
+    'c7': '🚗', // Secours Routier
+  };
+
   const filteredItems = useMemo(() => {
     let items = [];
 
@@ -180,9 +187,10 @@ export default function Repertoire() {
                            </div>
                          )}
                        </div>
-                       <Badge className="bg-white/5 text-white/40 border-none font-black uppercase text-[10px] tracking-widest px-4 py-2">
-                          {item.itemType === 'quiz' ? 'QCM' : (item.difficulty || 'Fiche')}
-                       </Badge>
+                        <Badge className="bg-white/5 text-white/40 border-none font-black uppercase text-[10px] tracking-widest px-4 py-2 flex items-center gap-1.5">
+                           <span className="text-sm">{THEME_EMOJIS[categoryId] || '📖'}</span>
+                           {item.itemType === 'quiz' ? 'QCM' : (item.difficulty || 'Fiche')}
+                        </Badge>
                      </div>
                      
                      <div className="flex flex-col gap-4">

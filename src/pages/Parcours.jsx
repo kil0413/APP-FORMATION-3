@@ -9,14 +9,16 @@ import { useNavigate } from 'react-router-dom';
 // ─── Constantes ───────────────────────────────────────────────────────────────
 const DIFFICULTY_ORDER = { 'Débutant': 0, 'Intermédiaire': 1, 'Avancé': 2 };
 
-const CHAPTER_COLORS = [
-  { color: '#E24B4A', colorBg: 'rgba(226,75,74,0.12)', colorGlow: 'rgba(226,75,74,0.35)' },
-  { color: '#378ADD', colorBg: 'rgba(55,138,221,0.12)', colorGlow: 'rgba(55,138,221,0.35)' },
-  { color: '#EF9F27', colorBg: 'rgba(239,159,39,0.12)', colorGlow: 'rgba(239,159,39,0.35)' },
-  { color: '#1D9E75', colorBg: 'rgba(29,158,117,0.12)', colorGlow: 'rgba(29,158,117,0.35)' },
-  { color: '#9B59B6', colorBg: 'rgba(155,89,182,0.12)', colorGlow: 'rgba(155,89,182,0.35)' },
-  { color: '#F39C12', colorBg: 'rgba(243,156,18,0.12)', colorGlow: 'rgba(243,156,18,0.35)' },
-];
+const CAT_THEMES = {
+  'c1': { color: '#378ADD', colorBg: 'rgba(55,138,221,0.12)', colorGlow: 'rgba(55,138,221,0.35)', emoji: '🩸' }, // Bleu SUAP
+  'c2': { color: '#E24B4A', colorBg: 'rgba(226,75,74,0.12)', colorGlow: 'rgba(226,75,74,0.35)', emoji: '🔥' }, // Rouge Incendie
+  'c3': { color: '#EF9F27', colorBg: 'rgba(239,159,39,0.12)', colorGlow: 'rgba(239,159,39,0.35)', emoji: '⚡' }, // Jaune Risques Part.
+  'c7': { color: '#6b7280', colorBg: 'rgba(107,114,128,0.12)', colorGlow: 'rgba(107,114,128,0.35)', emoji: '🚗' }, // Gris Routier
+  // Fallbacks
+  'c4': { color: '#9B59B6', colorBg: 'rgba(155,89,182,0.12)', colorGlow: 'rgba(155,89,182,0.35)', emoji: '📻' },
+  'c5': { color: '#1D9E75', colorBg: 'rgba(29,158,117,0.12)', colorGlow: 'rgba(29,158,117,0.35)', emoji: '🛡️' },
+  'default': { color: '#F39C12', colorBg: 'rgba(243,156,18,0.12)', colorGlow: 'rgba(243,156,18,0.35)', emoji: '📖' },
+};
 
 const ZIGZAG = [-1.2, 1.2, -0.8, 1.0, -1.4, 0.6];
 
@@ -292,8 +294,19 @@ function ChapterSection({ chapter, onNodeClick }) {
         </div>
       </div>
 
-      {/* Nœuds + chemin SVG */}
-      <div ref={containerRef} className="relative w-full">
+      {/* Nœuds + chemin SVG avec Background Emojis */}
+      <div ref={containerRef} className="relative w-full overflow-hidden">
+        
+        {/* Fond Emojis Background */}
+        <div className="absolute inset-0 pointer-events-none opacity-[0.02] flex flex-wrap gap-8 items-start justify-center -z-10 bg-[#0B0A0D]"
+             style={{ maskImage: 'linear-gradient(to bottom, transparent, black 5%, black 95%, transparent)', WebkitMaskImage: 'linear-gradient(to bottom, transparent, black 5%, black 95%, transparent)' }}>
+           {Array.from({ length: 40 }).map((_, i) => (
+             <span key={i} className="text-7xl mt-10 mx-6 mix-blend-overlay" style={{ transform: `rotate(${Math.random() * 40 - 20}deg) scale(${0.8 + Math.random() * 0.4})` }}>
+                {chapter.emoji}
+             </span>
+           ))}
+        </div>
+
         <svg width={svgData.w} height={svgData.h}
           className="absolute inset-0 pointer-events-none" style={{ overflow: 'visible' }}>
           <ChapterPath nodePositions={svgData.positions} doneCount={doneCount} color={chapter.color} />
@@ -326,13 +339,14 @@ export default function Parcours() {
   const navigate = useNavigate();
   const [selectedNode, setSelectedNode] = useState(null);
   const [selectedChapter, setSelectedChapter] = useState(null);
+  const [activeTab, setActiveTab] = useState(null);
 
   // ── Construction dynamique des chapitres ──────────────────────────────────
   const chapters = useMemo(() => {
     const completedFiches = user?.completed_fiches || [];
 
-    return categories.map((cat, catIdx) => {
-      const colorTheme = CHAPTER_COLORS[catIdx % CHAPTER_COLORS.length];
+    return categories.map((cat) => {
+      const colorTheme = CAT_THEMES[cat.id] || CAT_THEMES['default'];
 
       // Fiches de cette catégorie, triées par difficulté
       const catFiches = fiches
@@ -392,6 +406,14 @@ export default function Parcours() {
   const doneNodes = chapters.reduce((acc, ch) => acc + ch.nodes.filter(n => n.status === 'done').length, 0);
   const globalPct = totalNodes > 0 ? Math.round((doneNodes / totalNodes) * 100) : 0;
 
+  useEffect(() => {
+    if (!activeTab && chapters.length > 0) {
+       setActiveTab(chapters[0].id);
+    }
+  }, [chapters, activeTab]);
+
+  const activeChapter = chapters.find(c => c.id === activeTab) || chapters[0];
+
   // Suggestion du jour : premier nœud "next" ou "refresh"
   const suggestions = chapters.flatMap(ch => ch.nodes.filter(n => n.status === 'next' || n.status === 'refresh'))
     .slice(0, 2);
@@ -439,19 +461,34 @@ export default function Parcours() {
             <span className="text-[10px] font-black text-white/30 shrink-0">{globalPct}%</span>
           </div>
 
-          {/* Chips par chapitre */}
-          <div className="flex gap-2 overflow-x-auto no-scrollbar pb-0.5">
+          {/* Menu des Thèmes */}
+          <div className="flex gap-2 overflow-x-auto no-scrollbar pb-2 mt-2">
             {chapters.map(ch => {
               const done = ch.nodes.filter(n => n.status === 'done').length;
               const pct = ch.nodes.length > 0 ? Math.round((done / ch.nodes.length) * 100) : 0;
+              const isActive = activeTab === ch.id;
+              
               return (
-                <div key={ch.id} className="flex items-center gap-1.5 px-3 py-1.5 rounded-full shrink-0"
-                  style={{ background: ch.colorBg, border: `1px solid ${ch.color}30` }}>
-                  <div className="w-1.5 h-1.5 rounded-full" style={{ background: ch.color }} />
-                  <span className="text-[10px] font-black whitespace-nowrap" style={{ color: ch.color }}>
-                    {ch.title} {pct}%
-                  </span>
-                </div>
+                <button 
+                  key={ch.id} 
+                  onClick={() => setActiveTab(ch.id)}
+                  className={cn(
+                     "flex items-center gap-3 px-4 py-3 rounded-2xl shrink-0 transition-all font-black text-xs uppercase tracking-widest",
+                     isActive ? "text-white shadow-xl" : "text-white/40 hover:text-white/60 bg-white/5 border border-white/5"
+                  )}
+                  style={{
+                     backgroundColor: isActive ? ch.color : undefined,
+                     boxShadow: isActive ? `0 10px 30px ${ch.colorGlow}` : undefined
+                  }}
+                >
+                  <span className="text-xl leading-none">{ch.emoji}</span>
+                  <div className="flex flex-col items-start text-left">
+                     <span>{ch.title}</span>
+                     <span className={cn("text-[9px] mt-0.5", isActive ? "text-white/80" : "text-white/30")}>
+                        {pct}% complété
+                     </span>
+                  </div>
+                </button>
               );
             })}
           </div>
@@ -482,13 +519,14 @@ export default function Parcours() {
             </div>
           )}
 
-          {chapters.map(chapter => (
-            <ChapterSection
-              key={chapter.id}
-              chapter={chapter}
-              onNodeClick={(node) => handleNodeClick(node, chapter)}
-            />
-          ))}
+          {/* Affichage du Chapitre Actif */}
+          {activeChapter && (
+             <ChapterSection
+               key={activeChapter.id}
+               chapter={activeChapter}
+               onNodeClick={(node) => handleNodeClick(node, activeChapter)}
+             />
+          )}
 
           {chapters.length > 0 && (
             <div className="flex flex-col items-center gap-4 py-12 px-6 text-center">
