@@ -5,6 +5,7 @@ import { PageWrapper } from '../components/layout/PageWrapper';
 import { useAuthStore } from '../store/useAuthStore';
 import { useFicheStore } from '../store/useFicheStore';
 import { useNavigate } from 'react-router-dom';
+import { cn } from '../lib/utils';
 
 // ─── Constantes ───────────────────────────────────────────────────────────────
 const DIFFICULTY_ORDER = { 'Débutant': 0, 'Intermédiaire': 1, 'Avancé': 2 };
