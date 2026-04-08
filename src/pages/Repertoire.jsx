@@ -179,7 +179,7 @@ export default function Repertoire() {
                             className="h-20 w-20 md:h-24 md:w-24 shrink-0 items-center justify-center rounded-[2rem] text-white shadow-2xl rotate-3 group-hover:rotate-0 transition-transform duration-500 flex"
                             style={{ backgroundColor: category?.theme_header || '#CC1A1A' }}
                          >
-                           {item.itemType === 'quiz' ? <Brain size={40} /> : item.file_type === 'pdf' ? <FileText size={40} /> : <ImageIcon size={40} />}
+                           <span className="text-4xl md:text-5xl">{THEME_EMOJIS[categoryId] || '📖'}</span>
                          </div>
                          {isCompleted && (
                            <div className="absolute -bottom-2 -right-2 h-10 w-10 rounded-full bg-green-500 shadow-xl border border-white/10 flex items-center justify-center text-white active:scale-95 transition-transform shadow-[0_0_15px_rgba(34,197,94,0.4)]">
@@ -187,8 +187,7 @@ export default function Repertoire() {
                            </div>
                          )}
                        </div>
-                        <Badge className="bg-white/5 text-white/40 border-none font-black uppercase text-[10px] tracking-widest px-4 py-2 flex items-center gap-1.5">
-                           <span className="text-sm">{THEME_EMOJIS[categoryId] || '📖'}</span>
+                        <Badge className="bg-white/5 text-white/40 border-none font-black uppercase text-[10px] tracking-widest px-4 py-2">
                            {item.itemType === 'quiz' ? 'QCM' : (item.difficulty || 'Fiche')}
                         </Badge>
                      </div>
