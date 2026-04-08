@@ -43,6 +43,7 @@ export const useFicheStore = create((set, get) => ({
           fichesData = resF.data || [];
         } catch (e) {
           console.error("Erreur fiches:", e.message);
+          alert("Alerte Système: Impossible de charger les fiches. Raison : " + e.message);
           set({ error: "Erreur Supabase: " + e.message });
         }
 
@@ -59,12 +60,10 @@ export const useFicheStore = create((set, get) => ({
       // On utilise les données DB en priorité si ID identiques
       const demoIds = ['f1', 'f2', 'f3', 'f4', 'q1', 'q2', 'q3', 'q4'];
 
-      const finalFiches = [...(fichesData || [])]
-        .filter(f => !demoIds.includes(f.id))
-        .filter(f => !['Bilans secouristes', 'Mise en place de l\'ARI', 'Lecture au plan', 'Phénomènes Thermiques'].some(title => f.title?.includes(title)));
+      const finalFiches = [...(fichesData || [])];
       
       fallbackFiches.forEach(fallback => {
-        if (!finalFiches.find(f => f.id === fallback.id) && !demoIds.includes(fallback.id)) {
+        if (!finalFiches.find(f => f.id === fallback.id)) {
           finalFiches.push(fallback);
         }
       });
