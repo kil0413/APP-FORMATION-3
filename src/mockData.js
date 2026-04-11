@@ -1,11 +1,10 @@
 export const categories = [
-  { id: 'c1', name: 'SUAP', icon: 'Ambulance', color: 'bg-red-100 text-[#CC1A1A]', description: 'Premiers secours et interventions médicales.', theme_header: '#618fad', theme_bg: '#eaf7ff' },
-  { id: 'c2', name: 'Incendie', icon: 'Flame', color: 'bg-orange-100 text-orange-600', description: 'Techniques d\'extinction et sauvetage.', theme_header: '#d45959', theme_bg: '#ffeeee' },
-  { id: 'c3', name: 'Risques Particuliers', icon: 'Biohazard', color: 'bg-green-100 text-green-600', description: 'Nucléaire, Radiologique, Biologique, Chimique.', theme_header: '#c2b142', theme_bg: '#ffffe9' },
-  { id: 'c4', name: 'Communication', icon: 'Radio', color: 'bg-blue-100 text-blue-600', description: 'Procédures radios et gestion d\'appels.', theme_header: '#fae78f', theme_bg: '#FBFAEF' },
-  { id: 'c5', name: 'Commandement', icon: 'Shield', color: 'bg-purple-100 text-purple-600', description: 'Gestion de crise et commandement.', theme_header: '#fae78f', theme_bg: '#FBFAEF' },
-  { id: 'c6', name: 'Sécurité Civile', icon: 'Siren', color: 'bg-yellow-100 text-yellow-600', description: 'Interventions diverses.', theme_header: '#fae78f', theme_bg: '#FBFAEF' },
-  { id: 'c7', name: 'Secours Routier', icon: 'Car', color: 'bg-teal-100 text-teal-600', description: 'Désincarcération et interventions sur véhicules.', theme_header: '#3b82f6', theme_bg: '#eff6ff' },
+  { id: 'c1', name: 'SUAP', icon: 'Heart', color: 'bg-blue-100 text-blue-600', description: 'Premiers secours et interventions médicales.' },
+  { id: 'c2', name: 'Incendie', icon: 'Flame', color: 'bg-red-100 text-red-600', description: 'Techniques d\'extinction et sauvetage.' },
+  { id: 'c3', name: 'Risques particuliers', icon: 'Zap', color: 'bg-yellow-100 text-yellow-600', description: 'NRBC, Gaz et risques technologiques.' },
+  { id: 'c4', name: 'Secours Routier', icon: 'Car', color: 'bg-slate-100 text-slate-600', description: 'Désincarcération et balisage routier.' },
+  { id: 'c5', name: 'Prévention', icon: 'Shield', color: 'bg-orange-100 text-orange-600', description: 'Réglementation et sécurité incendie.' },
+  { id: 'c6', name: 'Culture Administrative', icon: 'Library', color: 'bg-purple-100 text-purple-600', description: 'Organisation des services et institutions.' },
 ];
 
 export const fiches = [

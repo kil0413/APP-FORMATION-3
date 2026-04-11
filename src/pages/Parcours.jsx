@@ -14,11 +14,10 @@ const CAT_THEMES = {
   'c1': { color: '#378ADD', mapBg: '#091524', colorBg: 'rgba(55,138,221,0.12)', colorGlow: 'rgba(55,138,221,0.35)', emoji: '🩸' }, // Bleu SUAP
   'c2': { color: '#E24B4A', mapBg: '#210c0c', colorBg: 'rgba(226,75,74,0.12)', colorGlow: 'rgba(226,75,74,0.35)', emoji: '🔥' }, // Rouge Incendie
   'c3': { color: '#EF9F27', mapBg: '#231808', colorBg: 'rgba(239,159,39,0.12)', colorGlow: 'rgba(239,159,39,0.35)', emoji: '⚡' }, // Jaune Risques Part.
-  'c7': { color: '#6b7280', mapBg: '#131417', colorBg: 'rgba(107,114,128,0.12)', colorGlow: 'rgba(107,114,128,0.35)', emoji: '🚗' }, // Gris Routier
-  // Fallbacks
-  'c4': { color: '#9B59B6', mapBg: '#180d1d', colorBg: 'rgba(155,89,182,0.12)', colorGlow: 'rgba(155,89,182,0.35)', emoji: '📻' },
-  'c5': { color: '#1D9E75', mapBg: '#081c15', colorBg: 'rgba(29,158,117,0.12)', colorGlow: 'rgba(29,158,117,0.35)', emoji: '🛡️' },
-  'default': { color: '#F39C12', mapBg: '#0b0a0d', colorBg: 'rgba(243,156,18,0.12)', colorGlow: 'rgba(243,156,18,0.35)', emoji: '📖' },
+  'c4': { color: '#6b7280', mapBg: '#131417', colorBg: 'rgba(107,114,128,0.12)', colorGlow: 'rgba(107,114,128,0.35)', emoji: '🚗' }, // Gris Routier
+  'c5': { color: '#F39C12', mapBg: '#1e140a', colorBg: 'rgba(243,156,18,0.12)', colorGlow: 'rgba(243,156,18,0.35)', emoji: '🛡️' }, // Orange Prévention
+  'c6': { color: '#9B59B6', mapBg: '#180d1d', colorBg: 'rgba(155,89,182,0.12)', colorGlow: 'rgba(155,89,182,0.35)', emoji: '📖' }, // Violet Culture Admin
+  'default': { color: '#F39C12', mapBg: '#0b0a0d', colorBg: 'rgba(243,156,18,0.12)', colorGlow: 'rgba(243,156,18,0.35)', emoji: '📘' },
 };
 
 const ZIGZAG = [-1.2, 1.2, -0.8, 1.0, -1.4, 0.6];

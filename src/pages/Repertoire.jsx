@@ -24,8 +24,10 @@ export default function Repertoire() {
   const THEME_EMOJIS = {
     'c1': '🩸', // SUAP
     'c2': '🔥', // Incendie
-    'c3': '⚡', // Risques Particuliers
-    'c7': '🚗', // Secours Routier
+    'c3': '⚡', // Risques particuliers
+    'c4': '🚗', // Secours Routier
+    'c5': '🛡️', // Prévention
+    'c6': '📖', // Culture Administrative
   };
 
   const filteredItems = useMemo(() => {

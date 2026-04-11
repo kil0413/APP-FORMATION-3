@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { Heart, Zap, Flame, Play, LayoutGrid, Brain, CheckCircle2, ChevronRight, Trophy, Star, Target, TrendingUp, Sparkles, AlertTriangle, Radio, Shield, Siren, Car, Activity } from 'lucide-react';
+import { Heart, Zap, Flame, Play, LayoutGrid, Brain, CheckCircle2, ChevronRight, Trophy, Star, Target, TrendingUp, Sparkles, AlertTriangle, Radio, Shield, Siren, Car, Activity, Library, BookOpen } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Header } from '../components/layout/Header';
 import { PageWrapper } from '../components/layout/PageWrapper';
@@ -147,9 +147,8 @@ export default function Home() {
                 else if (name.includes('INCENDIE')) { Icon = Flame; themeColor = "bg-red-500"; textColor = "text-red-500"; borderColor = "border-red-500/20"; shadowColor = "shadow-red-500/10"; }
                 else if (name.includes('RISQUES PARTICULIERS')) { Icon = Zap; themeColor = "bg-yellow-500"; textColor = "text-yellow-500"; borderColor = "border-yellow-500/20"; shadowColor = "shadow-yellow-500/10"; }
                 else if (name.includes('SECOURS ROUTIER')) { Icon = Car; themeColor = "bg-slate-400"; textColor = "text-slate-400"; borderColor = "border-slate-400/20"; shadowColor = "shadow-slate-400/10"; }
-                else if (name.includes('COMMUNICATION')) { Icon = Radio; themeColor = "bg-sky-400"; textColor = "text-sky-400"; borderColor = "border-sky-400/20"; shadowColor = "shadow-sky-400/10"; }
-                else if (name.includes('COMMANDEMENT')) { Icon = Shield; themeColor = "bg-purple-500"; textColor = "text-purple-500"; borderColor = "border-purple-500/20"; shadowColor = "shadow-purple-500/10"; }
-                else if (name.includes('SÉCURITÉ CIVILE')) { Icon = Siren; themeColor = "bg-orange-500"; textColor = "text-orange-500"; borderColor = "border-orange-500/20"; shadowColor = "shadow-orange-500/10"; }
+                else if (name.includes('PRÉVENTION')) { Icon = Shield; themeColor = "bg-orange-500"; textColor = "text-orange-500"; borderColor = "border-orange-500/20"; shadowColor = "shadow-orange-500/10"; }
+                else if (name.includes('CULTURE ADMINISTRATIVE')) { Icon = Library; themeColor = "bg-purple-500"; textColor = "text-purple-500"; borderColor = "border-purple-500/20"; shadowColor = "shadow-purple-500/10"; }
 
                 return (
                   <Card key={cat.id} className={cn("bg-[#1E293B]/20 border-white/5 group hover:bg-[#1E293B]/40 transition-all duration-300 rounded-3xl overflow-hidden", borderColor)}>
