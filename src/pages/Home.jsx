@@ -151,7 +151,11 @@ export default function Home() {
                 else if (name.includes('CULTURE ADMINISTRATIVE')) { Icon = Library; themeColor = "bg-purple-500"; textColor = "text-purple-500"; borderColor = "border-purple-500/20"; shadowColor = "shadow-purple-500/10"; }
 
                 return (
-                  <Card key={cat.id} className={cn("bg-[#1E293B]/20 border-white/5 group hover:bg-[#1E293B]/40 transition-all duration-300 rounded-3xl overflow-hidden", borderColor)}>
+                  <Card 
+                    key={cat.id} 
+                    onClick={() => navigate(`/parcours?theme=${cat.id}`)}
+                    className={cn("bg-[#1E293B]/20 border-white/5 group hover:bg-[#1E293B]/40 transition-all duration-300 rounded-3xl overflow-hidden cursor-pointer", borderColor)}
+                  >
                     <CardContent className="p-6 flex flex-col gap-4">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-4">

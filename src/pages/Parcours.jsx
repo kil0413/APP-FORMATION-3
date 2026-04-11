@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect, useMemo } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { BookOpen, Zap, Crown, Star, X, Flame, RotateCcw, Play, FileQuestion, FileText } from 'lucide-react';
 import { Header } from '../components/layout/Header';
 import { PageWrapper } from '../components/layout/PageWrapper';
@@ -406,11 +407,22 @@ export default function Parcours() {
   const doneNodes = chapters.reduce((acc, ch) => acc + ch.nodes.filter(n => n.status === 'done').length, 0);
   const globalPct = totalNodes > 0 ? Math.round((doneNodes / totalNodes) * 100) : 0;
 
+  const [searchParams, setSearchParams] = useSearchParams();
+  const themeParam = searchParams.get('theme');
+
   useEffect(() => {
-    if (!activeTab && chapters.length > 0) {
+    // Si on a un thème dans l'URL, on l'active
+    if (themeParam && categories.some(cat => cat.id === themeParam)) {
+       setActiveTab(themeParam);
+    } else if (!activeTab && chapters.length > 0) {
        setActiveTab(chapters[0].id);
     }
-  }, [chapters, activeTab]);
+  }, [chapters, activeTab, themeParam, categories]);
+
+  const handleTabChange = (id) => {
+    setActiveTab(id);
+    setSearchParams({ theme: id });
+  };
 
   const activeChapter = chapters.find(c => c.id === activeTab) || chapters[0];
 
@@ -432,7 +444,7 @@ export default function Parcours() {
     <PageWrapper className="" style={{ backgroundColor: activeChapter?.mapBg || '#0B0A0D' }}>
       <Header title="Mon Parcours" className="md:hidden" />
 
-      <main className="flex flex-col gap-0 pb-32 max-w-lg mx-auto w-full relative">
+      <main className="flex flex-col gap-0 pb-32 w-full relative">
 
         {/* ── En-tête sticky ── */}
         <div className="sticky top-0 z-30 px-4 pt-4 pb-3 flex flex-col gap-3"
@@ -471,7 +483,7 @@ export default function Parcours() {
               return (
                 <button 
                   key={ch.id} 
-                  onClick={() => setActiveTab(ch.id)}
+                  onClick={() => handleTabChange(ch.id)}
                   className={cn(
                      "flex items-center gap-3 px-4 py-3 rounded-2xl shrink-0 transition-all font-black text-xs uppercase tracking-widest",
                      isActive ? "text-white shadow-xl" : "text-white/40 hover:text-white/60 bg-white/5 border border-white/5"
