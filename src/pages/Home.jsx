@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { Heart, Zap, Flame, Play, LayoutGrid, Brain, CheckCircle2, ChevronRight, Trophy, Star, Target, TrendingUp, Sparkles, AlertTriangle } from 'lucide-react';
+import { Heart, Zap, Flame, Play, LayoutGrid, Brain, CheckCircle2, ChevronRight, Trophy, Star, Target, TrendingUp, Sparkles, AlertTriangle, Radio, Shield, Siren, Car, Activity } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Header } from '../components/layout/Header';
 import { PageWrapper } from '../components/layout/PageWrapper';
@@ -115,49 +115,79 @@ export default function Home() {
             </div>
           </section>
 
-          {/* Module en cours - Premium Hero Card */}
-          <section>
-            <Card className="relative overflow-hidden bg-gradient-to-br from-red-600 to-red-950 text-white border border-red-500/30 shadow-[0_20px_50px_rgba(239,68,68,0.25)] group cursor-pointer" onClick={() => navigate(`/fiche/${risqueGazId}`)}>
-              <div className="absolute top-0 right-0 p-10 opacity-10 group-hover:scale-110 transition-transform duration-700 -rotate-12 translate-x-1/4 -translate-y-1/4">
-                 <Zap size={240} className="fill-white" />
-              </div>
-              
-              <CardContent className="flex flex-col md:flex-row md:items-center justify-between p-10 md:p-14 relative z-10 gap-8">
-                <div className="flex flex-col gap-6 max-w-lg">
-                  <div className="flex flex-wrap gap-3">
-                    <Badge className="bg-white text-red-600 border-none px-4 py-1.5 text-[10px] font-black uppercase tracking-widest animate-pulse">
-                       MODULE PRIORITAIRE
-                    </Badge>
-                    <Badge className="bg-black/20 text-white/70 border-none px-4 py-1.5 text-[10px] font-black uppercase tracking-widest">
-                       {nrbcCategory}
-                    </Badge>
-                  </div>
-                  
-                  <div className="flex flex-col gap-2">
-                    <h2 className="text-4xl md:text-5xl font-black tracking-tighter uppercase italic leading-none">RISQUE GAZ</h2>
-                    <p className="text-sm md:text-lg text-white/70 font-bold uppercase tracking-widest">Étape 4 : Plage d'explosivité et BLEVE</p>
-                  </div>
+          {/* Progression par Thématique - Remplace l'en-tête Risque Gaz */}
+          <section className="flex flex-col gap-8">
+            <div className="flex items-center justify-between">
+              <h2 className="text-sm font-black text-white uppercase tracking-[0.4em] flex items-center gap-3">
+                <Activity className="text-red-500" size={18} />
+                Ma Progression par Thème
+              </h2>
+            </div>
+            
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
+              {categories.map(cat => {
+                // Calcul du progrès pour cette catégorie
+                const catFiches = fiches.filter(f => f.category_id === cat.id);
+                const total = catFiches.length;
+                const completed = (user?.completed_fiches || []).filter(cf => {
+                  const fid = cf.includes('|') ? cf.split('|')[0] : cf;
+                  return catFiches.some(f => f.id === fid);
+                }).length;
+                const percent = total > 0 ? Math.round((completed / total) * 100) : 0;
 
-                  <div className="flex items-center gap-4 mt-2">
-                     <span className="h-1 flex-1 bg-black/20 rounded-full overflow-hidden">
-                        <span className="block h-full bg-white w-[60%] shadow-lg shadow-white/50" />
-                     </span>
-                     <span className="text-[10px] font-black text-white/40 uppercase tracking-widest">PROGRÈS 60%</span>
-                  </div>
-                </div>
-                
-                <button 
-                  onClick={(e) => { e.stopPropagation(); navigate(`/fiche/${risqueGazId}`); }}
-                  className="inline-flex items-center justify-center gap-4 rounded-[2rem] bg-white px-12 py-6 text-sm font-black uppercase tracking-widest text-red-600 transition-all hover:scale-105 active:scale-95 shadow-[0_10px_30px_rgba(255,255,255,0.2)]"
-                >
-                  Continuer
-                  <Play size={20} className="fill-current" />
-                </button>
-              </CardContent>
-              
-              {/* Animated BG patterns */}
-              <div className="absolute -bottom-10 -right-10 h-64 w-64 rounded-full bg-red-600/20 blur-[100px]" />
-            </Card>
+                // Sélection de l'icône et de la couleur selon le thème
+                let Icon = Target;
+                let themeColor = "bg-red-500";
+                let textColor = "text-red-500";
+                let borderColor = "border-red-500/20";
+                let shadowColor = "shadow-red-500/10";
+
+                const name = cat.name.toUpperCase();
+                if (name.includes('SUAP')) { Icon = Heart; themeColor = "bg-blue-500"; textColor = "text-blue-500"; borderColor = "border-blue-500/20"; shadowColor = "shadow-blue-500/10"; }
+                else if (name.includes('INCENDIE')) { Icon = Flame; themeColor = "bg-red-500"; textColor = "text-red-500"; borderColor = "border-red-500/20"; shadowColor = "shadow-red-500/10"; }
+                else if (name.includes('RISQUES PARTICULIERS')) { Icon = Zap; themeColor = "bg-yellow-500"; textColor = "text-yellow-500"; borderColor = "border-yellow-500/20"; shadowColor = "shadow-yellow-500/10"; }
+                else if (name.includes('SECOURS ROUTIER')) { Icon = Car; themeColor = "bg-slate-400"; textColor = "text-slate-400"; borderColor = "border-slate-400/20"; shadowColor = "shadow-slate-400/10"; }
+                else if (name.includes('COMMUNICATION')) { Icon = Radio; themeColor = "bg-sky-400"; textColor = "text-sky-400"; borderColor = "border-sky-400/20"; shadowColor = "shadow-sky-400/10"; }
+                else if (name.includes('COMMANDEMENT')) { Icon = Shield; themeColor = "bg-purple-500"; textColor = "text-purple-500"; borderColor = "border-purple-500/20"; shadowColor = "shadow-purple-500/10"; }
+                else if (name.includes('SÉCURITÉ CIVILE')) { Icon = Siren; themeColor = "bg-orange-500"; textColor = "text-orange-500"; borderColor = "border-orange-500/20"; shadowColor = "shadow-orange-500/10"; }
+
+                return (
+                  <Card key={cat.id} className={cn("bg-[#1E293B]/20 border-white/5 group hover:bg-[#1E293B]/40 transition-all duration-300 rounded-3xl overflow-hidden", borderColor)}>
+                    <CardContent className="p-6 flex flex-col gap-4">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-4">
+                          <div className={cn("h-12 w-12 rounded-2xl flex items-center justify-center bg-white/5 transition-transform group-hover:scale-110 group-hover:rotate-6", textColor)}>
+                            <Icon size={24} />
+                          </div>
+                          <div className="flex flex-col">
+                            <span className="text-[10px] font-black text-white/30 uppercase tracking-[0.2em] mb-0.5">Thématique</span>
+                            <span className="font-black text-white uppercase tracking-tighter italic text-sm">{cat.name}</span>
+                          </div>
+                        </div>
+                        <div className="flex flex-col items-end">
+                          <span className={cn("text-xl font-black italic tracking-tighter", textColor)}>{percent}%</span>
+                        </div>
+                      </div>
+
+                      <div className="flex flex-col gap-2">
+                        <div className="h-2 w-full bg-white/5 rounded-full overflow-hidden border border-white/5">
+                          <div 
+                            className={cn("h-full transition-all duration-1000 ease-out shadow-lg", themeColor, shadowColor)}
+                            style={{ width: `${percent}%` }}
+                          />
+                        </div>
+                        <div className="flex justify-between items-center">
+                          <span className="text-[9px] font-black text-white/20 uppercase tracking-widest">{completed} / {total} acquis</span>
+                          {percent === 100 && (
+                            <Badge className="bg-green-500/10 text-green-500 border-green-500/20 text-[8px] px-2 py-0.5 font-black uppercase">Terminé</Badge>
+                          )}
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                );
+              })}
+            </div>
           </section>
 
           {/* Outils d'apprentissage - Grid Layout */}
